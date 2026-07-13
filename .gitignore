@@ -1,8 +1,6 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-node_modules
-/.pnp
+# Dependencies
+node_modules/
+.pnp
 .pnp.*
 .yarn/*
 !.yarn/patches
@@ -10,45 +8,83 @@ node_modules
 !.yarn/releases
 !.yarn/versions
 
-# testing
-/coverage
+# Next.js
+.next/
+out/
+build/
+dist/
 
-# next.js
-/.next/
-/out/
+# Production
+*.tsbuildinfo
+next-env.d.ts
 
-# production
-/build
-
-# misc
+# Misc
 .DS_Store
 *.pem
+Thumbs.db
 
-# debug
+# Debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# Env files (NEVER commit secrets)
+.env
+.env*.local
+.env.production
+.env.development
+.env.test
+!.env.example
 
-# vercel
+# Database (SQLite local file)
+db/*.db
+db/*.db-journal
+db/*.db-shm
+db/*.db-wal
+
+# Prisma generated client (regenerated on install)
+prisma/migrations/dev.db*
+
+# Vercel
 .vercel
 
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-local-*
-.claude
-.z-ai-config
+# OS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Logs
+logs/
 *.log
-dev.log
-dev.out.log
-test
-prompt
 
-server.log
-# Skills directory
-/skills/
+# Cache
+.cache/
+.turbo/
+.eslintcache
+
+# Test coverage
+coverage/
+
+# Local scripts/output (user-generated)
+download/*.png
+download/*.pdf
+download/*.docx
+download/*.md
+!download/.gitkeep
+
+# Worklog (agent-only)
+worklog.md
+
+# Z.ai SDK config (NEVER commit)
+.z-ai-config
+
+# Project-internal scripts that shouldn't be in the repo
+scripts/__pycache__/
