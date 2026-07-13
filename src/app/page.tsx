@@ -5,7 +5,7 @@ import { useTheme } from 'next-themes';
 import {
   Upload, FileText, Sparkles, Moon, Sun, Loader2, Check, AlertCircle,
   RefreshCw, History, Copy, Download, ChevronRight, Target, X, Github,
-  Menu,
+  Menu, Trash2, FileUp, MessageCircle, Mail, ExternalLink, Zap,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -52,7 +52,7 @@ interface RunInfo {
 
 // ─── Icon resolver ─────────────────────────────────────────────────────────
 import {
-  Compass, FileText as FileTextIcon, Mail, Linkedin, Mic, DollarSign,
+  Compass, FileText as FileTextIcon, Linkedin, Mic, DollarSign,
   TrendingUp, Crosshair, FileSignature, Users, ClipboardCheck, Gift,
   Rocket, GitBranch, ShieldCheck, HeartHandshake,
 } from 'lucide-react';
@@ -93,13 +93,11 @@ function ThemeToggle() {
   );
 }
 
-// ─── Upload Zone ────────────────────────────────────────────────────────────
-function UploadZone({ onUploaded, onProfileLoaded }: {
-  onUploaded: (p: ProfileInfo) => void;
-  onProfileLoaded: () => void;
-}) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [dragging, setDragging] = useState(false);
+// ─── Upload hook (reusable file-picker logic) ─────────────────────────────────
+function useFileUpload(
+  onSuccess: (p: ProfileInfo) => void,
+  onRunsReload: () => void,
+) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
@@ -121,15 +119,27 @@ function UploadZone({ onUploaded, onProfileLoaded }: {
         title: 'Profile ready',
         description: `Parsed ${data.profile.textLength.toLocaleString()} chars from ${data.profile.fileName}.`,
       });
-      onUploaded(data.profile);
-      onProfileLoaded();
+      onSuccess(data.profile);
+      onRunsReload();
     } catch (e: any) {
       setError(e?.message || 'Network error during upload.');
       toast({ title: 'Upload failed', description: e?.message, variant: 'destructive' });
     } finally {
       setUploading(false);
     }
-  }, [onUploaded, onProfileLoaded, toast]);
+  }, [onSuccess, onRunsReload, toast]);
+
+  return { uploading, error, handleFile };
+}
+
+// ─── Upload Zone (landing state) ────────────────────────────────────────────────
+function UploadZone({ onUploaded, onProfileLoaded }: {
+  onUploaded: (p: ProfileInfo) => void;
+  onProfileLoaded: () => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [dragging, setDragging] = useState(false);
+  const { uploading, error, handleFile } = useFileUpload(onUploaded, onProfileLoaded);
 
   return (
     <div className="space-y-4">
@@ -193,10 +203,75 @@ function UploadZone({ onUploaded, onProfileLoaded }: {
   );
 }
 
+// ─── Compact Replace / Clear buttons (used in ProfilePanel) ─────────────────────
+function ProfileActions({ onUploaded, onProfileLoaded, onCleared }: {
+  onUploaded: (p: ProfileInfo) => void;
+  onProfileLoaded: () => void;
+  onCleared: () => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [clearing, setClearing] = useState(false);
+  const { uploading, handleFile } = useFileUpload(onUploaded, onProfileLoaded);
+  const { toast } = useToast();
+
+  const clearProfile = async () => {
+    if (!confirm('Clear your profile and all skill runs? This cannot be undone.')) return;
+    setClearing(true);
+    try {
+      const res = await fetch('/api/profile/delete', { method: 'DELETE' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Clear failed');
+      toast({ title: 'Profile cleared', description: 'Fresh slate — upload a new CV to begin.' });
+      onCleared();
+    } catch (e: any) {
+      toast({ title: 'Clear failed', description: e?.message, variant: 'destructive' });
+    } finally {
+      setClearing(false);
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-2">
+      <input
+        ref={inputRef}
+        type="file"
+        accept=".pdf,.docx,.txt,.md"
+        className="hidden"
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) handleFile(f);
+          e.target.value = '';
+        }}
+      />
+      <Button
+        size="sm"
+        variant="outline"
+        className="h-7 text-xs"
+        onClick={() => inputRef.current?.click()}
+        disabled={uploading || clearing}
+      >
+        {uploading ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <FileUp className="h-3 w-3 mr-1" />}
+        {uploading ? 'Uploading…' : 'Replace CV'}
+      </Button>
+      <Button
+        size="sm"
+        variant="ghost"
+        className="h-7 text-xs text-muted-foreground hover:text-destructive"
+        onClick={clearProfile}
+        disabled={uploading || clearing}
+      >
+        {clearing ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <Trash2 className="h-3 w-3 mr-1" />}
+        Clear
+      </Button>
+    </div>
+  );
+}
+
 // ─── Profile Panel ──────────────────────────────────────────────────────────
-function ProfilePanel({ profile, onChanged }: {
+function ProfilePanel({ profile, onChanged, onCleared }: {
   profile: ProfileInfo;
   onChanged: () => void;
+  onCleared: () => void;
 }) {
   const [editing, setEditing] = useState(false);
   const [fullName, setFullName] = useState(profile.fullName || '');
@@ -251,7 +326,7 @@ function ProfilePanel({ profile, onChanged }: {
               </CardDescription>
             </div>
           </div>
-          <Button size="sm" variant="ghost" onClick={() => setEditing(!editing)}>
+          <Button size="sm" variant="ghost" onClick={() => setEditing(!editing)} className="h-7 text-xs">
             {editing ? 'Cancel' : 'Edit'}
           </Button>
         </div>
@@ -278,6 +353,11 @@ function ProfilePanel({ profile, onChanged }: {
                 <span>{profile.counts.uploads} upload{profile.counts.uploads !== 1 ? 's' : ''}</span>
               </div>
             )}
+            <ProfileActions
+              onUploaded={(p) => { onChanged(); }}
+              onProfileLoaded={() => {}}
+              onCleared={onCleared}
+            />
           </>
         ) : (
           <div className="space-y-3">
@@ -571,6 +651,106 @@ function HistoryPanel({ runs, onClear }: { runs: RunInfo[]; onClear: () => void 
   );
 }
 
+// ─── Top promo banner (GLM 5.2 + Telegram) ───────────────────────────────────
+function PromoBanner() {
+  return (
+    <div className="border-b bg-gradient-to-r from-foreground/[0.03] via-foreground/[0.05] to-foreground/[0.03]">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-[11px] sm:text-xs">
+        <a
+          href="https://z.ai/subscribe?ic=ROK78RJKNW"
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1.5 font-medium hover:text-foreground transition-colors"
+        >
+          <Zap className="h-3.5 w-3.5 text-amber-500" />
+          <span>Built using <span className="font-semibold">GLM 5.2 Coding Model</span></span>
+          <span className="text-muted-foreground">— coding plans here</span>
+          <ExternalLink className="h-3 w-3 opacity-60" />
+        </a>
+        <span className="hidden sm:inline text-muted-foreground/60">·</span>
+        <a
+          href="https://t.me/VibeCodePrompterSystem"
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1.5 font-medium hover:text-foreground transition-colors"
+        >
+          <MessageCircle className="h-3.5 w-3.5 text-sky-500" />
+          <span>Telegram — free resources for vibe coders</span>
+          <ExternalLink className="h-3 w-3 opacity-60" />
+        </a>
+      </div>
+    </div>
+  );
+}
+
+// ─── Bottom author footer ────────────────────────────────────────────────────
+function AuthorFooter() {
+  return (
+    <footer className="border-t mt-auto bg-gradient-to-b from-transparent to-foreground/[0.02]">
+      {/* Top promo banner (mirrored at bottom for visibility) */}
+      <div className="border-b bg-foreground/[0.02]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-3 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs">
+          <a
+            href="https://z.ai/subscribe?ic=ROK78RJKNW"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 font-medium hover:text-foreground transition-colors"
+          >
+            <Zap className="h-3.5 w-3.5 text-amber-500" />
+            <span>Built using <span className="font-semibold">GLM 5.2 Coding Model</span> · coding plans</span>
+            <ExternalLink className="h-3 w-3 opacity-60" />
+          </a>
+          <span className="hidden sm:inline text-muted-foreground/60">·</span>
+          <a
+            href="https://t.me/VibeCodePrompterSystem"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 font-medium hover:text-foreground transition-colors"
+          >
+            <MessageCircle className="h-3.5 w-3.5 text-sky-500" />
+            <span>Telegram — free resources for vibe coders</span>
+            <ExternalLink className="h-3 w-3 opacity-60" />
+          </a>
+        </div>
+      </div>
+
+      {/* Author row */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-5">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-sm">
+          <div className="flex items-center gap-2">
+            <span className="text-muted-foreground text-xs">Author:</span>
+            <a
+              href="https://www.rommark.dev"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1 font-semibold hover:underline"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              Rommark.Dev
+              <ExternalLink className="h-3 w-3 opacity-60" />
+            </a>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-muted-foreground text-xs">Want to connect?</span>
+            <a
+              href="mailto:rommark@gmx.com"
+              className="inline-flex items-center gap-1.5 font-medium hover:underline"
+            >
+              <Mail className="h-3.5 w-3.5" />
+              rommark@gmx.com
+            </a>
+          </div>
+        </div>
+
+        <div className="mt-3 pt-3 border-t text-center text-[11px] text-muted-foreground">
+          Career Arsenal · 16 AI skills · Powered by Z.ai GLM · Local-first — your data stays on this device
+        </div>
+      </div>
+    </footer>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────
 export default function Home() {
   const [profile, setProfile] = useState<ProfileInfo | null>(null);
@@ -606,6 +786,13 @@ export default function Home() {
   useEffect(() => {
     loadProfile();
     loadRuns();
+  }, [loadProfile, loadRuns]);
+
+  const clearProfile = useCallback(async () => {
+    setProfile(null);
+    setRuns([]);
+    await loadProfile();
+    await loadRuns();
   }, [loadProfile, loadRuns]);
 
   const openSkill = (s: Skill) => {
@@ -649,6 +836,9 @@ export default function Home() {
           </div>
         </div>
       </header>
+
+      {/* Top promo banner */}
+      <PromoBanner />
 
       <main className="flex-1 mx-auto max-w-7xl w-full px-4 sm:px-6 py-6 sm:py-10">
         {!profile && !loadingProfile && (
@@ -705,7 +895,7 @@ export default function Home() {
           <div className="grid lg:grid-cols-[320px_1fr] gap-6">
             {/* Left: profile + history */}
             <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto pr-1">
-              <ProfilePanel profile={profile} onChanged={loadProfile} />
+              <ProfilePanel profile={profile} onChanged={loadProfile} onCleared={clearProfile} />
 
               <Card className="p-3">
                 <div className="flex items-center justify-between mb-2">
@@ -723,7 +913,7 @@ export default function Home() {
               </Card>
 
               <div className="text-[11px] text-muted-foreground px-1">
-                <p>Replace your profile anytime by uploading a new file. Skill runs are stored locally.</p>
+                <p>Use “Replace CV” above to upload a new file, or “Clear” to start fresh. Skill runs are stored locally.</p>
               </div>
             </aside>
 
@@ -753,22 +943,8 @@ export default function Home() {
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="border-t mt-auto">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
-          <div className="flex items-center gap-1.5">
-            <span>Built on</span>
-            <a href="https://chat.z.ai" target="_blank" rel="noreferrer" className="font-medium hover:text-foreground">
-              Z.ai GLM
-            </a>
-            <span>·</span>
-            <span>Career Arsenal · 16 skills</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <span>Local-first · your data stays on this device</span>
-          </div>
-        </div>
-      </footer>
+      {/* Footer / author badge */}
+      <AuthorFooter />
 
       <SkillRunDialog
         skill={activeSkill}
