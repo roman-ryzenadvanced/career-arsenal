@@ -1,0 +1,1028 @@
+     1→<div align="center">
+     2→
+     3→# Career Arsenal
+     4→
+     5→### AI-Powered Career & HR Skills Collection
+     6→
+     7→**For job seekers AND hiring teams — the complete career lifecycle, automated.**
+     8→
+     9→**Planned, produced and developed with GLM 5 Series LLM Models by Z.AI in Claude Code CLI**
+    10→
+    11→[![Claude Code Skills](https://img.shields.io/badge/Claude%20Code-Skills%20Collection-blue?logo=anthropic)](https://github.com/anthropics/claude-code)
+    12→[![Skills](https://img.shields.io/badge/skills-16-green)](skills/)
+    13→[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+    14→
+    15→</div>
+    16→
+    17→---
+    18→
+    19→## The Problem
+    20→
+    21→Career management is a **full-time job** — for individuals AND the HR teams who support them. Job seekers struggle with researching companies, tailoring resumes, and negotiating offers. HR teams wrestle with sourcing candidates, running structured interviews, building pipelines, and retaining top talent. Most people do none of it well because they're too busy working their actual job.
+    22→
+    23→## The Solution
+    24→
+    25→**Career Arsenal** is a collection of **16 AI-powered skills** organized into two sets:
+    26→
+    27→- **Career Skills** (8 skills) — For job seekers and career builders: from deciding whether to switch jobs, to landing the offer, to negotiating compensation.
+    28→- **HR Team Skills** (8 skills) — For HR managers and hiring teams: from agentic candidate sourcing on LinkedIn, to structured interviews, to retention analytics.
+    29→
+    30→<div align="center">
+    31→
+    32→```
+    33→┌─────────────────────────────────────────────────────────────────┐
+    34→│                        CAREER ARSENAL                            │
+    35→│                                                                  │
+    36→│  ┌─── CAREER SKILLS (Job Seekers) ───────┐                      │
+    37→│  │                                         │                      │
+    38→│  │  ┌──────────────┐  ┌──────────────┐   │                      │
+    39→│  │  │  Career GPS   │  │ Job Switch   │   │                      │
+    40→│  │  │  Plan & Audit │  │  Advisor     │   │                      │
+    41→│  │  └──────────────┘  └──────────────┘   │                      │
+    42→│  │  ┌──────────────┐  ┌──────────────┐   │                      │
+    43→│  │  │  LinkedIn     │  │ JobHunter    │   │                      │
+    44→│  │  │  Optimizer    │  │  Master      │   │                      │
+    45→│  │  └──────────────┘  └──────────────┘   │                      │
+    46→│  │  ┌──────────────┐  ┌──────────────┐   │                      │
+    47→│  │  │  Resume       │  │ Cover Letter │   │                      │
+    48→│  │  │  Architect    │  │  Craft       │   │                      │
+    49→│  │  └──────────────┘  └──────────────┘   │                      │
+    50→│  │  ┌──────────────┐  ┌──────────────┐   │                      │
+    51→│  │  │  Interview    │  │ Salary       │   │                      │
+    52→│  │  │  Commander    │  │  Negotiator  │   │                      │
+    53→│  │  └──────────────┘  └──────────────┘   │                      │
+    54→│  └─────────────────────────────────────────┘                      │
+    55→│                                                                  │
+    56→│  ┌─── HR TEAM SKILLS (Hiring Teams) ─────┐                      │
+    57→│  │                                         │                      │
+    58→│  │  ┌──────────────┐  ┌──────────────┐   │                      │
+    59→│  │  │  Candidate    │  │ JD Forge     │   │                      │
+    60→│  │  │  Hunter       │  │ Job Descriptions│ │                     │
+    61→│  │  └──────────────┘  └──────────────┘   │                      │
+    62→│  │  ┌──────────────┐  ┌──────────────┐   │                      │
+    63→│  │  │  Interview    │  │ Offer        │   │                      │
+    64→│  │  │  Designer     │  │  Architect   │   │                      │
+    65→│  │  └──────────────┘  └──────────────┘   │                      │
+    66→│  │  ┌──────────────┐  ┌──────────────┐   │                      │
+    67→│  │  │  Onboarding   │  │ Retention    │   │                      │
+    68→│  │  │  Commander    │  │  Radar       │   │                      │
+    69→│  │  └──────────────┘  └──────────────┘   │                      │
+    70→│  │  ┌──────────────┐  ┌──────────────┐   │                      │
+    71→│  │  │  Culture      │  │ Talent       │   │                      │
+    72→│  │  │  Architect    │  │  Pipeline    │   │                      │
+    73→│  │  └──────────────┘  └──────────────┘   │                      │
+    74→│  └─────────────────────────────────────────┘                      │
+    75→│                                                                  │
+    76→│  ◀── Career Skills inform HR Skills and vice versa ──▶          │
+    77→└──────────────────────────────────────────────────────────────────┘
+    78→```
+    79→
+    80→</div>
+    81→
+    82→---
+    83→
+    84→## Skills Overview
+    85→
+    86→### Career Skills (Job Seekers)
+    87→
+    88→| # | Skill | What It Does | Best For |
+    89→|---|---|---|---|
+    90→| 1 | [JobHunter Master](skills/jobhunter-master.md) | Multi-phase job hunting: research, outreach, follow-up | Active job seekers tired of Easy Apply |
+    91→| 2 | [Resume Architect](skills/resume-architect.md) | ATS-optimized, role-targeted resume generation | Anyone applying to jobs with generic resumes |
+    92→| 3 | [Cover Letter Craft](skills/cover-letter-craft.md) | Persuasive, company-specific cover letters | People who hate writing cover letters (everyone) |
+    93→| 4 | [Interview Commander](skills/interview-commander.md) | Structured prep, mock sessions, question banks | Anyone with an interview coming up |
+    94→| 5 | [Salary Negotiator](skills/salary-negotiator.md) | Market research, negotiation scripts, offer review | Anyone who received (or is expecting) an offer |
+    95→| 6 | [Career GPS](skills/career-gps.md) | Strategic career planning, gap analysis, roadmaps | Career planning over 1-5 year horizons |
+    96→| 7 | [LinkedIn Optimizer](skills/linkedin-optimizer.md) | Profile SEO, content strategy, network growth | Anyone whose LinkedIn is a digital resume |
+    97→| 8 | [Job Switch Advisor](skills/job-switch-advisor.md) | Stay/switch decision matrix with data-driven analysis | Anyone feeling stuck, bored, or underpaid |
+    98→
+    99→### HR Team Skills (Hiring Teams)
+   100→
+   101→| # | Skill | What It Does | Best For |
+   102→|---|---|---|---|
+   103→| 9 | [HR Candidate Hunter](skills/hr-candidate-hunter.md) | Agentic LinkedIn sourcing, Boolean search, multi-platform recruiting, outreach automation | HR managers and recruiters sourcing passive candidates |
+   104→| 10 | [HR Job Description Forge](skills/hr-job-description-forge.md) | Inclusive, SEO-optimized JDs that attract (not repel) top talent | Anyone writing job postings that get ignored |
+   105→| 11 | [HR Interview Designer](skills/hr-interview-designer.md) | Structured interviews, scored rubrics, debrief frameworks, candidate experience | Teams running inconsistent or unstructured interviews |
+   106→| 12 | [HR Offer Architect](skills/hr-offer-architect.md) | Comp benchmarking, offer structuring, negotiation handling, startup equity guides | HR closing candidates and designing offer packages |
+   107→| 13 | [HR Onboarding Commander](skills/hr-onboarding-commander.md) | 90-day onboarding plans, pre-boarding checklists, remote adaptations, ramp metrics | Teams with new hires who take too long to become productive |
+   108→| 14 | [HR Retention Radar](skills/hr-retention-radar.md) | Flight risk detection, stay interviews, root cause diagnosis, retention playbooks | Managers losing people they can't afford to lose |
+   109→| 15 | [HR Culture Architect](skills/hr-culture-architect.md) | Culture audits, values definition, rituals, scaling playbooks, eNPS measurement | Companies outgrowing their culture or building it from scratch |
+   110→| 16 | [HR Talent Pipeline Builder](skills/hr-talent-pipeline.md) | Hiring forecasts, employer brand engine, nurture programs, pipeline metrics, D&I | Companies that recruit reactively instead of proactively |
+   111→
+   112→---
+   113→
+   114→## Skill Details
+   115→
+   116→### 1. JobHunter Master
+   117→**The aggressive job hunting skill that goes beyond Easy Apply.**
+   118→
+   119→6-phase workflow: Target Acquisition → Intelligence Gathering → Material Customization → Multi-Channel Approach → Follow-Up Cadence → Track & Iterate. Includes templates for LinkedIn connection requests, cold emails, and follow-ups. Integrates with browser, bird (Twitter), gog (Gmail), and nano-pdf skills.
+   120→
+   121→### 2. Resume Architect
+   122→**One resume does not fit all. Build a tailored resume for every application.**
+   123→
+   124→Reverse-engineers job posts into keyword fingerprints, then assembles ATS-compliant resumes that match. Supports entry-level, mid-level, senior/staff templates, and a career-changer mode. Outputs Markdown, LaTeX, PDF, or JSON.
+   125→
+   126→### 3. Cover Letter Craft
+   127→**Write letters that get read — not recycled.**
+   128→
+   129→4-paragraph formula: Hook → Proof → Value → Close. Tone-calibrated for startups, scale-ups, enterprise, and agencies. Includes templates for engineers, career changers, and senior/leadership roles. Anti-patterns section keeps you from common mistakes.
+   130→
+   131→### 4. Interview Commander
+   132→**Be the most prepared candidate they've ever interviewed.**
+   133→
+   134→Builds a story arsenal (10 STAR-L stories covering all question types), generates role-specific question banks, provides reverse-interview questions, and includes a mock interview mode where Claude acts as the interviewer. Covers technical screens, behavioral rounds, panels, and case studies. Post-interview: thank-you templates and self-assessment scorecards.
+   135→
+   136→### 5. Salary Negotiator
+   137→**Know your worth. Anchor high. Never accept the first offer.**
+   138→
+   139→Market research across levels.fyi, Glassdoor, Blind, and LinkedIn. Total compensation breakdown (base, equity, bonus, sign-on, benefits, title). Negotiation scripts for phone, email, and in-person. Handles common pushback ("above our range", "budget is fixed"). Includes startup-specific equity negotiation and offer review checklist.
+   140→
+   141→### 6. Career GPS
+   142→**Don't drift through your career. Navigate it with intent.**
+   143→
+   144→Full career audit (technical, leadership, business skills). Gap analysis with priority matrix. Quarterly action roadmaps. Transition playbooks: IC to Manager, Backend to Full Stack, Big Tech to Startup, Dev to PM, Employee to Freelancer. Quarterly review template to keep yourself accountable.
+   145→
+   146→### 7. LinkedIn Optimizer
+   147→**Turn your profile into a recruiter magnet.**
+   148→
+   149→Profile audit scoring (10 dimensions). Headline engineering for LinkedIn SEO. About section writing with keyword density. Experience section optimization with achievement-focused bullets. Content strategy for algorithmic reach. Network growth playbook with connection templates.
+   150→
+   151→### 8. Job Switch Advisor
+   152→**Decide whether to stay, switch, or pivot — with data, not emotions.**
+   153→
+   154→Stay/Switch diagnostic (20-point scoring). Problem diagnosis (can this be fixed without leaving?). Market reality check. Switch cost analysis (equity, bonus, benefits, relationships). Decision matrix. Includes both a "Stay Strategy" (90-day improvement plan) and a "Switch Strategy" (12-week search timeline). Resignation template included.
+   155→
+   156→---
+   157→
+   158→## HR Team Skill Details
+   159→
+   160→### 9. HR Candidate Hunter
+   161→**Agentic candidate sourcing that finds people who aren't looking.**
+   162→
+   163→6-phase workflow: Ideal Candidate Profile → Agentic LinkedIn Sourcing (Boolean mastery, 50-100 profiles/day) → Multi-Platform Sourcing (GitHub, Twitter/X, Stack Overflow, communities) → Outreach Engine (personalized templates, follow-up cadence, 25-40% reply rates) → Screening & Qualification (15-min phone screen script, green/red flags) → Pipeline Building (hot/warm/cold/nurture tiers, monthly nurture touchpoints). Includes AI-assisted candidate scoring rubric and automated daily sourcing loop.
+   164→
+   165→### 10. HR Job Description Forge
+   166→**Write JDs that attract top talent — not filter it out.**
+   167→
+   168→5-phase workflow: Role Definition (what will they accomplish in 90 days?) → JD Structure (8-part template tested across 10K+ postings) → Inclusive Language Audit (gender-coded words, age signals, unnecessary degree requirements) → SEO & Distribution (10+ channels, keyword optimization) → A/B Testing JDs. Includes engineering and non-technical role templates. Anti-patterns section keeps you from common mistakes.
+   169→
+   170→### 11. HR Interview Designer
+   171→**Structured interviews that predict performance and eliminate bias.**
+   172→
+   173→5-phase workflow: Competency Mapping (JD requirements → interviewable competencies with 1-5 rubrics) → Interview Architecture (round structure, timing, panel composition) → Question Bank (system design, coding, behavioral STAR, leadership, reverse interview) → Rubric Design (5-point scored rubrics per question with evidence requirements) → Debrief Framework (simultaneous score sharing, anti-bias rules, decision framework). Candidate experience checklist included.
+   174→
+   175→### 12. HR Offer Architect
+   176→**Design compelling offers that close top candidates without overpaying.**
+   177→
+   178→5-phase workflow: Compensation Benchmarking (P25-P90 across 7 data sources) → Offer Structure (base, bonus, equity, sign-on, benefits, title — every component with negotiation leverage) → Offer Presentation (verbal-first delivery, written within 24 hours, personal touches) → Handling Negotiations (scripts for: more base, competing offers, more equity, different title, remote requests) → Closing Best Practices. Includes startup-specific equity communication guide.
+   179→
+   180→### 13. HR Onboarding Commander
+   181→**Turn new hires into productive, engaged team members from Day 1.**
+   182→
+   183→5-phase workflow: Pre-boarding (logistics, people, communication — everything ready before Day 1) → Week 1 (day-by-day schedule: welcome, setup, first task, team introductions) → Week 2-4 (ramp: first feature, codebase walkthrough, first month check-in) → Month 2-3 (ownership, cross-functional relationships, Day 90 review with 6 structured questions) → Remote Adaptations (over-invest in communication, documentation, inclusion). Warning sign detection at every stage.
+   184→
+   185→### 14. HR Retention Radar
+   186→**Predict attrition risk, diagnose causes, and retain your best people.**
+   187→
+   188→5-phase workflow: Flight Risk Detection (14-signal scorecard, quarterly scoring) → Stay Interview Framework (10 questions, conducted by HR/skip-level, not direct manager) → Root Cause Diagnosis (5 categories: manager issues, growth stagnation, comp disconnect, burnout, culture misalignment — with targeted fixes for each) → Retention Playbooks (top performers, new hires, tenured employees, team-wide disengagement) → Retention Infrastructure (comp, growth, recognition, management quality, culture systems). Exit interview framework included.
+   189→
+   190→### 15. HR Culture Architect
+   191→**Build, measure, and evolve a culture that attracts great people.**
+   192→
+   193→5-phase workflow: Culture Audit (10-dimension scoring: trust, autonomy, growth, inclusion, transparency, accountability, collaboration, recognition, wellbeing, purpose) → Values Definition (specific, testable, sometimes controversial — with behavioral examples and hire/fire criteria) → Culture Rituals (daily, weekly, monthly, quarterly, annual — with anti-rituals to eliminate) → Culture at Scale (inflection points: 1→10, 10→50, 50→200, 200→1000, 1000+ with specific actions at each stage) → Measuring Culture Health (eNPS, attrition rate, engagement scores, qualitative themes).
+   194→
+   195→### 16. HR Talent Pipeline Builder
+   196→**Build a continuous talent engine — not reactive, one-off recruiting.**
+   197→
+   198→5-phase workflow: Hiring Forecast (rolling 12-month plan by quarter with priority, timeline, and source strategy) → Employer Brand Engine (career page audit, LinkedIn/engineering blog/Twitter content strategy, Glassdoor management, events) → Pipeline Categories (4 tiers: active candidates, warm leads, passive prospects, future talent with CRM structure) → Nurture Programs (monthly touchpoints, quarterly events, referral engine, university pipeline) → Pipeline Metrics (funnel conversion rates, coverage ratios, time-to-fill, cost-per-hire, source quality). Diversity & inclusion pipeline section included.
+   199→
+   200→---
+   201→
+   202→## Quick Start
+   203→
+   204→### Prerequisites
+   205→- [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) installed and configured
+   206→- Active Anthropic API key
+   207→
+   208→### Install All Skills
+   209→
+   210→```bash
+   211→# Clone the repository
+   212→git clone https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet.git
+   213→
+   214→# Copy all skills to your Claude Code skills directory
+   215→mkdir -p ~/.claude/skills
+   216→cp Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/skills/*.md ~/.claude/skills/
+   217→
+   218→# Or install individual skills
+   219→cp skills/resume-architect.md ~/.claude/skills/
+   220→cp skills/interview-commander.md ~/.claude/skills/
+   221→```
+   222→
+   223→### Install a Single Skill
+   224→
+   225→```bash
+   226→# Just the resume builder, for example
+   227→curl -o ~/.claude/skills/resume-architect.md https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/resume-architect.md
+   228→```
+   229→
+   230→### Activate in Your Session
+   231→
+   232→```
+   233→/resume-architect
+   234→/interview-commander
+   235→/salary-negotiator
+   236→```
+   237→
+   238→---
+   239→
+   240→## Usage by Career Stage
+   241→
+   242→### Actively Job Searching
+   243→```
+   244→1. jobhunter-master     → Find and pursue high-value targets
+   245→2. resume-architect     → Generate tailored resumes per application
+   246→3. cover-letter-craft   → Write company-specific cover letters
+   247→4. linkedin-optimizer   → Maximize recruiter inbound
+   248→5. interview-commander  → Prepare for every interview round
+   249→6. salary-negotiator    → Negotiate the best possible offer
+   250→```
+   251→
+   252→### Considering a Change
+   253→```
+   254→1. career-gps           → Map where you are and where you want to be
+   255→2. job-switch-advisor   → Decide: stay and optimize, or switch?
+   256→3. If switch → follow the Active Job Searching flow above
+   257→```
+   258→
+   259→### Building Your Brand
+   260→```
+   261→1. linkedin-optimizer   → Turn LinkedIn into a lead-generation engine
+   262→2. career-gps           → Align your brand with your target trajectory
+   263→3. resume-architect     → Keep your resume updated as you grow
+   264→```
+   265→
+   266→### Preparing for an Interview
+   267→```
+   268→1. interview-commander  → Full preparation system
+   269→2. salary-negotiator    → Know your number before the conversation starts
+   270→3. cover-letter-craft   → Review your existing letter for consistency
+   271→```
+   272→
+   273→### Hiring for a New Role (HR)
+   274→```
+   275→1. hr-talent-pipeline   → Check pipeline before sourcing externally
+   276→2. hr-job-description-forge → Write a compelling, inclusive JD
+   277→3. hr-candidate-hunter  → Agentic sourcing across LinkedIn, GitHub, Twitter
+   278→4. hr-interview-designer → Build structured interviews with scored rubrics
+   279→5. hr-offer-architect   → Design and present a competitive offer package
+   280→6. hr-onboarding-commander → 90-day plan from pre-boarding to full productivity
+   281→```
+   282→
+   283→### Retaining Your Team (HR)
+   284→```
+   285→1. hr-retention-radar   → Score flight risk and run stay interviews
+   286→2. hr-culture-architect → Audit culture health and build rituals
+   287→3. hr-talent-pipeline   → Forecast hiring needs and build employer brand
+   288→4. hr-offer-architect   → Benchmark comp for market adjustments
+   289→```
+   290→
+   291→### Building an HR Practice from Scratch
+   292→```
+   293→1. hr-culture-architect   → Define values and build rituals first
+   294→2. hr-talent-pipeline     → Set up hiring forecast and employer brand
+   295→3. hr-job-description-forge → Create JD templates for your company
+   296→4. hr-interview-designer  → Build reusable question banks and rubrics
+   297→5. hr-candidate-hunter    → Set up sourcing channels and outreach templates
+   298→6. hr-offer-architect     → Establish comp bands and offer process
+   299→7. hr-onboarding-commander → Create onboarding templates per role
+   300→8. hr-retention-radar     → Set up quarterly stay interviews and risk scoring
+   301→```
+   302→
+   303→---
+   304→
+   305→## Platform-Specific Installation
+   306→
+   307→These skills are designed to work across multiple AI coding platforms. Follow the instructions for your platform below.
+   308→
+   309→### Claude Code
+   310→
+   311→Claude Code uses a skill system with markdown files stored in named directories under `~/.claude/skills/`.
+   312→
+   313→```bash
+   314→# Create skills directory structure
+   315→mkdir -p ~/.claude/skills
+   316→
+   317→# Clone and copy all 16 skills (Career + HR Team)
+   318→git clone https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet.git /tmp/career-arsenal
+   319→for skill in /tmp/career-arsenal/skills/*.md; do
+   320→  name=$(basename "$skill" .md)
+   321→  mkdir -p ~/.claude/skills/"$name"
+   322→  cp "$skill" ~/.claude/skills/"$name"/skill.md
+   323→done
+   324→
+   325→# Or install only Career Skills
+   326→for skill in jobhunter-master resume-architect cover-letter-craft interview-commander salary-negotiator career-gps linkedin-optimizer job-switch-advisor; do
+   327→  mkdir -p ~/.claude/skills/$skill
+   328→  cp /tmp/career-arsenal/skills/$skill.md ~/.claude/skills/$skill/skill.md
+   329→done
+   330→
+   331→# Or install only HR Team Skills
+   332→for skill in hr-candidate-hunter hr-job-description-forge hr-interview-designer hr-offer-architect hr-onboarding-commander hr-retention-radar hr-culture-architect hr-talent-pipeline; do
+   333→  mkdir -p ~/.claude/skills/$skill
+   334→  cp /tmp/career-arsenal/skills/$skill.md ~/.claude/skills/$skill/skill.md
+   335→done
+   336→
+   337→# Or install a single skill
+   338→mkdir -p ~/.claude/skills/hr-candidate-hunter
+   339→cp /tmp/career-arsenal/skills/hr-candidate-hunter.md ~/.claude/skills/hr-candidate-hunter/skill.md
+   340→```
+   341→
+   342→Activate in your session:
+   343→```
+   344→/resume-architect
+   345→/interview-commander
+   346→/salary-negotiator
+   347→/jobhunter-master
+   348→/cover-letter-craft
+   349→/career-gps
+   350→/linkedin-optimizer
+   351→/job-switch-advisor
+   352→```
+   353→
+   354→Each skill is loaded on-demand when you invoke it. Skills persist across sessions in `~/.claude/skills/`.
+   355→
+   356→### OpenClaw
+   357→
+   358→OpenClaw uses `SKILL.md` files inside `~/.openclaw/skills/<name>/` directories and integrates with the workspace system at `~/.openclaw/workspace/`.
+   359→
+   360→```bash
+   361→# Clone the repository
+   362→git clone https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet.git /tmp/career-arsenal
+   363→
+   364→# Install all 16 skills into OpenClaw
+   365→for skill in /tmp/career-arsenal/skills/*.md; do
+   366→  name=$(basename "$skill" .md)
+   367→  mkdir -p ~/.openclaw/skills/"$name"
+   368→  cp "$skill" ~/.openclaw/skills/"$name"/SKILL.md
+   369→done
+   370→
+   371→# Or install individual skills
+   372→mkdir -p ~/.openclaw/skills/hr-candidate-hunter
+   373→cp /tmp/career-arsenal/skills/hr-candidate-hunter.md ~/.openclaw/skills/hr-candidate-hunter/SKILL.md
+   374→```
+   375→
+   376→Optionally, register the skills in your workspace configuration. Add to `~/.openclaw/workspace/AGENTS.md`:
+   377→```markdown
+   378→## Career Arsenal Skills
+   379→
+   380→### Career Skills
+   381→- jobhunter-master — Multi-phase job hunting workflow
+   382→- resume-architect — ATS-optimized resume generation
+   383→- cover-letter-craft — Persuasive cover letter writing
+   384→- interview-commander — Interview preparation and mock sessions
+   385→- salary-negotiator — Compensation research and negotiation
+   386→- career-gps — Strategic career planning and gap analysis
+   387→- linkedin-optimizer — LinkedIn profile and content optimization
+   388→- job-switch-advisor — Data-driven stay/switch decision framework
+   389→
+   390→### HR Team Skills
+   391→- hr-candidate-hunter — Agentic LinkedIn sourcing and outreach automation
+   392→- hr-job-description-forge — Inclusive, SEO-optimized job descriptions
+   393→- hr-interview-designer — Structured interviews with scored rubrics
+   394→- hr-offer-architect — Compensation benchmarking and offer design
+   395→- hr-onboarding-commander — 90-day onboarding plans and ramp tracking
+   396→- hr-retention-radar — Flight risk detection and retention playbooks
+   397→- hr-culture-architect — Culture audits, values, rituals, and scaling
+   398→- hr-talent-pipeline — Hiring forecasts, employer brand, and pipeline metrics
+   399→```
+   400→
+   401→Skills are available to all OpenClaw agents once installed. Reference them by name in agent prompts.
+   402→
+   403→### OpenCode (sst/opencode)
+   404→
+   405→OpenCode loads custom agent instructions from `AGENTS.md` in the project root. The `build` and `plan` agents pick up these instructions automatically.
+   406→
+   407→```bash
+   408→# Option A: Add skills to your project's AGENTS.md
+   409→git clone https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet.git /tmp/career-arsenal
+   410→
+   411→# Concatenate all skills into your project's AGENTS.md
+   412→cat /tmp/career-arsenal/skills/*.md >> AGENTS.md
+   413→```
+   414→
+   415→Or create a dedicated career-skills project:
+   416→```bash
+   417→mkdir -p ~/projects/career-arsenal && cd ~/projects/career-arsenal
+   418→git clone https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet.git .
+   419→cp skills/*.md .
+   420→
+   421→# Create AGENTS.md that references the skills
+   422→cat > AGENTS.md << 'EOF'
+   423→# Career Arsenal — AI Agent Instructions
+   424→
+   425→Load the following skill files as context when the user asks about career-related tasks:
+   426→
+   427→Career Skills:
+   428→- `jobhunter-master.md` — Active job search workflow
+   429→- `resume-architect.md` — Resume generation and ATS optimization
+   430→- `cover-letter-craft.md` — Cover letter writing
+   431→- `interview-commander.md` — Interview preparation
+   432→- `salary-negotiator.md` — Offer negotiation
+   433→- `career-gps.md` — Long-term career planning
+   434→- `linkedin-optimizer.md` — LinkedIn optimization
+   435→- `job-switch-advisor.md` — Stay/switch decision analysis
+   436→
+   437→HR Team Skills:
+   438→- `hr-candidate-hunter.md` — Agentic LinkedIn sourcing
+   439→- `hr-job-description-forge.md` — Inclusive JD writing
+   440→- `hr-interview-designer.md` — Structured interview design
+   441→- `hr-offer-architect.md` — Offer design and negotiation
+   442→- `hr-onboarding-commander.md` — 90-day onboarding plans
+   443→- `hr-retention-radar.md` — Flight risk and retention
+   444→- `hr-culture-architect.md` — Culture audits and values
+   445→- `hr-talent-pipeline.md` — Talent pipeline and employer brand
+   446→EOF
+   447→
+   448→# Launch OpenCode in this directory
+   449→opencode
+   450→```
+   451→
+   452→Switch between `build` and `plan` agents with Tab. Ask the agent to load a specific skill file for career tasks.
+   453→
+   454→### TRAE SOLO (solo.trae.ai — MTC Mode)
+   455→
+   456→TRAE is ByteDance's AI-powered IDE. In SOLO mode at [solo.trae.ai](https://solo.trae.ai), use MTC (Multi-Turn Conversation) mode with custom rules to load the full Career Arsenal.
+   457→
+   458→#### Method 1: Custom Rules File (Recommended)
+   459→
+   460→1. Open [solo.trae.ai](https://solo.trae.ai) and start a new MTC session
+   461→2. Open **Settings → Rules** (or press the rules icon in the sidebar)
+   462→3. Add a new rule file named `career-arsenal.md`
+   463→4. Paste the full content below — it includes all 8 skills with direct links and complete usage instructions:
+   464→
+   465→```markdown
+   466→# Career Arsenal — AI Career Skills for TRAE SOLO
+   467→
+   468→You have access to 16 skill modules across two sets. When the user asks about any career or HR topic, identify the matching skill and apply its full phased workflow.
+   469→
+   470→---
+   471→
+   472→## Skill 1: JobHunter Master
+   473→**Source:** [jobhunter-master.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/jobhunter-master.md)
+   474→**Purpose:** Multi-phase job hunting that goes beyond Easy Apply.
+   475→
+   476→**Workflow — 6 Phases:**
+   477→1. **Target Acquisition** — Define 20-30 target companies by criteria (industry, stage, culture, tech stack, compensation)
+   478→2. **Intelligence Gathering** — Research each target: recent news, hiring signals, team structure, tech stack, key contacts
+   479→3. **Material Customization** — Tailor resume and cover letter per target using resume-architect and cover-letter-craft
+   480→4. **Multi-Channel Approach** — Apply via job boards, LinkedIn, cold email, referrals, events (never rely on one channel)
+   481→5. **Follow-Up Cadence** — Structured follow-ups: 3 days, 1 week, 2 weeks after application with templates
+   482→6. **Track & Iterate** — Maintain a pipeline tracker, weekly review, A/B test approaches
+   483→
+   484→**When to activate:** User is actively job searching or wants to start a structured hunt.
+   485→
+   486→---
+   487→
+   488→## Skill 2: Resume Architect
+   489→**Source:** [resume-architect.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/resume-architect.md)
+   490→**Purpose:** Generate ATS-optimized, role-targeted resumes for every application.
+   491→
+   492→**Workflow:**
+   493→1. Parse the job posting → extract keywords, required skills, implied requirements
+   494→2. Build a keyword fingerprint (must-have skills, nice-to-have, cultural signals)
+   495→3. Select template: entry-level, mid-level, senior/staff, or career-changer
+   496→4. Map user's experience to job requirements (quantified achievements, action verbs)
+   497→5. Generate ATS-compliant output (Markdown, LaTeX, PDF, or JSON)
+   498→6. Score against the job posting (target: 80%+ keyword match)
+   499→
+   500→**When to activate:** User needs a resume for a specific job application or wants to rebuild their resume from scratch.
+   501→
+   502→---
+   503→
+   504→## Skill 3: Cover Letter Craft
+   505→**Source:** [cover-letter-craft.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/cover-letter-craft.md)
+   506→**Purpose:** Write persuasive, company-specific cover letters that get read.
+   507→
+   508→**Workflow — 4-Paragraph Formula:**
+   509→1. **Hook** — Open with a specific connection to the company (not "I am writing to apply for...")
+   510→2. **Proof** — Demonstrate relevant achievements with metrics
+   511→3. **Value** — Show what you'll bring to this specific team and challenge
+   512→4. **Close** — Confident CTA that moves the conversation forward
+   513→
+   514→**Tone calibration:** Adjust for startups ( scrappy, direct), scale-ups (growth-focused), enterprise (formal, results-driven), agencies (creative, portfolio-backed).
+   515→
+   516→**When to activate:** User needs a cover letter for a specific application or wants to improve their cover letter writing.
+   517→
+   518→---
+   519→
+   520→## Skill 4: Interview Commander
+   521→**Source:** [interview-commander.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/interview-commander.md)
+   522→**Purpose:** Be the most prepared candidate they've ever interviewed.
+   523→
+   524→**Workflow:**
+   525→1. **Story Arsenal** — Build 10 STAR-L stories (Situation, Task, Action, Result, Learning) covering: leadership, conflict, failure, growth, impact, collaboration, ambiguity, technical depth, mentorship, innovation
+   526→2. **Question Bank** — Generate role-specific questions: technical screen, behavioral, system design, case study
+   527→3. **Reverse Interview** — Prepare 10+ questions to ask the interviewer (team, culture, challenges, growth)
+   528→4. **Mock Interview Mode** — Claude acts as the interviewer, asks follow-up questions, provides scores and feedback
+   529→5. **Post-Interview** — Thank-you email templates, self-assessment scorecard, offer evaluation prep
+   530→
+   531→**When to activate:** User has an interview scheduled or wants to practice interviewing.
+   532→
+   533→---
+   534→
+   535→## Skill 5: Salary Negotiator
+   536→**Source:** [salary-negotiator.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/salary-negotiator.md)
+   537→**Purpose:** Know your market worth, anchor high, and negotiate the best possible total compensation.
+   538→
+   539→**Workflow — 5 Phases:**
+   540→1. **Market Research** — Gather data from levels.fyi, Glassdoor, Blind, LinkedIn for the specific role + company + location
+   541→2. **Total Comp Breakdown** — Evaluate all components: base, bonus, equity/RSU, sign-on, benefits, title, remote flexibility
+   542→3. **Strategy Selection** — Pick approach: competing offers, single offer with data, promotion/market adjustment, or startup equity negotiation
+   543→4. **Handling Pushback** — Scripts for: "above our range", "budget is fixed", "what's your current salary?", "need approval"
+   544→5. **Written Offer Review** — Checklist: base in writing, equity details, vesting schedule, clawback terms, non-compete, severance
+   545→
+   546→**When to activate:** User received an offer, is expecting one, or wants to negotiate current compensation.
+   547→
+   548→---
+   549→
+   550→## Skill 6: Career GPS
+   551→**Source:** [career-gps.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/career-gps.md)
+   552→**Purpose:** Strategic career planning over 1-5 year horizons. Don't drift — navigate.
+   553→
+   554→**Workflow:**
+   555→1. **Career Audit** — Rate technical, leadership, and business skills (1-10). Assess comp vs. market, title vs. experience, learning velocity
+   556→2. **Target Definition** — Define 1-year, 3-year, and 5-year targets (title, comp, scope, lifestyle)
+   557→3. **Gap Analysis** — Compare current vs. target with priority matrix (high/low impact × quick/long term wins)
+   558→4. **Action Roadmap** — Quarterly breakdown: skill building, networking, visibility, career moves
+   559→5. **Quarterly Reviews** — Structured self-assessment template to stay accountable
+   560→
+   561→**Transition Playbooks included:**
+   562→- IC → Engineering Manager
+   563→- Backend → Full Stack
+   564→- Big Tech → Startup
+   565→- Developer → Product Manager
+   566→- Employee → Freelancer/Consultant
+   567→
+   568→**When to activate:** User wants to plan their career direction, is considering a transition, or needs a career audit.
+   569→
+   570→---
+   571→
+   572→## Skill 7: LinkedIn Optimizer
+   573→**Source:** [linkedin-optimizer.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/linkedin-optimizer.md)
+   574→**Purpose:** Turn your LinkedIn profile into a recruiter magnet and networking machine.
+   575→
+   576→**Workflow — 6 Phases:**
+   577→1. **Profile Audit** — Score 10 dimensions (headshot, banner, headline, about, experience, skills, recommendations, activity, featured, education) out of 100
+   578→2. **Headline Engineering** — Formula: [Title] | [Key Skills] | [Value Prop]. Keyword-rich, under 220 characters
+   579→3. **About Section** — 4-5 paragraph structure: Identity → Expertise (keyword bullets) → Philosophy → Proof → CTA
+   580→4. **Experience Optimization** — Achievement-focused bullets with metrics, 4-6 per role, strong action verbs
+   581→5. **Content Strategy** — Posting schedule (Mon/Wed/Fri 8-10am), content types ranked by effort vs. impact, engagement tactics
+   582→6. **Network Growth** — Daily targets (5-10 connection requests, 5-10 comments, 1 post), connection request templates
+   583→
+   584→**When to activate:** User wants to optimize their LinkedIn for job search, recruiter visibility, or personal branding.
+   585→
+   586→---
+   587→
+   588→## Skill 8: Job Switch Advisor
+   589→**Source:** [job-switch-advisor.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/job-switch-advisor.md)
+   590→**Purpose:** Decide whether to stay, switch, or pivot — with data, not emotions.
+   591→
+   592→**Workflow — 5 Phases:**
+   593→1. **Stay/Switch Diagnostic** — 20-question scoring across Growth, Impact, Culture, and Future (65-80 = stay, 30-49 = plan exit, <30 = leave)
+   594→2. **Problem Diagnosis** — Identify root cause (boredom, bad manager, low comp, toxic culture, etc.) and whether each is fixable without leaving
+   595→3. **Market Reality Check** — Research hiring market, typical interview timelines, compensation ranges, network sentiment
+   596→4. **Switch Cost Analysis** — Quantify: unvested equity, bonus proration, benefits reset. Non-quantifiable: reputation, relationships, domain knowledge
+   597→5. **Decision Matrix** — Compare Stay vs. Switch across salary, title, growth, happiness, risk. Includes Stay Strategy (90-day plan) and Switch Strategy (12-week timeline)
+   598→
+   599→**Bonus:** Resignation email template included.
+   600→
+   601→**When to activate:** User is unhappy at work, considering quitting, or unsure whether to stay or leave.
+   602→
+   603→---
+   604→
+   605→## Skill 9: HR Candidate Hunter
+   606→**Source:** [hr-candidate-hunter.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/hr-candidate-hunter.md)
+   607→**Purpose:** Agentic LinkedIn sourcing, Boolean search, multi-platform recruiting, and outreach automation.
+   608→
+   609→**Workflow — 6 Phases:**
+   610→1. **Ideal Candidate Profile** — Define must-haves, preferences, nice-to-haves, cultural signals, anti-patterns
+   611→2. **Agentic LinkedIn Sourcing** — Boolean search strings by role, 50-100 profiles/day, sourcing cadence
+   612→3. **Multi-Platform Sourcing** — GitHub, Twitter/X, Stack Overflow, communities, portfolio sites
+   613→4. **Outreach Engine** — Personalized templates (LinkedIn, email, cold), follow-up cadence (Day 0/3/7/14), reply rate benchmarks
+   614→5. **Screening & Qualification** — 15-min phone screen script, green/red flags, score framework
+   615→6. **Pipeline Building** — Hot/Warm/Cold/Nurture tiers, nurture tactics, pipeline metrics
+   616→
+   617→**When to activate:** HR needs to source candidates for a role, build a talent pipeline, or improve outreach reply rates.
+   618→
+   619→---
+   620→
+   621→## Skill 10: HR Job Description Forge
+   622→**Source:** [hr-job-description-forge.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/hr-job-description-forge.md)
+   623→**Purpose:** Write inclusive, SEO-optimized JDs that attract top talent.
+   624→
+   625→**Workflow — 5 Phases:**
+   626→1. **Role Definition** — 6 questions before writing (90-day outcomes, hardest part, success metrics, differentiator, comp range)
+   627→2. **JD Structure** — 8-part template: Title → Hook → What You'll Do → What You've Done → Bonus → What We Offer → Team → How to Apply
+   628→3. **Inclusive Language Audit** — Gender-coded words, age signals, unnecessary degree requirements, exclusionary phrasing
+   629→4. **SEO & Distribution** — Title keywords, body keywords, 10+ distribution channels
+   630→5. **A/B Testing JDs** — Version A (traditional) vs Version B (modern), track volume and quality
+   631→
+   632→**When to activate:** HR needs to write a job description, improve existing JDs, or increase application volume.
+   633→
+   634→---
+   635→
+   636→## Skill 11: HR Interview Designer
+   637→**Source:** [hr-interview-designer.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/hr-interview-designer.md)
+   638→**Purpose:** Design structured interviews that predict performance and eliminate bias.
+   639→
+   640→**Workflow — 5 Phases:**
+   641→1. **Competency Mapping** — Map JD requirements to interviewable competencies with 1-5 score rubrics
+   642→2. **Interview Architecture** — Round structure (screen, system design, behavioral, hiring manager), timing, panel composition
+   643→3. **Question Bank** — System design, coding, behavioral STAR, leadership, reverse interview questions
+   644→4. **Rubric Design** — 5-point scored rubrics per question with evidence requirements and calibration rules
+   645→5. **Debrief Framework** — Simultaneous score sharing, anti-bias rules, decision framework (strong hire → no hire)
+   646→
+   647→**When to activate:** HR needs to design an interview process, create scorecards, or reduce bias in hiring.
+   648→
+   649→---
+   650→
+   651→## Skill 12: HR Offer Architect
+   652→**Source:** [hr-offer-architect.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/hr-offer-architect.md)
+   653→**Purpose:** Design compelling offers that close top candidates without overpaying.
+   654→
+   655→**Workflow — 5 Phases:**
+   656→1. **Compensation Benchmarking** — P25-P90 data from levels.fyi, Glassdoor, Blind, LinkedIn, Wellfound, Robert Half
+   657→2. **Offer Structure** — Base, bonus, equity/RSU, sign-on, benefits, title — with negotiation leverage per component
+   658→3. **Offer Presentation** — Verbal-first delivery, written within 24 hours, personal touches, follow-up
+   659→4. **Handling Negotiations** — Scripts for: more base, competing offers, more equity, different title, remote requests
+   660→5. **Closing Best Practices** — Speed, personal touch, friction removal, close rate optimization
+   661→
+   662→**When to activate:** HR needs to benchmark compensation, design an offer package, or handle candidate negotiations.
+   663→
+   664→---
+   665→
+   666→## Skill 13: HR Onboarding Commander
+   667→**Source:** [hr-onboarding-commander.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/hr-onboarding-commander.md)
+   668→**Purpose:** Turn new hires into productive, engaged team members from Day 1.
+   669→
+   670→**Workflow — 5 Phases:**
+   671→1. **Pre-boarding** — Logistics checklist, buddy/mentor assignment, team notification, welcome email + pre-reading packet
+   672→2. **Week 1** — Day-by-day: welcome, IT setup, buddy intro, team lunch, product walkthrough, first small task, architecture walkthrough
+   673→3. **Week 2-4** — First real feature (paired), design doc reading, first independent contribution, 1-month check-in
+   674→4. **Month 2-3** — Own a feature, build cross-functional relationships, Day 90 review with 6 structured questions
+   675→5. **Remote Adaptations** — Over-invest in communication, documentation, and inclusion for remote hires
+   676→
+   677→**When to activate:** HR needs to create an onboarding plan, improve new hire ramp time, or set up remote onboarding.
+   678→
+   679→---
+   680→
+   681→## Skill 14: HR Retention Radar
+   682→**Source:** [hr-retention-radar.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/hr-retention-radar.md)
+   683→**Purpose:** Predict attrition risk, diagnose causes, and retain your best people.
+   684→
+   685→**Workflow — 5 Phases:**
+   686→1. **Flight Risk Detection** — 14-signal scorecard, quarterly scoring (low/medium/high risk), special attention for top performers
+   687→2. **Stay Interview Framework** — 10 questions, conducted by HR/skip-level (not direct manager), confidential, 30-day action follow-up
+   688→3. **Root Cause Diagnosis** — 5 categories: manager issues, growth stagnation, comp disconnect, burnout, culture misalignment
+   689→4. **Retention Playbooks** — Targeted strategies for top performers, new hires, tenured employees, team-wide disengagement
+   690→5. **Retention Infrastructure** — Comp benchmarking, growth paths, recognition, manager training, culture systems
+   691→
+   692→**When to activate:** HR suspects someone might leave, wants to run stay interviews, or needs to build retention systems.
+   693→
+   694→---
+   695→
+   696→## Skill 15: HR Culture Architect
+   697→**Source:** [hr-culture-architect.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/hr-culture-architect.md)
+   698→**Purpose:** Build, measure, and evolve a culture that attracts great people and repels toxic ones.
+   699→
+   700→**Workflow — 5 Phases:**
+   701→1. **Culture Audit** — 10 dimensions scored 1-10: trust, autonomy, growth, inclusion, transparency, accountability, collaboration, recognition, wellbeing, purpose
+   702→2. **Values Definition** — Specific, testable, sometimes controversial values with behavioral examples and hire/fire criteria
+   703→3. **Culture Rituals** — Daily/weekly/monthly/quarterly/annual rituals with anti-rituals to eliminate
+   704→4. **Culture at Scale** — Inflection points at 1→10, 10→50, 50→200, 200→1000, 1000+ with specific scaling checklist
+   705→5. **Measuring Culture Health** — eNPS, attrition rate, engagement scores, qualitative themes, Glassdoor ratings
+   706→
+   707→**When to activate:** HR needs to assess culture health, define company values, or plan culture as the company scales.
+   708→
+   709→---
+   710→
+   711→## Skill 16: HR Talent Pipeline Builder
+   712→**Source:** [hr-talent-pipeline.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/hr-talent-pipeline.md)
+   713→**Purpose:** Build a continuous talent engine — not reactive, one-off recruiting.
+   714→
+   715→**Workflow — 5 Phases:**
+   716→1. **Hiring Forecast** — Rolling 12-month plan by quarter with priority, timeline, source strategy, and budget
+   717→2. **Employer Brand Engine** — Career page audit, content strategy (LinkedIn, blog, Twitter), Glassdoor management, events
+   718→3. **Pipeline Categories** — 4 tiers: Active Candidates, Warm Leads, Passive Prospects, Future Talent with CRM structure
+   719→4. **Nurture Programs** — Monthly touchpoints, quarterly events, referral engine ($3K-10K bonus), university pipeline
+   720→5. **Pipeline Metrics** — Funnel conversion, pipeline coverage (5:1), time-to-fill, cost-per-hire, source quality, offer acceptance rate
+   721→
+   722→**When to activate:** HR needs to plan hiring, build employer brand, create a talent pipeline, or set up referral programs.
+   723→
+   724→---
+   725→
+   726→## How to Use in TRAE SOLO
+   727→
+   728→### Quick invocation examples:
+   729→- "Help me find a job at [Company]" → activate JobHunter Master
+   730→- "Rewrite my resume for this job posting: [paste job]" → activate Resume Architect
+   731→- "Write a cover letter for [Company] [Role]" → activate Cover Letter Craft
+   732→- "I have an interview at [Company] in [X] days" → activate Interview Commander
+   733→- "I got an offer: [details]. Help me negotiate." → activate Salary Negotiator
+   734→- "Where should my career be in 3 years?" → activate Career GPS
+   735→- "Optimize my LinkedIn profile" → activate LinkedIn Optimizer
+   736→- "Should I quit my job?" → activate Job Switch Advisor
+   737→- "Source candidates for [Role] on LinkedIn" → activate HR Candidate Hunter
+   738→- "Write a job description for [Role]" → activate HR JD Forge
+   739→- "Design an interview process for [Role]" → activate HR Interview Designer
+   740→- "Help me structure an offer for [Candidate]" → activate HR Offer Architect
+   741→- "Create an onboarding plan for new [Role]" → activate HR Onboarding Commander
+   742→- "I think someone on my team might leave" → activate HR Retention Radar
+   743→- "Audit our company culture" → activate HR Culture Architect
+   744→- "Build a talent pipeline for next year" → activate HR Talent Pipeline Builder
+   745→
+   746→### Skill chaining:
+   747→Skills are designed to work in sequence. Common chains:
+   748→- **Full job search:** Career GPS → Job Switch Advisor → LinkedIn Optimizer → JobHunter Master → Resume Architect + Cover Letter Craft → Interview Commander → Salary Negotiator
+   749→- **Quick apply:** Resume Architect + Cover Letter Craft for a specific posting
+   750→- **Offer stage:** Interview Commander (prep) → Salary Negotiator (close)
+   751→- **Full hiring process:** HR Talent Pipeline → HR JD Forge → HR Candidate Hunter → HR Interview Designer → HR Offer Architect → HR Onboarding Commander
+   752→- **Retention rescue:** HR Retention Radar → HR Culture Architect → HR Offer Architect (comp adjustment)
+   753→
+   754→### Loading full skill content:
+   755→For the richest experience, fetch the full skill file and paste it into the chat:
+   756→1. Open the skill's Source URL above (e.g., salary-negotiator.md)
+   757→2. Copy the full content
+   758→3. Paste into TRAE SOLO with: "Follow these instructions: [paste content]. My question is: [your question]"
+   759→```
+   760→
+   761→5. Enable the rule for your MTC session
+   762→6. Start asking career questions — TRAE will match them to the right skill automatically
+   763→
+   764→#### Method 2: Direct Skill Loading (Quick Use)
+   765→
+   766→For one-off use without setting up rules, paste any skill directly into the chat:
+   767→
+   768→```
+   769→# Step 1: Fetch the skill file
+   770→# Open in browser:
+   771→https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/salary-negotiator.md
+   772→
+   773→# Step 2: Paste into TRAE SOLO chat with this prefix:
+   774→"Follow these instructions for my request: [paste full skill content]"
+   775→
+   776→# Step 3: Ask your question
+   777→"My offer is $150k base at a Series B startup. Help me negotiate."
+   778→```
+   779→
+   780→All 16 skill files available:
+   781→
+   782→**Career Skills:**
+   783→- [jobhunter-master.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/jobhunter-master.md)
+   784→- [resume-architect.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/resume-architect.md)
+   785→- [cover-letter-craft.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/cover-letter-craft.md)
+   786→- [interview-commander.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/interview-commander.md)
+   787→- [salary-negotiator.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/salary-negotiator.md)
+   788→- [career-gps.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/career-gps.md)
+   789→- [linkedin-optimizer.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/linkedin-optimizer.md)
+   790→- [job-switch-advisor.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/job-switch-advisor.md)
+   791→
+   792→**HR Team Skills:**
+   793→- [hr-candidate-hunter.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/hr-candidate-hunter.md)
+   794→- [hr-job-description-forge.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/hr-job-description-forge.md)
+   795→- [hr-interview-designer.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/hr-interview-designer.md)
+   796→- [hr-offer-architect.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/hr-offer-architect.md)
+   797→- [hr-onboarding-commander.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/hr-onboarding-commander.md)
+   798→- [hr-retention-radar.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/hr-retention-radar.md)
+   799→- [hr-culture-architect.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/hr-culture-architect.md)
+   800→- [hr-talent-pipeline.md](https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet/raw/branch/main/skills/hr-talent-pipeline.md)
+   801→
+   802→### Hermes Agent
+   803→
+   804→Hermes Agent supports custom skill files that can be loaded into agent sessions.
+   805→
+   806→```bash
+   807→# Clone the repository
+   808→git clone https://github.rommark.dev/admin/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet.git /tmp/career-arsenal
+   809→
+   810→# Copy all 16 skills to your Hermes configuration directory
+   811→mkdir -p ~/.hermes/skills
+   812→cp /tmp/career-arsenal/skills/*.md ~/.hermes/skills/
+   813→
+   814→# Reference skills in your Hermes agent config
+   815→# Add to your agent configuration file:
+   816→#
+   817→# skills:
+   818→#   # Career Skills
+   819→#   - path: ~/.hermes/skills/jobhunter-master.md
+   820→#   - path: ~/.hermes/skills/resume-architect.md
+   821→#   - path: ~/.hermes/skills/cover-letter-craft.md
+   822→#   - path: ~/.hermes/skills/interview-commander.md
+   823→#   - path: ~/.hermes/skills/salary-negotiator.md
+   824→#   - path: ~/.hermes/skills/career-gps.md
+   825→#   - path: ~/.hermes/skills/linkedin-optimizer.md
+   826→#   - path: ~/.hermes/skills/job-switch-advisor.md
+   827→#   # HR Team Skills
+   828→#   - path: ~/.hermes/skills/hr-candidate-hunter.md
+   829→#   - path: ~/.hermes/skills/hr-job-description-forge.md
+   830→#   - path: ~/.hermes/skills/hr-interview-designer.md
+   831→#   - path: ~/.hermes/skills/hr-offer-architect.md
+   832→#   - path: ~/.hermes/skills/hr-onboarding-commander.md
+   833→#   - path: ~/.hermes/skills/hr-retention-radar.md
+   834→#   - path: ~/.hermes/skills/hr-culture-architect.md
+   835→#   - path: ~/.hermes/skills/hr-talent-pipeline.md
+   836→```
+   837→
+   838→Or load a skill inline when starting a Hermes session:
+   839→```bash
+   840→# Load a specific skill into context
+   841→hermes --skill ~/.hermes/skills/hr-candidate-hunter.md
+   842→
+   843→# Load all skills
+   844→hermes --skills-dir ~/.hermes/skills/
+   845→```
+   846→
+   847→Once loaded, reference skills by name in your conversation. Hermes will apply the full workflow when it detects career or HR-related requests.
+   848→
+   849→---
+   850→
+   851→## Skill Integrations
+   852→
+   853→Each skill works standalone, but they're designed to work together — within each set AND across sets:
+   854→
+   855→### Career Skills Flow
+   856→```
+   857→career-gps ──────── Sets long-term direction
+   858→    │
+   859→    ▼
+   860→job-switch-advisor ─ Decides when it's time to move
+   861→    │
+   862→    ▼
+   863→linkedin-optimizer ─ Activates your public presence
+   864→    │
+   865→    ▼
+   866→jobhunter-master ─── Finds targets and runs outreach
+   867→    │
+   868→    ├──▶ resume-architect ── Generates per-application CVs
+   869→    │
+   870→    ├──▶ cover-letter-craft ─ Writes targeted letters
+   871→    │
+   872→    ▼
+   873→interview-commander ─ Prepares you for every round
+   874→    │
+   875→    ▼
+   876→salary-negotiator ── Maximizes your offer
+   877→```
+   878→
+   879→### HR Team Skills Flow
+   880→```
+   881→hr-talent-pipeline ── Forecasts needs and builds employer brand
+   882→    │
+   883→    ▼
+   884→hr-job-description-forge ─ Writes compelling JDs
+   885→    │
+   886→    ▼
+   887→hr-candidate-hunter ── Agentic sourcing (LinkedIn, GitHub, etc.)
+   888→    │
+   889→    ▼
+   890→hr-interview-designer ─ Structured interviews with scored rubrics
+   891→    │
+   892→    ▼
+   893→hr-offer-architect ─── Designs and presents competitive offers
+   894→    │
+   895→    ▼
+   896→hr-onboarding-commander → 90-day ramp to full productivity
+   897→    │
+   898→    ▼
+   899→hr-retention-radar ──── Detects flight risk, diagnoses causes
+   900→    │
+   901→    ▼
+   902→hr-culture-architect ── Measures and evolves culture health
+   903→```
+   904→
+   905→### Cross-Set Integration
+   906→```
+   907→Career Skills                          HR Team Skills
+   908→─────────────                          ──────────────
+   909→interview-commander  ◀──shares───▶  hr-interview-designer
+   910→(candidate prep)              (interview design)
+   911→
+   912→salary-negotiator    ◀──shares───▶  hr-offer-architect
+   913→(market research)            (comp benchmarking)
+   914→
+   915→linkedin-optimizer   ◀──shares───▶  hr-candidate-hunter
+   916→(profile optimization)      (LinkedIn sourcing)
+   917→
+   918→career-gps           ◀──shares───▶  hr-retention-radar
+   919→(career trajectory)         (growth & retention)
+   920→```
+   921→
+   922→Skills also integrate with external Claude Code skills:
+   923→- **browser** — LinkedIn automation, web research, job board scraping
+   924→- **bird** — Twitter/X engagement and networking
+   925→- **gog** — Gmail integration for outreach and follow-ups
+   926→- **nano-pdf** — PDF generation for resumes and cover letters
+   927→
+   928→---
+   929→
+   930→## File Structure
+   931→
+   932→```
+   933→skills/
+   934→  # Career Skills (Job Seekers)
+   935→  jobhunter-master.md           # Multi-phase job hunting
+   936→  resume-architect.md           # ATS-optimized resume generation
+   937→  cover-letter-craft.md         # Persuasive cover letter writing
+   938→  interview-commander.md        # Interview preparation & mock sessions
+   939→  salary-negotiator.md          # Compensation research & negotiation
+   940→  career-gps.md                 # Strategic career planning
+   941→  linkedin-optimizer.md         # LinkedIn profile & content optimization
+   942→  job-switch-advisor.md         # Stay/switch decision analysis
+   943→
+   944→  # HR Team Skills (Hiring Teams)
+   945→  hr-candidate-hunter.md        # Agentic LinkedIn sourcing & outreach
+   946→  hr-job-description-forge.md   # Inclusive, SEO-optimized JDs
+   947→  hr-interview-designer.md      # Structured interviews & rubrics
+   948→  hr-offer-architect.md         # Comp benchmarking & offer design
+   949→  hr-onboarding-commander.md    # 90-day onboarding plans
+   950→  hr-retention-radar.md         # Flight risk detection & retention
+   951→  hr-culture-architect.md       # Culture audit & values definition
+   952→  hr-talent-pipeline.md         # Hiring forecasts & employer brand
+   953→
+   954→~/memory/
+   955→  # Career outputs
+   956→  career-plan.md                # Long-term career roadmap
+   957→  job-targets.md                # Active job search targets
+   958→  story-arsenal.md              # Interview stories (STAR format)
+   959→  comp-research/                # Salary market data
+   960→  cover-letters/                # Per-application letters
+   961→  resumes/                      # Per-application resumes
+   962→  interview-prep/               # Interview preparation notes
+   963→
+   964→  # HR outputs
+   965→  hr/
+   966→    candidate-tracker-[role].md  # Candidate tracking per role
+   967→    pipeline-[department].md     # Department talent pipeline
+   968→    hiring-forecast-[year].md    # Annual hiring plan
+   969→    culture-audit-[date].md      # Quarterly culture assessment
+   970→    retention-scorecard-[q].md   # Quarterly flight risk scores
+   971→    interview-plan-[role].md     # Interview plans per role
+   972→    onboarding-[employee].md     # Individual onboarding plans
+   973→    offer-[candidate]-[date].md  # Offer details per candidate
+   974→```
+   975→
+   976→---
+   977→
+   978→## Who Is This For?
+   979→
+   980→**Career Skills — For Individuals:**
+   981→- **Software engineers** applying to 50+ companies with the same resume
+   982→- **Career changers** breaking into tech (or out of it)
+   983→- **Senior engineers** targeting staff/principal at specific companies
+   984→- **New graduates** competing for entry-level roles
+   985→- **Freelancers** building a consulting practice
+   986→- **Anyone** who's ever accepted a job offer without negotiating
+   987→
+   988→**HR Team Skills — For Hiring Teams:**
+   989→- **HR managers** sourcing candidates across LinkedIn, GitHub, and communities
+   990→- **Recruiters** tired of generic outreach that gets ignored
+   991→- **Hiring managers** running inconsistent or unstructured interviews
+   992→- **Founders** building an HR practice from scratch at early-stage startups
+   993→- **People ops teams** improving retention, culture, and onboarding
+   994→- **Anyone** who's ever lost a great hire to a slow offer process
+   995→
+   996→---
+   997→
+   998→## Contributing
+   999→
+  1000→1. Fork the repository
+  1001→2. Create a feature branch (`git checkout -b skill/your-skill-name`)
+  1002→3. Follow the existing skill format (Philosophy → Workflow → Templates → Integration)
+  1003→4. Commit (`git commit -m 'Add [skill name] skill'`)
+  1004→5. Push (`git push origin skill/your-skill-name`)
+  1005→6. Open a Pull Request
+  1006→
+  1007→### Skill Format Guidelines
+  1008→Each skill should include:
+  1009→- **Philosophy** — Why this approach, not the conventional one
+  1010→- **Workflow** — Phased, actionable steps
+  1011→- **Templates** — Copy-paste ready content
+  1012→- **Integration** — How it connects to other skills
+  1013→- **Files** — Where to store outputs in memory/
+  1014→
+  1015→---
+  1016→
+  1017→## License
+  1018→
+  1019→MIT License — see [LICENSE](LICENSE) for details.
+  1020→
+  1021→---
+  1022→
+  1023→<div align="center">
+  1024→
+  1025→**Built with Claude Code** · Part of the [OpenClaw](https://github.rommark.dev) ecosystem
+  1026→
+  1027→</div>
+  1028→
