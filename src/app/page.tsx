@@ -68,6 +68,27 @@ function SkillIcon({ name, className }: { name: string; className?: string }) {
   return <Icon className={className} />;
 }
 
+// ─── Defensive JSON parser ─────────────────────────────────────────────────────
+// Returns `{ error: string }` when the response isn't valid JSON (e.g. empty 502
+// body, HTML error page from a proxy, gateway timeout). This prevents the
+// frontend from crashing with "JSON.parse: unexpected end of data".
+async function safeJson(res: Response, fallbackError = 'Request failed.'): Promise<any> {
+  const text = await res.text();
+  if (!text || !text.trim()) {
+    return { error: res.status === 502
+      ? 'Server is temporarily unreachable (502). Please wait a few seconds and try again.'
+      : `Server returned an empty response (HTTP ${res.status}).` };
+  }
+  try {
+    return JSON.parse(text);
+  } catch {
+    // Response is HTML or some other non-JSON body (typical for 502/500 error pages)
+    return { error: res.status === 502
+      ? 'Server is temporarily unreachable (502). Please wait a few seconds and try again.'
+      : `Server error (HTTP ${res.status}). Please try again.` };
+  }
+}
+
 // ─── Theme toggle ──────────────────────────────────────────────────────────
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -109,7 +130,7 @@ function useFileUpload(
       const fd = new FormData();
       fd.append('file', file);
       const res = await fetch('/api/upload', { method: 'POST', body: fd });
-      const data = await res.json();
+      const data = await safeJson(res, 'Upload failed.');
       if (!res.ok) {
         setError(data.error || 'Upload failed.');
         toast({ title: 'Upload failed', description: data.error, variant: 'destructive' });
@@ -219,7 +240,7 @@ function ProfileActions({ onUploaded, onProfileLoaded, onCleared }: {
     setClearing(true);
     try {
       const res = await fetch('/api/profile/delete', { method: 'DELETE' });
-      const data = await res.json();
+      const data = await safeJson(res, 'Clear failed.');
       if (!res.ok) throw new Error(data.error || 'Clear failed');
       toast({ title: 'Profile cleared', description: 'Fresh slate — upload a new CV to begin.' });
       onCleared();
@@ -294,7 +315,7 @@ function ProfilePanel({ profile, onChanged, onCleared }: {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fullName, targetRole, targetContext }),
       });
-      const data = await res.json();
+      const data = await safeJson(res, 'Save failed.');
       if (!res.ok) throw new Error(data.error || 'Save failed');
       toast({ title: 'Profile updated' });
       setEditing(false);
@@ -465,7 +486,7 @@ function SkillRunDialog({ skill, open, onOpenChange, onSaved }: {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ inputs: inputValues }),
       });
-      const data = await res.json();
+      const data = await safeJson(res, 'Run failed.');
       if (!res.ok) {
         setError(data.error || 'Run failed.');
         return;
@@ -764,7 +785,7 @@ export default function Home() {
     setLoadingProfile(true);
     try {
       const res = await fetch('/api/upload', { cache: 'no-store' });
-      const data = await res.json();
+      const data = await safeJson(res);
       setProfile(data.profile || null);
     } catch {
       setProfile(null);
@@ -776,7 +797,7 @@ export default function Home() {
   const loadRuns = useCallback(async () => {
     try {
       const res = await fetch('/api/runs', { cache: 'no-store' });
-      const data = await res.json();
+      const data = await safeJson(res);
       setRuns(data.runs || []);
     } catch {
       setRuns([]);
