@@ -280,7 +280,7 @@ function UploadZone({ onUploaded, onProfileLoaded }: {
           const f = e.dataTransfer.files?.[0];
           if (f) handleFile(f);
         }}
-        className={`relative rounded-xl border-2 border-dashed p-10 text-center transition-all ${
+        className={`upload-zone relative rounded-xl border-2 border-dashed p-10 text-center transition-all ${
           dragging ? 'border-foreground/60 bg-foreground/[0.03]' : 'border-border'
         }`}
       >

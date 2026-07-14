@@ -432,86 +432,248 @@
   100% { transform: scale(1.3); opacity: 0; }
 }
 
-/* ─── Mobile scrolling fixes ─────────────────────────────────────────────── */
+/* ─── Mobile scrolling fixes (iOS Safari + Android Chrome) ────────────────── */
 
-/* Ensure html/body can scroll properly on mobile */
+/*
+ * KEY PROBLEMS ON MOBILE:
+ * 1. iOS Safari's `100vh` includes the dynamic URL bar, causing content to be
+ *    hidden behind it. Fix: use `100dvh` (dynamic viewport height) with fallback.
+ * 2. iOS Safari needs `-webkit-overflow-scrolling: touch` for momentum scroll.
+ * 3. `overscroll-behavior: contain` prevents scroll chaining (background scroll
+ *    when a modal/sheet reaches its boundary).
+ * 4. `position: fixed` elements (chat button, sheet) need `safe-area-inset`
+ *    padding to avoid iOS notch/home indicator.
+ * 5. Pull-to-refresh must be disabled on the main page to prevent accidental
+ *    refreshes during scroll.
+ * 6. The body must be the scroll container, not nested divs.
+ */
+
+/* --- Viewport height fix (iOS Safari dynamic URL bar) --- */
 html {
+  height: 100%;
   -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
   scroll-behavior: smooth;
 }
 
 body {
-  overscroll-behavior-y: contain;
+  height: 100%;
+  min-height: 100vh;
+  min-height: 100dvh; /* dynamic viewport height — adjusts when URL bar shows/hides */
+  overscroll-behavior-y: none; /* disable pull-to-refresh on body */
+  -webkit-overflow-scrolling: touch;
+  overflow-x: hidden;
+  max-width: 100vw;
+  position: relative;
+}
+
+/* --- Root layout: flex column with body as scroll container --- */
+body > div:first-child {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Main content area scrolls naturally --- */
+main {
+  flex: 1 1 auto;
+  min-height: 0; /* allow flex child to shrink and scroll */
   -webkit-overflow-scrolling: touch;
 }
 
-/* Sticky sidebar should NOT be sticky on mobile */
+/* --- Sticky sidebar disabled on mobile (flows naturally) --- */
 @media (max-width: 1023px) {
   .lg\:sticky {
     position: static !important;
     max-height: none !important;
     overflow: visible !important;
+    top: auto !important;
   }
 }
 
-/* Dialog content should scroll properly on mobile */
+/* --- Dialog (skill run dialog) mobile scrolling --- */
 [data-radix-dialog-content] {
   max-height: 92vh !important;
+  max-height: 92dvh !important;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  margin: 1rem;
+  width: calc(100% - 2rem) !important;
+  /* Safe area insets for iOS notch */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 [data-radix-dialog-content] > [data-radix-scroll-area-viewport] {
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Ensure scroll areas have momentum scrolling */
-[data-radix-scroll-area-viewport] {
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
 }
 
-/* Prevent horizontal scroll on mobile */
+/* --- Sheet (HR chat drawer) mobile scrolling --- */
+[data-radix-sheet-content] {
+  max-height: 100vh !important;
+  max-height: 100dvh !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  display: flex;
+  flex-direction: column;
+  /* Safe area insets for iOS */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+[data-radix-sheet-content] [data-radix-scroll-area-viewport] {
+  flex: 1 1 auto;
+  min-height: 0;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* --- All scroll areas: momentum scrolling + scroll containment --- */
+[data-radix-scroll-area-viewport] {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  /* Use native scrollbar on mobile for better performance */
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+[data-radix-scroll-area-viewport]::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  -webkit-appearance: none;
+}
+
+[data-radix-scroll-area-viewport]::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+[data-radix-scroll-area-viewport]::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* --- Prevent horizontal scroll/overflow everywhere --- */
 html, body {
   overflow-x: hidden;
   max-width: 100%;
 }
 
-/* Main content should have min-height to push footer down */
-main {
-  min-height: calc(100vh - 200px);
+/* All containers should not cause horizontal overflow */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
-/* Skill cards grid: single column on very small screens, 2 on sm */
+/* --- Skill cards grid: responsive columns --- */
 @media (max-width: 640px) {
   .skills-grid {
     grid-template-columns: 1fr !important;
   }
 }
 
-/* Upload zone: reduce padding on mobile */
+/* --- Upload zone: reduce padding on mobile --- */
 @media (max-width: 640px) {
   .upload-zone {
-    padding: 1.5rem !important;
+    padding: 1.25rem !important;
   }
 }
 
-/* Profile panel: reduce padding on mobile */
+/* --- Profile panel: reduce padding on mobile --- */
 @media (max-width: 640px) {
   .profile-panel {
     padding: 0.75rem !important;
   }
 }
 
-/* RTL adjustments */
-[dir="rtl"] .pug-think-bubbles {
-  /* Keep thinking bubbles centered in RTL too */
+/* --- Floating chat button: respect iOS safe areas --- */
+.fixed.bottom-4.right-4,
+.fixed.bottom-6.right-6 {
+  bottom: max(1rem, env(safe-area-inset-bottom)) !important;
+  right: max(1rem, env(safe-area-inset-right)) !important;
 }
 
+@media (min-width: 640px) {
+  .fixed.bottom-6.right-6 {
+    bottom: max(1.5rem, env(safe-area-inset-bottom)) !important;
+    right: max(1.5rem, env(safe-area-inset-right)) !important;
+  }
+}
+
+/* --- Sticky header: add safe area top padding on iOS --- */
+header.sticky {
+  padding-top: env(safe-area-inset-top);
+  margin-top: calc(-1 * env(safe-area-inset-top));
+}
+
+/* --- Textareas: prevent zoom on iOS (font-size >= 16px) --- */
+textarea, input[type="text"], input[type="email"], input[type="url"] {
+  font-size: 16px;
+}
+
+@media (min-width: 640px) {
+  textarea, input[type="text"], input[type="email"], input[type="url"] {
+    font-size: inherit;
+  }
+}
+
+/* --- Prevent text selection on UI elements (better mobile UX) --- */
+button, [role="button"], .pug-container {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* --- But allow text selection in content areas --- */
+.prose-sm, textarea, input, [contenteditable] {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
+}
+
+/* --- Touch targets: minimum 44px for accessibility --- */
+@media (max-width: 640px) {
+  button:not(.h-7):not(.h-6):not(.h-8):not([data-radix-collection-item]) {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* --- Tab triggers: make them scrollable on mobile instead of wrapping --- */
+[role="tablist"] {
+  -webkit-overflow-scrolling: touch;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+[role="tablist"]::-webkit-scrollbar {
+  display: none;
+}
+
+/* --- Persona selector horizontal scroll: hide scrollbar --- */
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.overflow-x-auto::-webkit-scrollbar {
+  display: none;
+}
+
+/* --- Footer: ensure it sticks to bottom on short pages, pushes down on long --- */
+footer {
+  flex-shrink: 0;
+}
+
+/* --- RTL adjustments --- */
 [dir="rtl"] [data-radix-dialog-content] {
+  text-align: right;
+}
+
+[dir="rtl"] [data-radix-sheet-content] {
   text-align: right;
 }
 
@@ -520,13 +682,13 @@ main {
   text-align: right;
 }
 
-/* Focus visible improvements for keyboard nav */
+/* --- Focus visible improvements for keyboard nav --- */
 *:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
 
-/* Smooth transitions for theme + language changes */
+/* --- Smooth transitions for theme + language changes --- */
 * {
   transition-property: background-color, border-color, color;
   transition-duration: 0.15s;
@@ -537,4 +699,61 @@ main {
 .pug-svg, .pug-body, .pug-head, .pug-tail, .pug-ear-left, .pug-ear-right,
 .pug-eye-left, .pug-eye-right, .pug-tongue, .pug-shadow, .pug-bubble {
   transition: none !important;
+}
+
+/* --- iOS Safari: prevent elastic scroll bounce on fixed elements --- */
+@supports (-webkit-touch-callout: none) {
+  body {
+    /* iOS Safari specific: prevent rubber-band scroll */
+    position: fixed;
+    width: 100%;
+  }
+
+  /* But allow body to scroll — use a wrapper */
+  body > div:first-child {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* --- Android Chrome: handle viewport resize when keyboard appears --- */
+@media (max-width: 640px) {
+  /* Use visual viewport API fallback via CSS */
+  [data-radix-dialog-content],
+  [data-radix-sheet-content] {
+    /* Ensure dialog stays visible when keyboard opens */
+    transform: translateZ(0);
+  }
+}
+
+/* --- Prevent layout shift when scrollbar appears/disappears --- */
+html {
+  scrollbar-gutter: stable;
+}
+
+/* --- Long text: prevent overflow on mobile --- */
+.break-words {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* --- Skill card: ensure it doesn't overflow on small screens --- */
+@media (max-width: 640px) {
+  [class*="grid-cols"] > * {
+    min-width: 0;
+  }
+}
+
+/* --- History panel: max height with scroll on mobile --- */
+@media (max-width: 1023px) {
+  .max-h-96 {
+    max-height: 24rem;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
 }
