@@ -942,6 +942,33 @@ export default function Home() {
     setDialogOpen(true);
   };
 
+  // Open a skill by ID (used by HR chat actions)
+  const openSkillById = useCallback((skillId: string) => {
+    const skill = ALL_SKILLS.find((s) => s.id === skillId);
+    if (skill) {
+      setActiveSkill(skill);
+      setDialogOpen(true);
+    } else {
+      console.warn('Skill not found:', skillId);
+    }
+  }, []);
+
+  // Update target role from chat action
+  const updateTargetRoleFromChat = useCallback(async (role: string) => {
+    try {
+      const res = await fetch('/api/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ targetRole: role }),
+      });
+      if (res.ok) {
+        await loadProfile();
+      }
+    } catch (e) {
+      console.error('Failed to update target role from chat:', e);
+    }
+  }, [loadProfile]);
+
   const filteredSkills = tab === 'all' ? ALL_SKILLS : tab === 'career' ? CAREER_SKILLS : HR_SKILLS;
 
   return (
@@ -1089,7 +1116,10 @@ export default function Home() {
       {/* Footer / author badge */}
       <AuthorFooter />
 
-      <HRChatButton />
+      <HRChatButton
+        onRunSkill={openSkillById}
+        onUpdateTargetRole={updateTargetRoleFromChat}
+      />
 
       <SkillRunDialog
         skill={activeSkill}

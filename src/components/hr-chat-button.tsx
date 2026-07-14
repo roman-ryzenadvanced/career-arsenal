@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { MessageCircle, X, Send, Sparkles, Loader2, User, Bot } from 'lucide-react';
+import { MessageCircle, Send, Sparkles, User, Zap, Target, Play, FileText, Mail, Mic, DollarSign, Linkedin, Crosshair, Compass, ClipboardCheck, Gift, Rocket, GitBranch, ShieldCheck, HeartHandshake, FileSignature, Users, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -12,9 +12,16 @@ import { useI18n } from '@/lib/i18n-context';
 import { PugLoader } from '@/components/pug-loader';
 import ReactMarkdown from 'react-markdown';
 
+interface ChatAction {
+  type: 'run_skill' | 'update_target_role';
+  skillId?: string;
+  value?: string;
+}
+
 interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
+  actions?: ChatAction[];
 }
 
 const PERSONAS = [
@@ -26,7 +33,17 @@ const PERSONAS = [
   { id: 'founder', name: 'Alex', role: 'Founder Advisor', icon: '🚀', color: 'bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-900' },
 ];
 
-export function HRChatButton() {
+const SKILL_ICONS: Record<string, any> = {
+  Compass, FileText, Mail, Linkedin, Mic, DollarSign, TrendingUp, Crosshair,
+  FileSignature, Users, ClipboardCheck, Gift, Rocket, GitBranch, ShieldCheck, HeartHandshake,
+};
+
+interface HRChatButtonProps {
+  onRunSkill?: (skillId: string) => void;
+  onUpdateTargetRole?: (role: string) => void;
+}
+
+export function HRChatButton({ onRunSkill, onUpdateTargetRole }: HRChatButtonProps) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [selectedPersona, setSelectedPersona] = useState('recruiter');
@@ -36,7 +53,6 @@ export function HRChatButton() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
-  // Auto-scroll to bottom on new message
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -71,7 +87,11 @@ export function HRChatButton() {
         return;
       }
 
-      setMessages((prev) => [...prev, { role: 'assistant', content: data.reply }]);
+      setMessages((prev) => [...prev, {
+        role: 'assistant',
+        content: data.reply,
+        actions: data.actions || [],
+      }]);
     } catch (e: any) {
       toast({ title: t('toast.chatFailed'), description: e?.message, variant: 'destructive' });
     } finally {
@@ -83,6 +103,23 @@ export function HRChatButton() {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       send();
+    }
+  };
+
+  const handleAction = (action: ChatAction) => {
+    if (action.type === 'run_skill' && action.skillId && onRunSkill) {
+      onRunSkill(action.skillId);
+      toast({
+        title: t('chat.actionTriggered'),
+        description: t('chat.openingSkill'),
+      });
+      setOpen(false);
+    } else if (action.type === 'update_target_role' && action.value && onUpdateTargetRole) {
+      onUpdateTargetRole(action.value);
+      toast({
+        title: t('chat.targetRoleUpdated'),
+        description: action.value,
+      });
     }
   };
 
@@ -108,7 +145,7 @@ export function HRChatButton() {
             <Sparkles className="h-4 w-4" />
             {t('chat.title')}
           </SheetTitle>
-          <p className="text-xs text-muted-foreground">{t('chat.subtitle')}</p>
+          <p className="text-xs text-muted-foreground">{t('chat.subtitlePortalAware')}</p>
         </SheetHeader>
 
         {/* Persona selector */}
@@ -147,11 +184,11 @@ export function HRChatButton() {
                   <p className="text-xs text-muted-foreground">{currentPersona.role}</p>
                 </div>
                 <p className="text-xs text-muted-foreground max-w-xs mx-auto">
-                  {t('chat.welcome')}
+                  {t('chat.welcomePortalAware')}
                 </p>
                 {/* Suggested questions */}
                 <div className="space-y-1.5 max-w-xs mx-auto">
-                  {getSuggestedQuestions(selectedPersona, t).map((q, i) => (
+                  {getSuggestedQuestions(selectedPersona).map((q, i) => (
                     <button
                       key={i}
                       onClick={() => setInput(q)}
@@ -167,34 +204,44 @@ export function HRChatButton() {
             {messages.map((msg, i) => (
               <div
                 key={i}
-                className={`flex gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
+                className={`flex gap-2 flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
               >
-                <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${
-                  msg.role === 'user'
-                    ? 'bg-foreground text-background'
-                    : currentPersona.color
-                }`}>
-                  {msg.role === 'user' ? (
-                    <User className="h-3.5 w-3.5" />
-                  ) : (
-                    <span className="text-sm">{currentPersona.icon}</span>
-                  )}
-                </div>
-                <div className={`flex-1 min-w-0 ${msg.role === 'user' ? 'flex justify-end' : ''}`}>
-                  <div className={`inline-block max-w-[85%] rounded-lg px-3 py-2 text-sm ${
+                <div className={`flex gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : ''} w-full`}>
+                  <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${
                     msg.role === 'user'
                       ? 'bg-foreground text-background'
-                      : 'bg-muted'
+                      : currentPersona.color
                   }`}>
-                    {msg.role === 'assistant' ? (
-                      <div className="prose prose-sm dark:prose-invert max-w-none">
-                        <ReactMarkdown>{msg.content}</ReactMarkdown>
-                      </div>
+                    {msg.role === 'user' ? (
+                      <User className="h-3.5 w-3.5" />
                     ) : (
-                      <p className="whitespace-pre-wrap">{msg.content}</p>
+                      <span className="text-sm">{currentPersona.icon}</span>
                     )}
                   </div>
+                  <div className={`flex-1 min-w-0 ${msg.role === 'user' ? 'flex justify-end' : ''}`}>
+                    <div className={`inline-block max-w-[85%] rounded-lg px-3 py-2 text-sm ${
+                      msg.role === 'user'
+                        ? 'bg-foreground text-background'
+                        : 'bg-muted'
+                    }`}>
+                      {msg.role === 'assistant' ? (
+                        <div className="prose prose-sm dark:prose-invert max-w-none">
+                          <ReactMarkdown>{msg.content}</ReactMarkdown>
+                        </div>
+                      ) : (
+                        <p className="whitespace-pre-wrap">{msg.content}</p>
+                      )}
+                    </div>
+                  </div>
                 </div>
+                {/* Action buttons */}
+                {msg.actions && msg.actions.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 pl-9 w-full">
+                    {msg.actions.map((action, ai) => (
+                      <ActionBadge key={ai} action={action} onClick={() => handleAction(action)} />
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
 
@@ -241,37 +288,94 @@ export function HRChatButton() {
   );
 }
 
-function getSuggestedQuestions(persona: string, t: (k: string) => string): string[] {
+// Action badge component — renders as a clickable button
+function ActionBadge({ action, onClick }: { action: ChatAction; onClick: () => void }) {
+  const { t } = useI18n();
+
+  if (action.type === 'run_skill' && action.skillId) {
+    const Icon = SKILL_ICONS[getSkillIconName(action.skillId)] || Play;
+    return (
+      <button
+        onClick={onClick}
+        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border bg-foreground/5 hover:bg-foreground/10 text-xs font-medium transition-all hover:scale-[1.02] active:scale-[0.98]"
+      >
+        <Icon className="h-3.5 w-3.5" />
+        <span>{t('chat.runSkill')}</span>
+        <span className="text-muted-foreground">·</span>
+        <span className="text-muted-foreground">{action.skillId}</span>
+      </button>
+    );
+  }
+
+  if (action.type === 'update_target_role' && action.value) {
+    return (
+      <button
+        onClick={onClick}
+        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border bg-foreground/5 hover:bg-foreground/10 text-xs font-medium transition-all hover:scale-[1.02] active:scale-[0.98]"
+      >
+        <Target className="h-3.5 w-3.5" />
+        <span>{t('chat.updateTargetRole')}</span>
+        <span className="text-muted-foreground truncate max-w-[120px]">{action.value}</span>
+      </button>
+    );
+  }
+
+  return null;
+}
+
+function getSkillIconName(skillId: string): string {
+  const iconMap: Record<string, string> = {
+    'career-gps': 'Compass',
+    'resume-architect': 'FileText',
+    'cover-letter-craft': 'Mail',
+    'linkedin-optimizer': 'Linkedin',
+    'interview-commander': 'Mic',
+    'salary-negotiator': 'DollarSign',
+    'job-switch-advisor': 'TrendingUp',
+    'jobhunter-master': 'Crosshair',
+    'hr-job-description-forge': 'FileSignature',
+    'hr-candidate-hunter': 'Users',
+    'hr-interview-designer': 'ClipboardCheck',
+    'hr-offer-architect': 'Gift',
+    'hr-onboarding-commander': 'Rocket',
+    'hr-talent-pipeline': 'GitBranch',
+    'hr-retention-radar': 'ShieldCheck',
+    'hr-culture-architect': 'HeartHandshake',
+  };
+  return iconMap[skillId] || 'Play';
+}
+
+function getSuggestedQuestions(persona: string): string[] {
   const questions: Record<string, string[]> = {
     recruiter: [
-      'What do recruiters look for in a senior resume?',
-      'How do I explain a career gap?',
-      'What questions should I ask in a recruiter screen?',
+      'Review my resume and tell me what to improve',
+      'What skills should I highlight for my target role?',
+      'Run the Resume Architect skill for me',
     ],
     compensation: [
-      'What\'s a fair salary for a senior engineer at a Series B startup?',
-      'How should I evaluate my equity offer?',
-      'What\'s included in total compensation?',
+      'Based on my resume, what salary should I target?',
+      'Run the Salary Negotiator skill for me',
+      'How do I evaluate my current compensation?',
     ],
     career_coach: [
-      'I feel stuck in my career. How do I figure out what\'s next?',
-      'How do I overcome imposter syndrome?',
-      'When is it time to leave my current role?',
+      'Looking at my resume, what career gaps do you see?',
+      'Run Career GPS to plan my next 3 years',
+      'Should I switch jobs based on my profile?',
     ],
     hr_legal: [
-      'What should I look for in my employment contract?',
-      'Is my non-compete enforceable?',
-      'What\'s the difference between contractor and employee?',
+      'Review my employment situation from my resume',
+      'What clauses should I watch for in a new contract?',
+      'Run the Salary Negotiator for my offer review',
     ],
     culture: [
-      'How do I assess company culture during interviews?',
-      'What are red flags in a job description?',
-      'How do I know if a team has psychological safety?',
+      'Based on my background, what company cultures fit me?',
+      'Run the Cover Letter Craft for a culture-focused application',
+      'How do I assess culture fit in interviews?',
     ],
     founder: [
-      'Should I join a pre-seed startup?',
-      'What equity should I expect as employee #5?',
-      'What questions should I ask the founder?',
+      'Based on my resume, am I suited for a startup?',
+      'Run the JobHunter Master to find startup opportunities',
+      'What equity should I expect given my experience?',
     ],
   };
   return questions[persona] || questions.recruiter;

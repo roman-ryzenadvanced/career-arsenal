@@ -112,6 +112,13 @@ const en: Dict = {
   'chat.send': 'Send',
   'chat.clearChat': 'Clear chat',
   'toast.chatFailed': 'Chat failed',
+  'chat.subtitlePortalAware': 'Reads your resume, knows your activity, can trigger portal actions',
+  'chat.welcomePortalAware': 'I can see your resume and portal activity. Ask me anything — I can also run skills on your behalf.',
+  'chat.runSkill': 'Run skill',
+  'chat.updateTargetRole': 'Set target role:',
+  'chat.actionTriggered': 'Action triggered',
+  'chat.openingSkill': 'Opening skill dialog…',
+  'chat.targetRoleUpdated': 'Target role updated',
 }
 
 const ru: Dict = {
@@ -206,6 +213,13 @@ const ru: Dict = {
   'chat.send': 'Отправить',
   'chat.clearChat': 'Очистить чат',
   'toast.chatFailed': 'Ошибка чата',
+  'chat.subtitlePortalAware': 'Читает ваше резюме, знает вашу активность, может запускать навыки',
+  'chat.welcomePortalAware': 'Я вижу ваше резюме и активность на портале. Спросите что угодно — я также могу запускать навыки для вас.',
+  'chat.runSkill': 'Запустить навык',
+  'chat.updateTargetRole': 'Установить роль:',
+  'chat.actionTriggered': 'Действие запущено',
+  'chat.openingSkill': 'Открытие диалога навыка…',
+  'chat.targetRoleUpdated': 'Целевая роль обновлена',
 };
 
 const he: Dict = {
@@ -300,6 +314,13 @@ const he: Dict = {
   'chat.send': 'שלח',
   'chat.clearChat': 'נקה צ"אט',
   'toast.chatFailed': 'צ"אט נכשל',
+  'chat.subtitlePortalAware': 'קורא את קורות החיים שלך, מכיר את הפעילות שלך, יכול להפעיל פעולות',
+  'chat.welcomePortalAware': 'אני יכול לראות את קורות החיים והפעילות שלך בפורטל. שאל כל דבר — אני יכול גם להפעיל כישורים עבורך.',
+  'chat.runSkill': 'הפעל כישור',
+  'chat.updateTargetRole': 'הגדר תפקיד יעד:',
+  'chat.actionTriggered': 'פעולה הופעלה',
+  'chat.openingSkill': 'פותח דיאלוג כישור…',
+  'chat.targetRoleUpdated': 'תפקיד יעד עודכן',
 };
 
 const fr: Dict = {
@@ -394,6 +415,13 @@ const fr: Dict = {
   'chat.send': 'Envoyer',
   'chat.clearChat': 'Effacer le chat',
   'toast.chatFailed': 'Échec du chat',
+  'chat.subtitlePortalAware': 'Lit votre CV, connaît votre activité, peut déclencher des actions',
+  'chat.welcomePortalAware': 'Je peux voir votre CV et votre activité. Demez-moi tout — je peux aussi lancer des compétences pour vous.',
+  'chat.runSkill': 'Lancer compétence',
+  'chat.updateTargetRole': 'Définir rôle cible:',
+  'chat.actionTriggered': 'Action déclenchée',
+  'chat.openingSkill': 'Ouverture du dialogue…',
+  'chat.targetRoleUpdated': 'Rôle cible mis à jour',
 };
 
 const ar: Dict = {
@@ -488,6 +516,13 @@ const ar: Dict = {
   'chat.send': 'إرسال',
   'chat.clearChat': 'مسح الدردشة',
   'toast.chatFailed': 'فشل الدردشة',
+  'chat.subtitlePortalAware': 'يقرأ سيرتك الذاتية، يعرف نشاطك، يمكنه تشغيل إجراءات',
+  'chat.welcomePortalAware': 'يمكنني رؤية سيرتك الذاتية ونشاطك في البوابة. اسألني أي شيء — يمكنني أيضاً تشغيل المهارات نيابة عنك.',
+  'chat.runSkill': 'تشغيل مهارة',
+  'chat.updateTargetRole': 'تعيين الوظيفة المستهدفة:',
+  'chat.actionTriggered': 'تم تشغيل الإجراء',
+  'chat.openingSkill': 'فتح حوار المهارة…',
+  'chat.targetRoleUpdated': 'تم تحديث الوظيفة المستهدفة',
 };
 
 export const TRANSLATIONS: Record<Locale, Dict> = { en, ru, he, fr, ar };

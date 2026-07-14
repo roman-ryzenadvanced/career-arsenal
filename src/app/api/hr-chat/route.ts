@@ -1,15 +1,23 @@
 /**
  * PATCH /api/hr-chat
  *
- * Live chat with AI-powered HR expert agents. Uses GLM with persona-specific
- * system prompts. Supports multi-turn conversations.
+ * Portal-aware live chat with AI-powered HR expert agents.
+ *
+ * The personas can:
+ *  1. READ the user's uploaded resume/LinkedIn text
+ *  2. READ the user's target role + context
+ *  3. READ the user's recent skill runs (what they've been working on)
+ *  4. RECOMMEND portal actions (run a specific skill, update target role)
+ *  5. TRIGGER actions on the user's behalf via action markers in the reply
  *
  * Body: { messages: [{role, content}], persona: string }
- * Returns: { reply: string, persona: string }
+ * Returns: { reply, persona, personaName, actions: [{type, skillId?, ...}] }
  *
  * Uses PATCH (not POST) because the platform's edge layer blocks POST.
  */
 import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+import { ALL_SKILLS } from '@/lib/skills';
 import ZAI from 'z-ai-web-dev-sdk';
 
 export const runtime = 'nodejs';
@@ -30,7 +38,9 @@ const PERSONAS: Record<string, { name: string; systemPrompt: string }> = {
 - How to position yourself for specific roles
 - Salary expectations and negotiation from the recruiter's perspective
 
-Be practical, honest, and specific. Share insider knowledge. Keep responses concise (150-300 words) unless the user asks for detail. Use markdown for structure. Never promise job placement — you're advisory only.`,
+Be practical, honest, and specific. Share insider knowledge. Keep responses concise (150-300 words) unless the user asks for detail. Use markdown for structure. Never promise job placement — you're advisory only.
+
+PORTAL ACCESS: You can see the user's uploaded resume and portal activity. Reference specific details from their resume when giving advice. You can also recommend running specific portal skills on their behalf.`,
   },
   compensation: {
     name: 'Marcus — Compensation Specialist',
@@ -41,7 +51,9 @@ Be practical, honest, and specific. Share insider knowledge. Keep responses conc
 - Negotiation strategy and scripts
 - Offer evaluation and counter-offer advice
 
-Be data-driven. Provide realistic ranges with caveats about data freshness. Use markdown tables for comp breakdowns. Keep responses concise unless asked for detail.`,
+Be data-driven. Provide realistic ranges with caveats about data freshness. Use markdown tables for comp breakdowns. Keep responses concise unless asked for detail.
+
+PORTAL ACCESS: You can see the user's uploaded resume and target role. Use their actual experience level to give accurate comp benchmarks. You can recommend running the Salary Negotiator skill on their behalf.`,
   },
   career_coach: {
     name: 'Dr. Priya — Career Coach',
@@ -52,7 +64,9 @@ Be data-driven. Provide realistic ranges with caveats about data freshness. Use 
 - Promotion strategies and managing up
 - Long-term career planning (1/3/5 year horizons)
 
-Be empathetic, ask clarifying questions when needed, and provide actionable frameworks. Reference proven methodologies (Designing Your Life, Mindset, etc.). Keep responses warm but structured.`,
+Be empathetic, ask clarifying questions when needed, and provide actionable frameworks. Reference proven methodologies (Designing Your Life, Mindset, etc.). Keep responses warm but structured.
+
+PORTAL ACCESS: You can see the user's uploaded resume and portal activity. Reference their actual career history when coaching. You can recommend running Career GPS, Job Switch Advisor, or LinkedIn Optimizer on their behalf.`,
   },
   hr_legal: {
     name: 'James — HR & Employment Legal',
@@ -63,7 +77,9 @@ Be empathetic, ask clarifying questions when needed, and provide actionable fram
 - Visa and immigration considerations for job changes
 - Severance and termination questions
 
-IMPORTANT: You are not providing formal legal advice. Always recommend consulting a licensed attorney for specific situations. Provide general guidance and flag red flags. Be precise about jurisdictional differences.`,
+IMPORTANT: You are not providing formal legal advice. Always recommend consulting a licensed attorney for specific situations. Provide general guidance and flag red flags. Be precise about jurisdictional differences.
+
+PORTAL ACCESS: You can see the user's uploaded resume to understand their employment context. You can recommend the Salary Negotiator skill for contract review scenarios.`,
   },
   culture: {
     name: 'Elena — Culture & Retention Expert',
@@ -74,7 +90,9 @@ IMPORTANT: You are not providing formal legal advice. Always recommend consultin
 - Retention strategies and stay interviews
 - Onboarding best practices for new hires
 
-Be observant and specific. Share frameworks like "culture add vs. culture fit." Help users read between the lines of job postings and interview signals. Use markdown for structure.`,
+Be observant and specific. Share frameworks like "culture add vs. culture fit." Help users read between the lines of job postings and interview signals. Use markdown for structure.
+
+PORTAL ACCESS: You can see the user's resume and target role to give culture-fit advice. You can recommend the Cover Letter Craft or Interview Commander skills on their behalf.`,
   },
   founder: {
     name: 'Alex — Startup Founder Advisor',
@@ -85,9 +103,81 @@ Be observant and specific. Share frameworks like "culture add vs. culture fit." 
 - What to ask during founder interviews
 - Risk assessment and runway analysis
 
-Be direct and honest about startup risk. Help users think like founders. Share specific questions to ask. Use markdown for checklists and frameworks.`,
+Be direct and honest about startup risk. Help users think like founders. Share specific questions to ask. Use markdown for checklists and frameworks.
+
+PORTAL ACCESS: You can see the user's resume to assess their startup fit. You can recommend the Job Switch Advisor, Salary Negotiator, or JobHunter Master skills on their behalf.`,
   },
 };
+
+// Build the portal context string that gets injected into the system prompt
+async function buildPortalContext(): Promise<string> {
+  const profile = await db.profile.findFirst({
+    orderBy: { createdAt: 'desc' },
+    include: {
+      skillRuns: {
+        orderBy: { createdAt: 'desc' },
+        take: 10,
+        select: { skillId: true, skillName: true, createdAt: true },
+      },
+    },
+  });
+
+  if (!profile) {
+    return `\n\n=== PORTAL CONTEXT ===\nThe user has NOT uploaded a resume yet. Suggest they upload one to get personalized advice. You can still give general guidance.\n=== END CONTEXT ===\n`;
+  }
+
+  let ctx = `\n\n=== PORTAL CONTEXT (the user's actual data — use this to personalize your advice) ===\n`;
+
+  ctx += `\n--- USER'S RESUME/PROFILE TEXT ---\n${profile.rawText}\n`;
+
+  if (profile.targetRole) {
+    ctx += `\n--- TARGET ROLE ---\n${profile.targetRole}\n`;
+  }
+  if (profile.targetContext) {
+    ctx += `\n--- ADDITIONAL CONTEXT ---\n${profile.targetContext}\n`;
+  }
+
+  if (profile.skillRuns.length > 0) {
+    ctx += `\n--- RECENT PORTAL ACTIVITY (skills the user has already run) ---\n`;
+    for (const run of profile.skillRuns) {
+      ctx += `- ${run.skillName} (${run.skillId}) — ${new Date(run.createdAt).toLocaleString()}\n`;
+    }
+  } else {
+    ctx += `\n--- RECENT PORTAL ACTIVITY ---\nNo skills run yet.\n`;
+  }
+
+  ctx += `\n--- AVAILABLE PORTAL SKILLS (you can recommend these to the user) ---\n`;
+  for (const skill of ALL_SKILLS) {
+    ctx += `- ${skill.name} (${skill.id}): ${skill.tagline}\n`;
+  }
+
+  ctx += `\n=== END PORTAL CONTEXT ===\n\nIMPORTANT: You have full access to the user's resume and portal activity above. Reference specific details from their resume when giving advice. If you recommend running a specific skill, use this exact format on a new line so the portal can render an action button:\n[ACTION:RUN_SKILL:skill-id-here]\nFor example: [ACTION:RUN_SKILL:resume-architect]\nYou can also suggest updating their target role:\n[ACTION:UPDATE_TARGET_ROLE:desired role text]\n\nOnly include action markers when genuinely helpful. Never fabricate skill IDs — use only the ones listed above.`;
+
+  return ctx;
+}
+
+// Extract action markers from the AI reply
+function extractActions(reply: string): { cleanedReply: string; actions: Array<{ type: string; skillId?: string; value?: string }> } {
+  const actions: Array<{ type: string; skillId?: string; value?: string }> = [];
+  let cleanedReply = reply;
+
+  // Match [ACTION:RUN_SKILL:skill-id]
+  const skillRegex = /\[ACTION:RUN_SKILL:([a-z-]+)\]/g;
+  let match;
+  while ((match = skillRegex.exec(reply)) !== null) {
+    actions.push({ type: 'run_skill', skillId: match[1] });
+  }
+  cleanedReply = cleanedReply.replace(skillRegex, '').trim();
+
+  // Match [ACTION:UPDATE_TARGET_ROLE:text]
+  const roleRegex = /\[ACTION:UPDATE_TARGET_ROLE:([^\]]+)\]/g;
+  while ((match = roleRegex.exec(reply)) !== null) {
+    actions.push({ type: 'update_target_role', value: match[1] });
+  }
+  cleanedReply = cleanedReply.replace(roleRegex, '').trim();
+
+  return { cleanedReply, actions };
+}
 
 export async function PATCH(req: NextRequest) {
   try {
@@ -110,22 +200,28 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
-    // Build the conversation with persona system prompt
+    // Build portal context (user's resume, target role, recent activity, available skills)
+    const portalContext = await buildPortalContext();
+
+    // Build the full system prompt: persona + portal context
+    const systemPrompt = persona.systemPrompt + portalContext;
+
+    // Build the conversation
     const fullMessages = [
-      { role: 'system' as const, content: persona.systemPrompt },
-      ...messages.slice(-20), // Keep last 20 messages for context window
+      { role: 'system' as const, content: systemPrompt },
+      ...messages.slice(-20),
     ];
 
     // Call GLM
-    let reply = '';
+    let rawReply = '';
     try {
       const zai = await ZAI.create();
       const completion = await zai.chat.completions.create({
         messages: fullMessages,
         thinking: { type: 'disabled' },
       });
-      reply = completion.choices?.[0]?.message?.content || '';
-      if (!reply) {
+      rawReply = completion.choices?.[0]?.message?.content || '';
+      if (!rawReply) {
         return NextResponse.json(
           { error: 'The expert returned an empty response. Please try again.' },
           { status: 502 }
@@ -139,9 +235,13 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
+    // Extract action markers from the reply
+    const { cleanedReply, actions } = extractActions(rawReply);
+
     return NextResponse.json({
       ok: true,
-      reply,
+      reply: cleanedReply,
+      actions,
       persona: personaKey,
       personaName: persona.name,
     });
@@ -154,7 +254,7 @@ export async function PATCH(req: NextRequest) {
   }
 }
 
-// GET — return available personas (for the UI to render the selector)
+// GET — return available personas
 export async function GET() {
   return NextResponse.json({
     personas: Object.entries(PERSONAS).map(([key, p]) => ({
