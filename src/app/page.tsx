@@ -5,7 +5,7 @@ import { useTheme } from 'next-themes';
 import {
   Upload, FileText, Sparkles, Moon, Sun, Loader2, Check, AlertCircle,
   RefreshCw, History, Copy, Download, ChevronRight, Target, X, Github,
-  Menu, Trash2, FileUp, MessageCircle, Mail, ExternalLink, Zap,
+  Menu, Trash2, FileUp, MessageCircle, Mail, ExternalLink, Zap, Globe,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -15,6 +15,9 @@ import { Label } from '@/components/ui/label';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
@@ -26,6 +29,10 @@ import { Toaster } from '@/components/ui/toaster';
 import { useToast } from '@/hooks/use-toast';
 import ReactMarkdown from 'react-markdown';
 import { ALL_SKILLS, CAREER_SKILLS, HR_SKILLS, type Skill } from '@/lib/skills';
+import { useI18n } from '@/lib/i18n-context';
+import { LOCALES } from '@/lib/i18n';
+import { PugLoader } from '@/components/pug-loader';
+import { HRChatButton } from '@/components/hr-chat-button';
 
 // ─── Types ────────────────────────────────────────────────────────────────
 interface ProfileInfo {
@@ -114,11 +121,41 @@ function ThemeToggle() {
   );
 }
 
+// ─── Language switcher ─────────────────────────────────────────────────────
+function LanguageSwitcher() {
+  const { locale, setLocale } = useI18n();
+  const current = LOCALES.find((l) => l.code === locale) || LOCALES[0];
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="sm" className="h-9 gap-1.5 px-2" aria-label="Language">
+          <Globe className="h-4 w-4" />
+          <span className="text-base leading-none">{current.flag}</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="min-w-[140px]">
+        {LOCALES.map((l) => (
+          <DropdownMenuItem
+            key={l.code}
+            onClick={() => setLocale(l.code)}
+            className={`cursor-pointer gap-2 ${l.code === locale ? 'font-semibold bg-accent' : ''}`}
+          >
+            <span className="text-base">{l.flag}</span>
+            <span>{l.label}</span>
+            {l.code === locale && <Check className="h-3.5 w-3.5 ml-auto" />}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 // ─── Upload hook (reusable file-picker logic) ─────────────────────────────────
 function useFileUpload(
   onSuccess: (p: ProfileInfo) => void,
   onRunsReload: () => void,
 ) {
+  const { t } = useI18n();
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
@@ -201,19 +238,19 @@ function useFileUpload(
       });
       const data = await safeJson(res, 'Upload failed.');
       if (!res.ok) {
-        setError(data.error || 'Upload failed.');
-        toast({ title: 'Upload failed', description: data.error, variant: 'destructive' });
+        setError(data.error || t('error.uploadFailed'));
+        toast({ title: t('toast.uploadFailed'), description: data.error, variant: 'destructive' });
         return;
       }
       toast({
-        title: 'Profile ready',
-        description: `Parsed ${data.profile.textLength.toLocaleString()} chars from ${data.profile.fileName}.`,
+        title: t('toast.profileReady'),
+        description: t('toast.profileReadyDesc', { count: data.profile.textLength.toLocaleString(), file: data.profile.fileName }),
       });
       onSuccess(data.profile);
       onRunsReload();
     } catch (e: any) {
       setError(e?.message || 'Network error during upload.');
-      toast({ title: 'Upload failed', description: e?.message, variant: 'destructive' });
+      toast({ title: t('toast.uploadFailed'), description: e?.message, variant: 'destructive' });
     } finally {
       setUploading(false);
     }
@@ -230,6 +267,7 @@ function UploadZone({ onUploaded, onProfileLoaded }: {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
   const { uploading, error, handleFile } = useFileUpload(onUploaded, onProfileLoaded);
+  const { t } = useI18n();
 
   return (
     <div className="space-y-4">
@@ -257,29 +295,30 @@ function UploadZone({ onUploaded, onProfileLoaded }: {
             e.target.value = '';
           }}
         />
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-foreground/[0.04]">
-          {uploading ? (
-            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-          ) : (
-            <Upload className="h-6 w-6 text-muted-foreground" />
-          )}
-        </div>
-        <p className="text-sm font-medium">
-          {uploading ? 'Parsing your file…' : 'Drop your resume or LinkedIn export here'}
-        </p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Supports PDF, DOCX, TXT — files are parsed in your browser, only text is sent.
-        </p>
-        <Button
-          variant="outline"
-          size="sm"
-          className="mt-4"
-          onClick={() => inputRef.current?.click()}
-          disabled={uploading}
-        >
-          <FileText className="mr-2 h-4 w-4" />
-          Choose file
-        </Button>
+        {uploading ? (
+          <PugLoader message={t('pug.parsing')} size="md" />
+        ) : (
+          <>
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-foreground/[0.04]">
+              <Upload className="h-6 w-6 text-muted-foreground" />
+            </div>
+            <p className="text-sm font-medium">
+              {t('hero.dropHere')}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {t('hero.supports')}
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-4"
+              onClick={() => inputRef.current?.click()}
+            >
+              <FileText className="mr-2 h-4 w-4" />
+              {t('hero.chooseFile')}
+            </Button>
+          </>
+        )}
       </div>
 
       {error && (
@@ -299,22 +338,23 @@ function ProfileActions({ onUploaded, onProfileLoaded, onCleared }: {
   onProfileLoaded: () => void;
   onCleared: () => void;
 }) {
+  const { t } = useI18n();
   const inputRef = useRef<HTMLInputElement>(null);
   const [clearing, setClearing] = useState(false);
   const { uploading, handleFile } = useFileUpload(onUploaded, onProfileLoaded);
   const { toast } = useToast();
 
   const clearProfile = async () => {
-    if (!confirm('Clear your profile and all skill runs? This cannot be undone.')) return;
+    if (!confirm(t('profile.clearConfirm'))) return;
     setClearing(true);
     try {
       const res = await fetch('/api/profile/delete', { method: 'DELETE' });
-      const data = await safeJson(res, 'Clear failed.');
-      if (!res.ok) throw new Error(data.error || 'Clear failed');
-      toast({ title: 'Profile cleared', description: 'Fresh slate — upload a new CV to begin.' });
+      const data = await safeJson(res, t('error.clearFailed'));
+      if (!res.ok) throw new Error(data.error || t('error.clearFailed'));
+      toast({ title: t('toast.profileCleared'), description: t('toast.profileClearedDesc') });
       onCleared();
     } catch (e: any) {
-      toast({ title: 'Clear failed', description: e?.message, variant: 'destructive' });
+      toast({ title: t('toast.clearFailed'), description: e?.message, variant: 'destructive' });
     } finally {
       setClearing(false);
     }
@@ -341,7 +381,7 @@ function ProfileActions({ onUploaded, onProfileLoaded, onCleared }: {
         disabled={uploading || clearing}
       >
         {uploading ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <FileUp className="h-3 w-3 mr-1" />}
-        {uploading ? 'Uploading…' : 'Replace CV'}
+        {uploading ? '…' : t('profile.replaceCV')}
       </Button>
       <Button
         size="sm"
@@ -351,7 +391,7 @@ function ProfileActions({ onUploaded, onProfileLoaded, onCleared }: {
         disabled={uploading || clearing}
       >
         {clearing ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <Trash2 className="h-3 w-3 mr-1" />}
-        Clear
+        {t('profile.clear')}
       </Button>
     </div>
   );
@@ -363,6 +403,7 @@ function ProfilePanel({ profile, onChanged, onCleared }: {
   onChanged: () => void;
   onCleared: () => void;
 }) {
+  const { t } = useI18n();
   const [editing, setEditing] = useState(false);
   const [fullName, setFullName] = useState(profile.fullName || '');
   const [targetRole, setTargetRole] = useState(profile.targetRole || '');
@@ -386,11 +427,11 @@ function ProfilePanel({ profile, onChanged, onCleared }: {
       });
       const data = await safeJson(res, 'Save failed.');
       if (!res.ok) throw new Error(data.error || 'Save failed');
-      toast({ title: 'Profile updated' });
+      toast({ title: t('toast.profileUpdated') });
       setEditing(false);
       onChanged();
     } catch (e: any) {
-      toast({ title: 'Save failed', description: e?.message, variant: 'destructive' });
+      toast({ title: t('toast.saveFailed'), description: e?.message, variant: 'destructive' });
     } finally {
       setSaving(false);
     }
@@ -406,7 +447,7 @@ function ProfilePanel({ profile, onChanged, onCleared }: {
             </div>
             <div className="min-w-0">
               <CardTitle className="truncate text-base">
-                {fullName || 'Your profile'}
+                {fullName || t('profile.yourProfile')}
               </CardTitle>
               <CardDescription className="truncate text-xs">
                 {profile.fileName} · {profile.textLength.toLocaleString()} chars ·{' '}
@@ -417,7 +458,7 @@ function ProfilePanel({ profile, onChanged, onCleared }: {
             </div>
           </div>
           <Button size="sm" variant="ghost" onClick={() => setEditing(!editing)} className="h-7 text-xs">
-            {editing ? 'Cancel' : 'Edit'}
+            {editing ? t('profile.cancel') : t('profile.edit')}
           </Button>
         </div>
       </CardHeader>
@@ -426,13 +467,13 @@ function ProfilePanel({ profile, onChanged, onCleared }: {
           <>
             {targetRole && (
               <div className="text-sm">
-                <span className="text-muted-foreground">Target role: </span>
+                <span className="text-muted-foreground">{t('profile.targetRole')} </span>
                 <span className="font-medium">{targetRole}</span>
               </div>
             )}
             {targetContext && (
               <div className="text-sm">
-                <span className="text-muted-foreground">Context: </span>
+                <span className="text-muted-foreground">{t('profile.context')} </span>
                 <span className="text-muted-foreground">{targetContext}</span>
               </div>
             )}
@@ -522,6 +563,7 @@ function SkillRunDialog({ skill, open, onOpenChange, onSaved }: {
   onOpenChange: (v: boolean) => void;
   onSaved: () => void;
 }) {
+  const { t } = useI18n();
   const [inputValues, setInputValues] = useState<Record<string, string>>({});
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState<string | null>(null);
@@ -658,28 +700,34 @@ function SkillRunDialog({ skill, open, onOpenChange, onSaved }: {
             {error && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Run failed</AlertTitle>
+                <AlertTitle>{t('error.runFailed')}</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
 
-            {result && (
-              <div className="space-y-2">
+            {running && (
+              <div className="flex flex-col items-center justify-center py-8 animate-fade-in-up">
+                <PugLoader message={t('pug.thinking')} size="lg" />
+              </div>
+            )}
+
+            {!running && result && (
+              <div className="space-y-2 animate-fade-in-up">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Sparkles className="h-3.5 w-3.5 text-muted-foreground" />
                     <span className="text-xs text-muted-foreground">
-                      Generated via {modelUsed || 'GLM'}
+                      {t('dialog.generated')} {modelUsed || 'GLM'}
                     </span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Button size="sm" variant="ghost" onClick={copy} className="h-7 text-xs">
                       {copied ? <Check className="h-3 w-3 mr-1" /> : <Copy className="h-3 w-3 mr-1" />}
-                      {copied ? 'Copied' : 'Copy'}
+                      {copied ? t('dialog.copied') : t('dialog.copy')}
                     </Button>
                     <Button size="sm" variant="ghost" onClick={download} className="h-7 text-xs">
                       <Download className="h-3 w-3 mr-1" />
-                      .md
+                      {t('dialog.download')}
                     </Button>
                   </div>
                 </div>
@@ -693,14 +741,14 @@ function SkillRunDialog({ skill, open, onOpenChange, onSaved }: {
         </ScrollArea>
 
         <DialogFooter className="border-t pt-4">
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>Close</Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)}>{t('dialog.close')}</Button>
           <Button onClick={run} disabled={running || !skill}>
             {running ? (
-              <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Running on GLM…</>
+              <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t('dialog.running')}</>
             ) : result ? (
-              <><RefreshCw className="mr-2 h-4 w-4" /> Re-run</>
+              <><RefreshCw className="mr-2 h-4 w-4" /> {t('dialog.rerun')}</>
             ) : (
-              <><Sparkles className="mr-2 h-4 w-4" /> Run with GLM</>
+              <><Sparkles className="mr-2 h-4 w-4" /> {t('dialog.runWithGLM')}</>
             )}
           </Button>
         </DialogFooter>
@@ -711,11 +759,12 @@ function SkillRunDialog({ skill, open, onOpenChange, onSaved }: {
 
 // ─── History Panel ───────────────────────────────────────────────────────────
 function HistoryPanel({ runs, onClear }: { runs: RunInfo[]; onClear: () => void }) {
+  const { t } = useI18n();
   if (runs.length === 0) {
     return (
       <div className="text-center py-12 text-sm text-muted-foreground">
         <History className="h-8 w-8 mx-auto mb-2 opacity-40" />
-        No runs yet. Pick a skill to get started.
+        {t('history.empty')}
       </div>
     );
   }
@@ -743,8 +792,9 @@ function HistoryPanel({ runs, onClear }: { runs: RunInfo[]; onClear: () => void 
 
 // ─── Top promo banner (GLM 5.2 + Telegram) ───────────────────────────────────
 function PromoBanner() {
+  const { t } = useI18n();
   return (
-    <div className="border-b bg-gradient-to-r from-foreground/[0.03] via-foreground/[0.05] to-foreground/[0.03]">
+    <div className="border-b bg-gradient-to-r from-foreground/[0.03] via-foreground/[0.05] to-foreground/[0.03] animate-fade-in-up">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-[11px] sm:text-xs">
         <a
           href="https://z.ai/subscribe?ic=ROK78RJKNW"
@@ -753,8 +803,8 @@ function PromoBanner() {
           className="inline-flex items-center gap-1.5 font-medium hover:text-foreground transition-colors"
         >
           <Zap className="h-3.5 w-3.5 text-amber-500" />
-          <span>Built using <span className="font-semibold">GLM 5.2 Coding Model</span></span>
-          <span className="text-muted-foreground">— coding plans here</span>
+          <span>{t('banner.glm')}</span>
+          <span className="text-muted-foreground">— {t('banner.glmDesc')}</span>
           <ExternalLink className="h-3 w-3 opacity-60" />
         </a>
         <span className="hidden sm:inline text-muted-foreground/60">·</span>
@@ -765,7 +815,7 @@ function PromoBanner() {
           className="inline-flex items-center gap-1.5 font-medium hover:text-foreground transition-colors"
         >
           <MessageCircle className="h-3.5 w-3.5 text-sky-500" />
-          <span>Telegram — free resources for vibe coders</span>
+          <span>{t('banner.telegram')}</span>
           <ExternalLink className="h-3 w-3 opacity-60" />
         </a>
       </div>
@@ -775,6 +825,7 @@ function PromoBanner() {
 
 // ─── Bottom author footer ────────────────────────────────────────────────────
 function AuthorFooter() {
+  const { t } = useI18n();
   return (
     <footer className="border-t mt-auto bg-gradient-to-b from-transparent to-foreground/[0.02]">
       {/* Top promo banner (mirrored at bottom for visibility) */}
@@ -787,7 +838,7 @@ function AuthorFooter() {
             className="inline-flex items-center gap-1.5 font-medium hover:text-foreground transition-colors"
           >
             <Zap className="h-3.5 w-3.5 text-amber-500" />
-            <span>Built using <span className="font-semibold">GLM 5.2 Coding Model</span> · coding plans</span>
+            <span>{t('banner.glm')} · {t('banner.glmDesc')}</span>
             <ExternalLink className="h-3 w-3 opacity-60" />
           </a>
           <span className="hidden sm:inline text-muted-foreground/60">·</span>
@@ -798,7 +849,7 @@ function AuthorFooter() {
             className="inline-flex items-center gap-1.5 font-medium hover:text-foreground transition-colors"
           >
             <MessageCircle className="h-3.5 w-3.5 text-sky-500" />
-            <span>Telegram — free resources for vibe coders</span>
+            <span>{t('banner.telegram')}</span>
             <ExternalLink className="h-3 w-3 opacity-60" />
           </a>
         </div>
@@ -808,7 +859,7 @@ function AuthorFooter() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-5">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-sm">
           <div className="flex items-center gap-2">
-            <span className="text-muted-foreground text-xs">Author:</span>
+            <span className="text-muted-foreground text-xs">{t('footer.author')}</span>
             <a
               href="https://www.rommark.dev"
               target="_blank"
@@ -822,7 +873,7 @@ function AuthorFooter() {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-muted-foreground text-xs">Want to connect?</span>
+            <span className="text-muted-foreground text-xs">{t('footer.connect')}</span>
             <a
               href="mailto:rommark@gmx.com"
               className="inline-flex items-center gap-1.5 font-medium hover:underline"
@@ -834,7 +885,7 @@ function AuthorFooter() {
         </div>
 
         <div className="mt-3 pt-3 border-t text-center text-[11px] text-muted-foreground">
-          Career Arsenal · 16 AI skills · Powered by Z.ai GLM · Local-first — your data stays on this device
+          {t('footer.tagline')}
         </div>
       </div>
     </footer>
@@ -843,6 +894,7 @@ function AuthorFooter() {
 
 // ─── Main Page ────────────────────────────────────────────────────────────
 export default function Home() {
+  const { t } = useI18n();
   const [profile, setProfile] = useState<ProfileInfo | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [activeSkill, setActiveSkill] = useState<Skill | null>(null);
@@ -903,9 +955,9 @@ export default function Home() {
                 <Sparkles className="h-4 w-4" />
               </div>
               <div className="flex items-baseline gap-2 min-w-0">
-                <span className="font-semibold text-sm sm:text-base truncate">Career Arsenal</span>
+                <span className="font-semibold text-sm sm:text-base truncate">{t('app.title')}</span>
                 <span className="hidden sm:inline text-[11px] text-muted-foreground">
-                  powered by GLM · 16 AI skills
+                  {t('app.subtitle')}
                 </span>
               </div>
             </div>
@@ -919,8 +971,9 @@ export default function Home() {
                   loadRuns();
                 }}
               >
-                <RefreshCw className="h-3.5 w-3.5 mr-1.5" /> Refresh
+                <RefreshCw className="h-3.5 w-3.5 mr-1.5" /> {t('nav.refresh')}
               </Button>
+              <LanguageSwitcher />
               <ThemeToggle />
             </div>
           </div>
@@ -933,34 +986,32 @@ export default function Home() {
       <main className="flex-1 mx-auto max-w-7xl w-full px-4 sm:px-6 py-6 sm:py-10">
         {!profile && !loadingProfile && (
           /* Empty state — upload flow */
-          <div className="max-w-2xl mx-auto py-8 sm:py-14">
+          <div className="max-w-2xl mx-auto py-8 sm:py-14 animate-fade-in-up">
             <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs text-muted-foreground mb-4">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                Free LLM access via Z.ai GLM
+                {t('hero.badge')}
               </div>
               <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
-                All 16 Career Arsenal skills.<br className="hidden sm:block" /> One platform.
+                {t('hero.title1')}<br className="hidden sm:block" /> {t('hero.title2')}
               </h1>
               <p className="mt-3 text-sm sm:text-base text-muted-foreground max-w-xl mx-auto">
-                Upload your resume or LinkedIn export. Then run any of the 16 skills — resume rewrites,
-                cover letters, interview prep, salary negotiation, LinkedIn optimization, and 11 more —
-                all powered by GLM, free.
+                {t('hero.desc')}
               </p>
             </div>
             <UploadZone onUploaded={setProfile} onProfileLoaded={loadRuns} />
             <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-muted-foreground">
               {[
-                { label: 'Career planning', icon: 'Compass' },
-                { label: 'Resume rewrite', icon: 'FileText' },
+                { label: t('skills.career'), icon: 'Compass' },
+                { label: t('hero.badge'), icon: 'FileText' },
                 { label: 'Cover letters', icon: 'Mail' },
                 { label: 'Interview prep', icon: 'Mic' },
                 { label: 'Salary scripts', icon: 'DollarSign' },
                 { label: 'LinkedIn opt', icon: 'Linkedin' },
                 { label: 'Job hunt plan', icon: 'Crosshair' },
                 { label: '+ 9 more', icon: 'Sparkles' },
-              ].map((x) => (
-                <div key={x.label} className="flex items-center gap-1.5 px-3 py-2 rounded-md border">
+              ].map((x, i) => (
+                <div key={i} className="flex items-center gap-1.5 px-3 py-2 rounded-md border stagger-card" style={{ animationDelay: `${i * 50}ms` }}>
                   <SkillIcon name={x.icon} className="h-3.5 w-3.5" />
                   <span>{x.label}</span>
                 </div>
@@ -982,7 +1033,7 @@ export default function Home() {
         )}
 
         {profile && !loadingProfile && (
-          <div className="grid lg:grid-cols-[320px_1fr] gap-6">
+          <div className="grid lg:grid-cols-[320px_1fr] gap-6 animate-fade-in-up">
             {/* Left: profile + history */}
             <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto pr-1">
               <ProfilePanel profile={profile} onChanged={loadProfile} onCleared={clearProfile} />
@@ -991,11 +1042,11 @@ export default function Home() {
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-1.5 text-xs font-medium">
                     <History className="h-3.5 w-3.5" />
-                    Recent runs
+                    {t('history.title')}
                   </div>
                   {runs.length > 0 && (
                     <Button size="sm" variant="ghost" className="h-6 text-[10px]" onClick={() => setRuns([])}>
-                      <X className="h-3 w-3 mr-1" /> Hide
+                      <X className="h-3 w-3 mr-1" /> {t('history.hide')}
                     </Button>
                   )}
                 </div>
@@ -1003,29 +1054,31 @@ export default function Home() {
               </Card>
 
               <div className="text-[11px] text-muted-foreground px-1">
-                <p>Use “Replace CV” above to upload a new file, or “Clear” to start fresh. Skill runs are stored locally.</p>
+                <p>{t('profile.hint')}</p>
               </div>
             </aside>
 
             {/* Right: skill grid */}
             <section>
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
                 <div>
-                  <h2 className="text-lg font-semibold">Skills</h2>
-                  <p className="text-xs text-muted-foreground">Click any card to run it with GLM.</p>
+                  <h2 className="text-lg font-semibold">{t('skills.title')}</h2>
+                  <p className="text-xs text-muted-foreground">{t('skills.subtitle')}</p>
                 </div>
                 <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>
                   <TabsList className="h-8">
-                    <TabsTrigger value="all" className="text-xs px-3 h-6">All ({ALL_SKILLS.length})</TabsTrigger>
-                    <TabsTrigger value="career" className="text-xs px-3 h-6">Career ({CAREER_SKILLS.length})</TabsTrigger>
-                    <TabsTrigger value="hr" className="text-xs px-3 h-6">Hiring ({HR_SKILLS.length})</TabsTrigger>
+                    <TabsTrigger value="all" className="text-xs px-3 h-6">{t('skills.all')} ({ALL_SKILLS.length})</TabsTrigger>
+                    <TabsTrigger value="career" className="text-xs px-3 h-6">{t('skills.career')} ({CAREER_SKILLS.length})</TabsTrigger>
+                    <TabsTrigger value="hr" className="text-xs px-3 h-6">{t('skills.hiring')} ({HR_SKILLS.length})</TabsTrigger>
                   </TabsList>
                 </Tabs>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
-                {filteredSkills.map((skill) => (
-                  <SkillCard key={skill.id} skill={skill} onRun={openSkill} />
+              <div className="skills-grid grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+                {filteredSkills.map((skill, i) => (
+                  <div key={skill.id} className="stagger-card" style={{ animationDelay: `${i * 40}ms` }}>
+                    <SkillCard skill={skill} onRun={openSkill} />
+                  </div>
                 ))}
               </div>
             </section>
@@ -1035,6 +1088,8 @@ export default function Home() {
 
       {/* Footer / author badge */}
       <AuthorFooter />
+
+      <HRChatButton />
 
       <SkillRunDialog
         skill={activeSkill}

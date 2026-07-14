@@ -1,6 +1,6 @@
-# Career Arsenal — 16 AI Skills Powered by GLM
+# Career Arsenal — 16 AI Skills + HR Live Chat · Powered by GLM
 
-> Upload your resume or LinkedIn export once. Run all 16 career & hiring skills — resume rewrites, cover letters, interview prep, salary negotiation, LinkedIn optimization, and 11 more — all powered by Z.ai GLM, free.
+> Upload your resume or LinkedIn export once. Run all 16 career & hiring skills, chat live with AI-powered HR experts, and get everything you need for your job search — all powered by Z.ai GLM, free.
 
 Built with [Next.js 16](https://nextjs.org), [TypeScript](https://www.typescriptlang.org/), [Tailwind CSS 4](https://tailwindcss.com), [shadcn/ui](https://ui.shadcn.com/), [Prisma](https://www.prisma.io/), and the [`z-ai-web-dev-sdk`](https://www.npmjs.com/package/z-ai-web-dev-sdk).
 
@@ -10,7 +10,8 @@ The 16 skills are based on the open-source [Career Arsenal](https://github.com/r
 
 ## ✨ Features
 
-- **Drag-and-drop upload** — drop a PDF / DOCX / TXT resume or LinkedIn export; text is extracted server-side and stored locally (SQLite via Prisma).
+### Core Platform
+- **Drag-and-drop upload** — drop a PDF / DOCX / TXT resume or LinkedIn export; files are parsed **client-side** (in your browser) and only extracted text is sent to the server, avoiding body size limits and ensuring privacy.
 - **16 AI skills in one place** — 8 career skills (job-seeker side) + 8 HR skills (hiring side), each with its own typed inputs and prompt template.
 - **Free LLM access via GLM** — all skill runs hit `z-ai-web-dev-sdk` → GLM-4.6. No API keys, no quotas.
 - **Clean, minimal chat.z.ai-style UI** — sticky header, top promo banner, sidebar profile + history panel, responsive skill grid, dark/light mode.
@@ -18,6 +19,54 @@ The 16 skills are based on the open-source [Career Arsenal](https://github.com/r
 - **Per-skill run dialog** — fill inputs, run, get markdown output with copy + download-as-`.md` buttons. Re-run with different inputs.
 - **Recent runs history** — every LLM call is persisted with skillId, inputs, output, model, and timestamp.
 - **Local-first** — your data stays on the device. No analytics, no telemetry, no third-party tracking.
+
+### 🆕 HR Expert Live Chat
+Chat with 6 AI-powered HR expert personas in real-time:
+- **Sarah** — Senior Recruiter (resume tips, interview prep, what recruiters look for)
+- **Marcus** — Compensation Specialist (salary benchmarking, equity evaluation, negotiation)
+- **Dr. Priya** — Career Coach (transitions, imposter syndrome, promotion strategy)
+- **James** — HR & Employment Legal (contracts, non-competes, worker classification)
+- **Elena** — Culture & Retention Expert (culture assessment, red flags, team dynamics)
+- **Alex** — Startup Founder Advisor (joining early-stage, equity, founder interviews)
+
+Each persona has a specialized system prompt. Multi-turn conversations with context. Suggested questions per persona. Floating chat button (bottom-right) with slide-out drawer.
+
+### 🆕 Multi-Language Support (i18n)
+Full end-to-end internationalization with 5 languages:
+- 🇬🇧 English
+- 🇷🇺 Russian (Русский)
+- 🇮🇱 Hebrew (עברית) — with RTL support
+- 🇫🇷 French (Français)
+- 🇸🇦 Arabic (العربية) — with RTL support
+
+Language preference is saved to localStorage. RTL languages automatically switch the entire UI direction. Language switcher in the header with flag icons.
+
+### 🆕 Cute Pug Helper Animation
+An animated SVG pug appears during loading states:
+- Bouncing body, wagging tail, twitching ears, blinking eyes, licking tongue
+- Shows during file parsing ("Sniffing out your skills…")
+- Shows during skill execution ("Thinking…")
+- Pure SVG + CSS animations — no external dependencies
+
+### 🆕 UI Transitions
+- Page fade-in-up animations
+- Staggered card entrance (skill cards appear one by one)
+- Smooth theme and language transitions
+- Toast notification animations
+- Dialog backdrop fade
+
+### 🆕 Mobile-First Responsive Design
+- Fixed mobile scrolling across all sections
+- Sticky sidebar disabled on mobile (flows naturally)
+- Skill grid: 1 column on mobile, 2 on tablet, 3 on desktop
+- Upload zone reduced padding on mobile
+- Dialog content scrolls properly with momentum scrolling
+- Horizontal overflow prevented
+- Touch-friendly 44px+ tap targets
+
+### Promo Badges
+- **Top banner**: "Built using GLM 5.2 Coding Model" → links to [z.ai/subscribe](https://z.ai/subscribe?ic=ROK78RJKNW) + Telegram community link
+- **Bottom footer**: Mirrored promo banner + author credit (Rommark.Dev) + email contact
 
 ---
 
