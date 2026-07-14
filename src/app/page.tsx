@@ -130,18 +130,72 @@ function useFileUpload(
       // Parse the file CLIENT-SIDE (in the browser) to avoid the edge layer's
       // body size limit and multipart corruption. Only the extracted text
       // (typically 5-15KB) is sent to the server.
-      const { parseFile } = await import('@/lib/client-file-parser');
-      const parsed = await parseFile(file);
+      //
+      // PDF/DOCX parsing libraries are loaded from CDN (not bundled) to avoid
+      // worker resolution issues with Next.js/Turbopack.
+      const lowerName = file.name.toLowerCase();
+      let extractedText = '';
+
+      if (lowerName.endsWith('.pdf')) {
+        // Load pdfjs v3 from CDN
+        if (!(window as any).pdfjsLib) {
+          await new Promise<void>((resolve, reject) => {
+            const s = document.createElement('script');
+            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+            s.onload = () => resolve();
+            s.onerror = () => reject(new Error('Failed to load PDF parser from CDN'));
+            document.head.appendChild(s);
+          });
+        }
+        const pdfjs = (window as any).pdfjsLib;
+        pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        const arrayBuffer = await file.arrayBuffer();
+        const loadingTask = pdfjs.getDocument({ data: new Uint8Array(arrayBuffer), isEvalSupported: false, useWorkerFetch: false });
+        const pdf = await loadingTask.promise;
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const content = await page.getTextContent();
+          extractedText += content.items.map((item: any) => item.str || '').join(' ') + '\n\n';
+        }
+        try { await pdf.destroy(); } catch {}
+      } else if (lowerName.endsWith('.docx')) {
+        // Load mammoth from CDN
+        if (!(window as any).mammoth) {
+          await new Promise<void>((resolve, reject) => {
+            const s = document.createElement('script');
+            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js';
+            s.onload = () => resolve();
+            s.onerror = () => reject(new Error('Failed to load DOCX parser from CDN'));
+            document.head.appendChild(s);
+          });
+        }
+        const mammoth = (window as any).mammoth;
+        const arrayBuffer = await file.arrayBuffer();
+        const result = await mammoth.extractRawText({ arrayBuffer });
+        extractedText = result.value || '';
+      } else if (lowerName.endsWith('.txt') || lowerName.endsWith('.md')) {
+        extractedText = await file.text();
+      } else {
+        throw new Error('Unsupported file type. Please upload PDF, DOCX, or TXT.');
+      }
+
+      extractedText = extractedText.trim();
+      if (extractedText.length < 50) {
+        throw new Error('The file appears to be empty or could not be parsed (text too short).');
+      }
+
+      const sourceKind = lowerName.includes('linkedin') ? 'linkedin' : 'resume';
 
       const res = await fetch('/api/profile', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           file: {
-            text: parsed.text,
-            sourceKind: parsed.sourceKind,
-            fileName: parsed.fileName,
-            fileSize: parsed.fileSize,
+            text: extractedText,
+            sourceKind,
+            fileName: file.name,
+            fileSize: file.size,
           },
         }),
       });
