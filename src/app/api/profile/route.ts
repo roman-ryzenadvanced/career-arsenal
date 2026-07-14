@@ -2,25 +2,18 @@
  * /api/profile
  * - GET: return current profile
  * - PATCH: dual-purpose:
- *   • JSON body with { file: { name, data (base64) } } → file upload
- *   • JSON body with { fullName, targetRole, targetContext } → metadata update
+ *   • JSON body with { file: { text, sourceKind, fileName, fileSize } } → save parsed CV
+ *   • JSON body with { fullName, targetRole, targetContext } → update metadata
  *
- * Multipart/form-data is NOT used because the edge layer corrupts it.
- * Files are sent as base64-encoded JSON instead.
+ * Files are parsed CLIENT-SIDE (in the browser) and only the extracted text
+ * is sent to the server. This avoids the edge layer's body size limit and
+ * multipart corruption issues.
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import mammoth from 'mammoth';
-import { extractText, getDocumentProxy } from 'unpdf';
 
 export const runtime = 'nodejs';
-export const maxDuration = 60;
-
-async function extractPdfText(buffer: Buffer): Promise<string> {
-  const pdf = await getDocumentProxy(new Uint8Array(buffer));
-  const { text } = await extractText(pdf, { mergePages: true });
-  return text;
-}
+export const maxDuration = 30;
 
 export async function GET() {
   const profile = await db.profile.findFirst({
@@ -54,9 +47,9 @@ export async function PATCH(req: NextRequest) {
   try {
     const body = await req.json();
 
-    // File upload via base64 JSON
-    if (body.file && body.file.data) {
-      return handleFileUpload(body.file.name, body.file.data);
+    // Save parsed CV text (parsed client-side)
+    if (body.file && body.file.text) {
+      return handleSaveParsedText(body.file);
     }
 
     // Metadata update
@@ -67,43 +60,17 @@ export async function PATCH(req: NextRequest) {
   }
 }
 
-async function handleFileUpload(fileName: string, base64Data: string) {
+async function handleSaveParsedText(file: { text: string; sourceKind: string; fileName: string; fileSize: number }) {
   try {
-    const buffer = Buffer.from(base64Data, 'base64');
-    const lowerName = fileName.toLowerCase();
-
-    let extractedText = '';
-    try {
-      if (lowerName.endsWith('.pdf')) {
-        extractedText = await extractPdfText(buffer);
-      } else if (lowerName.endsWith('.docx')) {
-        const result = await mammoth.extractRawText({ buffer });
-        extractedText = result.value || '';
-      } else if (lowerName.endsWith('.txt') || lowerName.endsWith('.md')) {
-        extractedText = buffer.toString('utf-8');
-      } else {
-        return NextResponse.json(
-          { error: 'Unsupported file type. Please upload PDF, DOCX, or TXT.' },
-          { status: 400 }
-        );
-      }
-    } catch (parseError: any) {
-      console.error('Parse error:', parseError?.message || parseError);
-      return NextResponse.json(
-        { error: 'Failed to parse the file. Make sure it is a valid PDF/DOCX/TXT.' },
-        { status: 422 }
-      );
-    }
-
-    extractedText = extractedText.trim();
+    const extractedText = (file.text || '').trim();
     if (extractedText.length < 50) {
       return NextResponse.json(
-        { error: 'The file appears to be empty or could not be parsed (text too short).' },
+        { error: 'The extracted text is too short. The file may be empty or unreadable.' },
         { status: 422 }
       );
     }
 
-    const sourceKind = lowerName.includes('linkedin') ? 'linkedin' : 'resume';
+    const sourceKind = file.sourceKind === 'linkedin' ? 'linkedin' : 'resume';
     const existing = await db.profile.findFirst({ orderBy: { createdAt: 'desc' } });
 
     let profile;
@@ -112,20 +79,20 @@ async function handleFileUpload(fileName: string, base64Data: string) {
       await db.uploadedFile.deleteMany({ where: { profileId: existing.id } });
       profile = await db.profile.update({
         where: { id: existing.id },
-        data: { rawText: extractedText, sourceKind, fileName, parsedJson: null },
+        data: { rawText: extractedText, sourceKind, fileName: file.fileName, parsedJson: null },
       });
     } else {
       profile = await db.profile.create({
-        data: { rawText: extractedText, sourceKind, fileName },
+        data: { rawText: extractedText, sourceKind, fileName: file.fileName },
       });
     }
 
     await db.uploadedFile.create({
       data: {
         profileId: profile.id,
-        fileName,
-        fileType: 'application/octet-stream',
-        fileSize: buffer.length,
+        fileName: file.fileName,
+        fileType: 'text/plain',
+        fileSize: file.fileSize || extractedText.length,
         extractedText,
       },
     });
@@ -145,9 +112,9 @@ async function handleFileUpload(fileName: string, base64Data: string) {
       },
     });
   } catch (err: any) {
-    console.error('Upload error:', err);
+    console.error('Save error:', err);
     return NextResponse.json(
-      { error: 'Internal server error during upload.', detail: err?.message },
+      { error: 'Internal server error while saving profile.', detail: err?.message },
       { status: 500 }
     );
   }

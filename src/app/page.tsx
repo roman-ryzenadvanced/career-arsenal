@@ -127,13 +127,23 @@ function useFileUpload(
     setUploading(true);
     setError(null);
     try {
-      // Convert file to base64 and send as JSON (edge layer corrupts multipart/form-data)
-      const arrayBuffer = await file.arrayBuffer();
-      const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+      // Parse the file CLIENT-SIDE (in the browser) to avoid the edge layer's
+      // body size limit and multipart corruption. Only the extracted text
+      // (typically 5-15KB) is sent to the server.
+      const { parseFile } = await import('@/lib/client-file-parser');
+      const parsed = await parseFile(file);
+
       const res = await fetch('/api/profile', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ file: { name: file.name, data: base64 } }),
+        body: JSON.stringify({
+          file: {
+            text: parsed.text,
+            sourceKind: parsed.sourceKind,
+            fileName: parsed.fileName,
+            fileSize: parsed.fileSize,
+          },
+        }),
       });
       const data = await safeJson(res, 'Upload failed.');
       if (!res.ok) {
@@ -201,10 +211,10 @@ function UploadZone({ onUploaded, onProfileLoaded }: {
           )}
         </div>
         <p className="text-sm font-medium">
-          {uploading ? 'Parsing your profile…' : 'Drop your resume or LinkedIn export here'}
+          {uploading ? 'Parsing your file…' : 'Drop your resume or LinkedIn export here'}
         </p>
         <p className="mt-1 text-xs text-muted-foreground">
-          Supports PDF, DOCX, TXT — we extract the text locally and store it on this device only.
+          Supports PDF, DOCX, TXT — files are parsed in your browser, only text is sent.
         </p>
         <Button
           variant="outline"
