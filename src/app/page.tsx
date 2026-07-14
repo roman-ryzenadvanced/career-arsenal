@@ -127,9 +127,14 @@ function useFileUpload(
     setUploading(true);
     setError(null);
     try {
-      const fd = new FormData();
-      fd.append('file', file);
-      const res = await fetch('/api/upload', { method: 'POST', body: fd });
+      // Convert file to base64 and send as JSON (edge layer corrupts multipart/form-data)
+      const arrayBuffer = await file.arrayBuffer();
+      const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+      const res = await fetch('/api/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ file: { name: file.name, data: base64 } }),
+      });
       const data = await safeJson(res, 'Upload failed.');
       if (!res.ok) {
         setError(data.error || 'Upload failed.');
@@ -481,10 +486,10 @@ function SkillRunDialog({ skill, open, onOpenChange, onSaved }: {
     setError(null);
     setResult(null);
     try {
-      const res = await fetch(`/api/skills/${skill.id}/run`, {
-        method: 'POST',
+      const res = await fetch(`/api/runs`, {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ inputs: inputValues }),
+        body: JSON.stringify({ skillId: skill.id, inputs: inputValues }),
       });
       const data = await safeJson(res, 'Run failed.');
       if (!res.ok) {
@@ -784,7 +789,7 @@ export default function Home() {
   const loadProfile = useCallback(async () => {
     setLoadingProfile(true);
     try {
-      const res = await fetch('/api/upload', { cache: 'no-store' });
+      const res = await fetch('/api/profile', { cache: 'no-store' });
       const data = await safeJson(res);
       setProfile(data.profile || null);
     } catch {

@@ -1,8 +1,11 @@
 /**
- * /api/runs
- * - GET: return recent skill runs (may be CDN-cached)
- * - PATCH: execute a skill via GLM (PATCH is used because POST is blocked by edge layer)
- *   Body: { skillId: string, inputs: Record<string, string> }
+ * POST /api/skills/[id]/run
+ *
+ * Body: { inputs: Record<string, string> }
+ *
+ * Looks up the skill definition, loads the user's profile, builds the
+ * system + user prompts, calls GLM via z-ai-web-dev-sdk, persists the
+ * run to the DB, and returns the generated markdown.
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
@@ -12,43 +15,21 @@ import ZAI from 'z-ai-web-dev-sdk';
 export const runtime = 'nodejs';
 export const maxDuration = 120;
 
-export async function GET() {
-  const profile = await db.profile.findFirst({ orderBy: { createdAt: 'desc' } });
-  if (!profile) return NextResponse.json({ runs: [] });
-
-  const runs = await db.skillRun.findMany({
-    where: { profileId: profile.id },
-    orderBy: { createdAt: 'desc' },
-    take: 50,
-    select: {
-      id: true,
-      skillId: true,
-      skillName: true,
-      output: true,
-      modelUsed: true,
-      createdAt: true,
-    },
-  });
-
-  return NextResponse.json({ runs });
-}
-
-// PATCH — execute a skill (using PATCH because POST is blocked by edge layer)
-export async function PATCH(req: NextRequest) {
+export async function POST(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const body = await req.json().catch(() => ({}));
-    const skillId: string = body.skillId;
-    const inputs: Record<string, string> = body.inputs || {};
-
-    if (!skillId) {
-      return NextResponse.json({ error: 'Missing skillId in request body.' }, { status: 400 });
-    }
-
+    const { id: skillId } = await params;
     const skill = getSkill(skillId);
     if (!skill) {
       return NextResponse.json({ error: `Unknown skill: ${skillId}` }, { status: 404 });
     }
 
+    const body = await req.json().catch(() => ({}));
+    const inputs: Record<string, string> = body.inputs || {};
+
+    // Validate required inputs
     for (const inp of skill.inputs) {
       if (inp.required && !inputs[inp.key]?.trim()) {
         return NextResponse.json(
@@ -58,6 +39,7 @@ export async function PATCH(req: NextRequest) {
       }
     }
 
+    // Load profile
     const profile = await db.profile.findFirst({ orderBy: { createdAt: 'desc' } });
     if (!profile || !profile.rawText) {
       return NextResponse.json(
@@ -66,6 +48,7 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
+    // Build prompts
     const userMessage = skill.userPromptTemplate({
       profile: {
         fullName: profile.fullName,
@@ -77,6 +60,7 @@ export async function PATCH(req: NextRequest) {
       inputs,
     });
 
+    // Call GLM
     let output = '';
     let modelUsed = 'glm-4.6';
     try {
@@ -87,6 +71,7 @@ export async function PATCH(req: NextRequest) {
           { role: 'user', content: userMessage },
         ],
         thinking: { type: 'disabled' },
+        // temperature: 0.7,  // SDK allows but optional
       });
       output = completion.choices?.[0]?.message?.content || '';
       if (!output) {
@@ -103,6 +88,7 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
+    // Persist the run
     const run = await db.skillRun.create({
       data: {
         profileId: profile.id,
