@@ -113,7 +113,7 @@ export function HRChatButton({ onRunSkill, onUpdateTargetRole }: HRChatButtonPro
     }
   };
 
-  const handleAction = (action: ChatAction) => {
+  const handleAction = async (action: ChatAction) => {
     if (action.type === 'run_skill' && action.skillId && onRunSkill) {
       onRunSkill(action.skillId);
       toast({
@@ -151,16 +151,51 @@ export function HRChatButton({ onRunSkill, onUpdateTargetRole }: HRChatButtonPro
             toast({ title: 'Please allow popups to view files' });
           }
         } else {
-          toast({ title: 'Failed to generate file', variant: 'destructive' });
+          // Fallback: server endpoint failed — use client-side blob download
+          fallbackDownload(action);
         }
       } catch (e: any) {
-        toast({ title: 'Download failed', description: e?.message, variant: 'destructive' });
+        // Fallback: network error — use client-side blob download
+        fallbackDownload(action);
       }
       return;
     }
+  };
 
-    // Note: the old client-side blob download code was removed.
-    // All file downloads now go through the server-side /api/download-file endpoint.
+  // Fallback download: creates a blob URL and opens it directly
+  const fallbackDownload = (action: ChatAction) => {
+    if (!action.content) return;
+    const content = action.content;
+    const fileName = action.fileName || 'download';
+
+    // Build a simple HTML page with the content
+    let html: string;
+    if (content.trim().startsWith('<') || content.trim().startsWith('<!DOCTYPE')) {
+      html = content;
+    } else {
+      html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${fileName}</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:20px;line-height:1.7;color:#1a1a1a}h1{border-bottom:2px solid #333}.toolbar{position:fixed;bottom:0;left:0;right:0;background:#1a1a1a;padding:12px;text-align:center;z-index:9999}@media print{.toolbar{display:none}}</style>
+</head><body><div id="c"></div>
+<div class="toolbar"><button onclick="window.print()" style="padding:10px 24px;font-size:14px;cursor:pointer">🖨️ Save as PDF</button></div>
+<script>document.getElementById('c').innerHTML=marked.parse(${JSON.stringify(content)})</script>
+</body></html>`;
+    }
+
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const w = window.open(url, '_blank');
+    if (w) {
+      toast({ title: '📄 File opened (fallback)', description: 'Use 🖨️ to save as PDF' });
+    } else {
+      // Last resort: download as file
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName + (content.trim().startsWith('<') ? '.html' : '.md');
+      a.click();
+      toast({ title: '📄 File downloaded', description: fileName });
+    }
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
   };
 
   const previewFile = (action: ChatAction) => {
