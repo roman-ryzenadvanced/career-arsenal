@@ -34,6 +34,7 @@ const PERSONAS = [
   { id: 'hr_legal', nameKey: 'persona.hr_legal.name', roleKey: 'persona.hr_legal.role', icon: '⚖️', color: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900' },
   { id: 'culture', nameKey: 'persona.culture.name', roleKey: 'persona.culture.role', icon: '🌟', color: 'bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950/40 dark:text-teal-300 dark:border-teal-900' },
   { id: 'founder', nameKey: 'persona.founder.name', roleKey: 'persona.founder.role', icon: '🚀', color: 'bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-900' },
+  { id: 'negotiator', nameKey: 'persona.negotiator.name', roleKey: 'persona.negotiator.role', icon: '🤝', color: 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-900' },
 ];
 
 const SKILL_ICONS: Record<string, any> = {

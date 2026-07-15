@@ -475,6 +475,8 @@ const personaEn: Dict = {
   'persona.culture.role': 'Culture Expert',
   'persona.founder.name': 'Alex',
   'persona.founder.role': 'Founder Advisor',
+  'persona.negotiator.name': 'Jordan',
+  'persona.negotiator.role': 'Negotiation Coach',
 };
 
 const personaRu: Dict = {
@@ -490,6 +492,8 @@ const personaRu: Dict = {
   'persona.culture.role': 'Эксперт по культуре',
   'persona.founder.name': 'Алекс',
   'persona.founder.role': 'Советник основателя',
+  'persona.negotiator.name': 'Джордан',
+  'persona.negotiator.role': 'Тренер по переговорам',
 };
 
 const personaHe: Dict = {
@@ -505,6 +509,8 @@ const personaHe: Dict = {
   'persona.culture.role': 'מומחית תרבות',
   'persona.founder.name': 'אלכס',
   'persona.founder.role': 'יועץ מייסדים',
+  'persona.negotiator.name': 'ג\"ורדן',
+  'persona.negotiator.role': 'מאמן משא ומתן',
 };
 
 const personaFr: Dict = {
@@ -520,6 +526,8 @@ const personaFr: Dict = {
   'persona.culture.role': 'Experte Culture',
   'persona.founder.name': 'Alex',
   'persona.founder.role': 'Conseiller Fondateur',
+  'persona.negotiator.name': 'Jordan',
+  'persona.negotiator.role': 'Coach en Négociation',
 };
 
 const personaAr: Dict = {
@@ -535,6 +543,8 @@ const personaAr: Dict = {
   'persona.culture.role': 'خبيرة ثقافة',
   'persona.founder.name': 'أليكس',
   'persona.founder.role': 'مستشار المؤسسين',
+  'persona.negotiator.name': 'جوردان',
+  'persona.negotiator.role': 'مدرب المفاوضات',
 };
 
 // ─── Resume template translations ───────────────────────────────────────────
