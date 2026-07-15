@@ -36,7 +36,8 @@ import { HRChatButton } from '@/components/hr-chat-button';
 import { ResumeBuilderDialog } from '@/components/resume-builder-dialog';
 import { CoverLetterBuilderDialog } from '@/components/cover-letter-builder-dialog';
 import { JobFinderDialog } from '@/components/job-finder-dialog';
-import { FileText as ResumeIcon, Mail as CoverLetterIcon, Sparkles as SparklesIcon, Briefcase as JobFinderIcon } from 'lucide-react';
+import { AISettingsDialog } from '@/components/ai-settings-dialog';
+import { FileText as ResumeIcon, Mail as CoverLetterIcon, Sparkles as SparklesIcon, Briefcase as JobFinderIcon, Settings as SettingsIcon } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────
 interface ProfileInfo {
@@ -1023,6 +1024,7 @@ export default function Home() {
   const [resumeBuilderOpen, setResumeBuilderOpen] = useState(false);
   const [coverLetterBuilderOpen, setCoverLetterBuilderOpen] = useState(false);
   const [jobFinderOpen, setJobFinderOpen] = useState(false);
+  const [aiSettingsOpen, setAiSettingsOpen] = useState(false);
   const [runs, setRuns] = useState<RunInfo[]>([]);
   const [tab, setTab] = useState<'all' | 'career' | 'hr'>('all');
 
@@ -1123,6 +1125,15 @@ export default function Home() {
                 }}
               >
                 <RefreshCw className="h-3.5 w-3.5 mr-1.5" /> {t('nav.refresh')}
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setAiSettingsOpen(true)}
+                aria-label={t('aiSettings.title')}
+                className="h-9 w-9"
+              >
+                <SettingsIcon className="h-4 w-4" />
               </Button>
               <LanguageSwitcher />
               <ThemeToggle />
@@ -1308,6 +1319,11 @@ export default function Home() {
       <JobFinderDialog
         open={jobFinderOpen}
         onOpenChange={setJobFinderOpen}
+      />
+
+      <AISettingsDialog
+        open={aiSettingsOpen}
+        onOpenChange={setAiSettingsOpen}
       />
 
       <Toaster />

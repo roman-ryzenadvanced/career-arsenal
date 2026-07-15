@@ -752,3 +752,136 @@ Object.keys(jobFinderRu).forEach(k => { EXTENDED_TRANSLATIONS.ru[k] = jobFinderR
 Object.keys(jobFinderHe).forEach(k => { EXTENDED_TRANSLATIONS.he[k] = jobFinderHe[k]; });
 Object.keys(jobFinderFr).forEach(k => { EXTENDED_TRANSLATIONS.fr[k] = jobFinderFr[k]; });
 Object.keys(jobFinderAr).forEach(k => { EXTENDED_TRANSLATIONS.ar[k] = jobFinderAr[k]; });
+
+// ─── AI Settings translations ────────────────────────────────────────────────
+const aiSettingsEn: Dict = {
+  'aiSettings.title': 'AI Provider Settings',
+  'aiSettings.loading': 'Loading AI settings…',
+  'aiSettings.model': 'Model',
+  'aiSettings.sourceSystem': 'System config',
+  'aiSettings.sourceProject': 'Project config',
+  'aiSettings.sourceHome': 'Home config',
+  'aiSettings.sourceNone': 'No config found',
+  'aiSettings.apiKeySet': 'API key set',
+  'aiSettings.apiKeyMissing': 'API key missing',
+  'aiSettings.tokenSet': 'Token set',
+  'aiSettings.tokenNone': 'No token',
+  'aiSettings.providerPresets': 'Provider Presets',
+  'aiSettings.baseUrl': 'Base URL',
+  'aiSettings.apiKey': 'API Key',
+  'aiSettings.apiKeyPlaceholder': '•••••••• (leave unchanged to keep)',
+  'aiSettings.apiKeyEmpty': 'Enter your API key',
+  'aiSettings.chatId': 'Chat ID (optional)',
+  'aiSettings.userId': 'User ID (optional)',
+  'aiSettings.token': 'Token',
+  'aiSettings.testConnection': 'Test Connection',
+  'aiSettings.save': 'Save Settings',
+  'aiSettings.saved': 'Settings saved!',
+  'aiSettings.saveFailed': 'Failed to save settings',
+  'aiSettings.loadFailed': 'Failed to load settings',
+  'aiSettings.infoNote': 'Settings are saved to a project-level config file. The SDK checks project → home → system directories in order. Changes take effect on the next API call. Masked fields (••••) are preserved when unchanged.',
+};
+
+const aiSettingsRu: Dict = {
+  'aiSettings.title': 'Настройки AI-провайдера',
+  'aiSettings.loading': 'Загрузка настроек AI…',
+  'aiSettings.model': 'Модель',
+  'aiSettings.sourceSystem': 'Системный конфиг',
+  'aiSettings.sourceProject': 'Конфиг проекта',
+  'aiSettings.sourceHome': 'Домашний конфиг',
+  'aiSettings.sourceNone': 'Конфиг не найден',
+  'aiSettings.apiKeySet': 'API ключ установлен',
+  'aiSettings.apiKeyMissing': 'API ключ отсутствует',
+  'aiSettings.tokenSet': 'Токен установлен',
+  'aiSettings.tokenNone': 'Нет токена',
+  'aiSettings.providerPresets': 'Пресеты провайдеров',
+  'aiSettings.baseUrl': 'Базовый URL',
+  'aiSettings.apiKey': 'API ключ',
+  'aiSettings.apiKeyPlaceholder': '•••••••• (оставьте без изменений)',
+  'aiSettings.apiKeyEmpty': 'Введите API ключ',
+  'aiSettings.chatId': 'Chat ID (необязательно)',
+  'aiSettings.userId': 'User ID (необязательно)',
+  'aiSettings.token': 'Токен',
+  'aiSettings.testConnection': 'Проверить соединение',
+  'aiSettings.save': 'Сохранить',
+  'aiSettings.saved': 'Настройки сохранены!',
+  'aiSettings.saveFailed': 'Не удалось сохранить',
+  'aiSettings.loadFailed': 'Не удалось загрузить',
+  'aiSettings.infoNote': 'Настройки сохраняются в конфиг-файл проекта. SDK проверяет: проект → дом → система. Изменения вступают в силу при следующем API вызове.',
+};
+
+const aiSettingsHe: Dict = {
+  ...aiSettingsEn,
+  'aiSettings.title': 'הגדרות ספק AI',
+  'aiSettings.loading': 'טוען הגדרות AI…',
+  'aiSettings.model': 'מודל',
+  'aiSettings.sourceSystem': 'קונפיג מערכת',
+  'aiSettings.sourceProject': 'קונפיג פרויקט',
+  'aiSettings.sourceHome': 'קונפיג בית',
+  'aiSettings.sourceNone': 'לא נמצא קונפיג',
+  'aiSettings.apiKeySet': 'מפתח API מוגדר',
+  'aiSettings.apiKeyMissing': 'מפתח API חסר',
+  'aiSettings.tokenSet': 'טוקן מוגדר',
+  'aiSettings.tokenNone': 'אין טוקן',
+  'aiSettings.providerPresets': 'פריסטים לספקים',
+  'aiSettings.baseUrl': 'כתובת בסיס',
+  'aiSettings.apiKey': 'מפתח API',
+  'aiSettings.testConnection': 'בדוק חיבור',
+  'aiSettings.save': 'שמור הגדרות',
+  'aiSettings.saved': 'הגדרות נשמרו!',
+  'aiSettings.saveFailed': 'שמירה נכשלה',
+  'aiSettings.loadFailed': 'טעינה נכשלה',
+};
+
+const aiSettingsFr: Dict = {
+  ...aiSettingsEn,
+  'aiSettings.title': 'Paramètres du fournisseur AI',
+  'aiSettings.loading': 'Chargement des paramètres AI…',
+  'aiSettings.model': 'Modèle',
+  'aiSettings.sourceSystem': 'Config système',
+  'aiSettings.sourceProject': 'Config projet',
+  'aiSettings.sourceHome': 'Config domicile',
+  'aiSettings.sourceNone': 'Aucune config trouvée',
+  'aiSettings.apiKeySet': 'Clé API définie',
+  'aiSettings.apiKeyMissing': 'Clé API manquante',
+  'aiSettings.tokenSet': 'Token défini',
+  'aiSettings.tokenNone': 'Pas de token',
+  'aiSettings.providerPresets': 'Préréglages fournisseurs',
+  'aiSettings.baseUrl': 'URL de base',
+  'aiSettings.apiKey': 'Clé API',
+  'aiSettings.testConnection': 'Tester la connexion',
+  'aiSettings.save': 'Enregistrer',
+  'aiSettings.saved': 'Paramètres enregistrés !',
+  'aiSettings.saveFailed': 'Échec de l\'enregistrement',
+  'aiSettings.loadFailed': 'Échec du chargement',
+};
+
+const aiSettingsAr: Dict = {
+  ...aiSettingsEn,
+  'aiSettings.title': 'إعدادات مزود الذكاء الاصطناعي',
+  'aiSettings.loading': 'جاري تحميل إعدادات الذكاء الاصطناعي…',
+  'aiSettings.model': 'النموذج',
+  'aiSettings.sourceSystem': 'تكوين النظام',
+  'aiSettings.sourceProject': 'تكوين المشروع',
+  'aiSettings.sourceHome': 'تكوين المنزل',
+  'aiSettings.sourceNone': 'لم يتم العثور على تكوين',
+  'aiSettings.apiKeySet': 'مفتاح API مضبوط',
+  'aiSettings.apiKeyMissing': 'مفتاح API مفقود',
+  'aiSettings.tokenSet': 'الرمز مضبوط',
+  'aiSettings.tokenNone': 'لا يوجد رمز',
+  'aiSettings.providerPresets': 'إعدادات مسبقة للمزودين',
+  'aiSettings.baseUrl': 'عنوان URL الأساسي',
+  'aiSettings.apiKey': 'مفتاح API',
+  'aiSettings.testConnection': 'اختبار الاتصال',
+  'aiSettings.save': 'حفظ الإعدادات',
+  'aiSettings.saved': 'تم حفظ الإعدادات!',
+  'aiSettings.saveFailed': 'فشل الحفظ',
+  'aiSettings.loadFailed': 'فشل التحميل',
+};
+
+// Merge AI settings translations
+Object.keys(aiSettingsEn).forEach(k => { EXTENDED_TRANSLATIONS.en[k] = aiSettingsEn[k]; });
+Object.keys(aiSettingsRu).forEach(k => { EXTENDED_TRANSLATIONS.ru[k] = aiSettingsRu[k]; });
+Object.keys(aiSettingsHe).forEach(k => { EXTENDED_TRANSLATIONS.he[k] = aiSettingsHe[k]; });
+Object.keys(aiSettingsFr).forEach(k => { EXTENDED_TRANSLATIONS.fr[k] = aiSettingsFr[k]; });
+Object.keys(aiSettingsAr).forEach(k => { EXTENDED_TRANSLATIONS.ar[k] = aiSettingsAr[k]; });
