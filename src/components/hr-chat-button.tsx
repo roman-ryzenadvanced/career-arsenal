@@ -128,85 +128,44 @@ export function HRChatButton({ onRunSkill, onUpdateTargetRole }: HRChatButtonPro
         description: action.value,
       });
     } else if (action.type === 'generate_file' && action.fileName && action.content) {
-      // ALL file downloads open in a new tab with proper rendering + download button
-      // This prevents broken files — everything is viewable HTML with a download option
-      const ft = action.fileType || 'txt';
-      const content = action.content;
-      const fileName = action.fileName;
-
-      // Build a complete HTML page that renders the content + has download buttons
-      let renderedHtml: string;
-
-      if (content.trim().startsWith('<') || content.trim().startsWith('<!DOCTYPE')) {
-        // Content is already HTML — use as-is, inject download bar
-        renderedHtml = content.replace('</body>',
-          `<div style="position:fixed;bottom:0;left:0;right:0;background:#1a1a1a;padding:12px;text-align:center;z-index:9999;">
-            <button onclick="window.print()" style="padding:10px 24px;font-size:14px;cursor:pointer;background:#fff;border:none;border-radius:6px;margin:0 4px;">🖨️ Save as PDF</button>
-            <button onclick="downloadOriginal()" style="padding:10px 24px;font-size:14px;cursor:pointer;background:#3b82f6;color:#fff;border:none;border-radius:6px;margin:0 4px;">💾 Download Original</button>
-          </div>
-          <script>
-          function downloadOriginal(){
-            var b=new Blob([document.documentElement.outerHTML],{type:'text/html'});
-            var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download='${fileName}.html';a.click();URL.revokeObjectURL(u);
+      // Use server-side endpoint to generate the file preview page
+      // This avoids CDN caching issues with client-side blob downloads
+      try {
+        const dlRes = await fetch('/api/download-file', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            content: action.content,
+            fileName: action.fileName,
+            fileType: action.fileType || 'txt',
+          }),
+        });
+        if (dlRes.ok) {
+          const html = await dlRes.text();
+          const w = window.open('', '_blank');
+          if (w) {
+            w.document.write(html);
+            w.document.close();
+            toast({ title: '📄 File opened', description: 'Use the toolbar to download or save as PDF' });
+          } else {
+            toast({ title: 'Please allow popups to view files' });
           }
-          </script>
-          </body>`);
-      } else {
-        // Content is markdown or text — wrap in styled HTML
-        renderedHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${fileName}</title>
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<style>
-@page { margin: 1.5cm; }
-body { font-family: Georgia, serif; max-width: 210mm; margin: 0 auto; padding: 20px 20px 80px; line-height: 1.6; color: #1a1a1a; }
-h1 { font-size: 22pt; border-bottom: 2px solid #333; padding-bottom: 4px; }
-h2 { font-size: 14pt; margin-top: 1.2em; text-transform: uppercase; letter-spacing: 1px; }
-h3 { font-size: 12pt; }
-ul, ol { padding-left: 1.5em; }
-li { margin: 3px 0; }
-table { border-collapse: collapse; width: 100%; }
-th, td { border: 1px solid #999; padding: 6px; }
-code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; }
-pre { background: #f4f4f4; padding: 12px; border-radius: 6px; overflow-x: auto; }
-@media print { .toolbar { display: none !important; } body { padding: 20px; } }
-</style>
-</head><body>
-<div id="content"></div>
-<div class="toolbar" style="position:fixed;bottom:0;left:0;right:0;background:#1a1a1a;padding:12px;text-align:center;z-index:9999;">
-  <button onclick="window.print()" style="padding:10px 24px;font-size:14px;cursor:pointer;background:#fff;border:none;border-radius:6px;margin:0 4px;">🖨️ Save as PDF</button>
-  <button onclick="downloadMD()" style="padding:10px 24px;font-size:14px;cursor:pointer;background:#3b82f6;color:#fff;border:none;border-radius:6px;margin:0 4px;">💾 Download .md</button>
-  <button onclick="downloadHTML()" style="padding:10px 24px;font-size:14px;cursor:pointer;background:#10b981;color:#fff;border:none;border-radius:6px;margin:0 4px;">💾 Download .html</button>
-</div>
-<script>
-var rawContent = ${JSON.stringify(content)};
-document.getElementById('content').innerHTML = marked.parse(rawContent);
-function downloadMD(){
-  var b=new Blob([rawContent],{type:'text/markdown'});
-  var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download='${fileName}.md';a.click();URL.revokeObjectURL(u);
-}
-function downloadHTML(){
-  var html='<!DOCTYPE html>\\n'+document.documentElement.outerHTML;
-  var b=new Blob([html],{type:'text/html'});
-  var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download='${fileName}.html';a.click();URL.revokeObjectURL(u);
-}
-</script>
-</body></html>`;
+        } else {
+          toast({ title: 'Failed to generate file', variant: 'destructive' });
+        }
+      } catch (e: any) {
+        toast({ title: 'Download failed', description: e?.message, variant: 'destructive' });
       }
-
-      // Open in new tab — user sees the rendered content + download buttons
-      const w = window.open('', '_blank');
-      if (!w) {
-        toast({ title: 'Please allow popups to view files' });
-        return;
-      }
-      w.document.write(renderedHtml);
-      w.document.close();
-      toast({ title: '📄 File opened', description: 'Use the toolbar to download or save as PDF' });
+      return;
     }
+
+    // Note: the old client-side blob download code was removed.
+    // All file downloads now go through the server-side /api/download-file endpoint.
   };
 
   const previewFile = (action: ChatAction) => {
     if (action.type !== 'generate_file' || !action.content) return;
-    // Preview uses the same handler — opens in new tab with toolbar
+    // Preview uses the same server-side handler
     handleAction(action);
   };
 
