@@ -14,16 +14,43 @@ export const runtime = 'nodejs';
 export const maxDuration = 120;
 
 export async function GET() {
-  const user = await getCurrentUser();
+  try {
+    const user = await getCurrentUser();
     if (!user) return NextResponse.json({ error: 'Not authenticated. Please login.' }, { status: 401 });
-    const profile = await getCurrentProfile(user.id);
 
-  return NextResponse.json({ runs });
+    const profile = await db.profile.findFirst({
+      where: { userId: user.id },
+      orderBy: { createdAt: 'desc' },
+    });
+    if (!profile) return NextResponse.json({ runs: [] });
+
+    const runs = await db.skillRun.findMany({
+      where: { profileId: profile.id },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+      select: {
+        id: true,
+        skillId: true,
+        skillName: true,
+        output: true,
+        modelUsed: true,
+        createdAt: true,
+      },
+    });
+
+    return NextResponse.json({ runs });
+  } catch (err: any) {
+    console.error('Runs GET error:', err);
+    return NextResponse.json({ runs: [] });
+  }
 }
 
 // PATCH — execute a skill (using PATCH because POST is blocked by edge layer)
 export async function PATCH(req: NextRequest) {
   try {
+    const user = await getCurrentUser();
+    if (!user) return NextResponse.json({ error: 'Not authenticated. Please login.' }, { status: 401 });
+
     const body = await req.json().catch(() => ({}));
     const skillId: string = body.skillId;
     const inputs: Record<string, string> = body.inputs || {};

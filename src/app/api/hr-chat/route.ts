@@ -111,13 +111,17 @@ PORTAL ACCESS: You can see the user's resume to assess their startup fit. You ca
 };
 
 // Build the portal context string that gets injected into the system prompt
-async function buildPortalContext(): Promise<string> {
-  const user = await getCurrentUser();
-    if (!user) return NextResponse.json({ error: 'Not authenticated. Please login.' }, { status: 401 });
+async function buildPortalContext(userId: string): Promise<string> {
     const profile = await db.profile.findFirst({
-      where: { userId: user.id },
+      where: { userId },
       orderBy: { createdAt: 'desc' },
-      include: { _count: { select: { skillRuns: true, uploads: true } } },
+      include: {
+        skillRuns: {
+          orderBy: { createdAt: 'desc' },
+          take: 10,
+          select: { skillId: true, skillName: true, createdAt: true },
+        },
+      },
     });
 
   if (!profile) {
@@ -179,6 +183,9 @@ function extractActions(reply: string): { cleanedReply: string; actions: Array<{
 
 export async function PATCH(req: NextRequest) {
   try {
+    const user = await getCurrentUser();
+    if (!user) return NextResponse.json({ error: 'Not authenticated. Please login.' }, { status: 401 });
+
     const body = await req.json();
     const messages: ChatMessage[] = body.messages || [];
     const personaKey: string = body.persona || 'recruiter';
@@ -199,7 +206,7 @@ export async function PATCH(req: NextRequest) {
     }
 
     // Build portal context (user's resume, target role, recent activity, available skills)
-    const portalContext = await buildPortalContext();
+    const portalContext = await buildPortalContext(user.id);
 
     // Build the full system prompt: persona + portal context
     const systemPrompt = persona.systemPrompt + portalContext;

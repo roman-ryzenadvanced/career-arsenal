@@ -15,25 +15,40 @@ export const maxDuration = 60;
 
 // GET — list all saved jobs
 export async function GET() {
-  const user = await getCurrentUser();
+  try {
+    const user = await getCurrentUser();
     if (!user) return NextResponse.json({ error: 'Not authenticated. Please login.' }, { status: 401 });
+
     const profile = await db.profile.findFirst({
       where: { userId: user.id },
       orderBy: { createdAt: 'desc' },
-      include: { _count: { select: { skillRuns: true, uploads: true } } },
+    });
+    if (!profile) return NextResponse.json({ jobs: [] });
+
+    const jobs = await db.jobPosting.findMany({
+      where: { profileId: profile.id },
+      orderBy: { createdAt: 'desc' },
+      include: { _count: { select: { applications: true } } },
     });
 
-  return NextResponse.json({
-    jobs: jobs.map((j) => ({
-      ...j,
-      applicationCount: j._count.applications,
-    })),
-  });
+    return NextResponse.json({
+      jobs: jobs.map((j) => ({
+        ...j,
+        applicationCount: j._count.applications,
+      })),
+    });
+  } catch (err: any) {
+    console.error('Jobs GET error:', err);
+    return NextResponse.json({ jobs: [] });
+  }
 }
 
 // PATCH — save a job + auto-calculate match score using AI
 export async function PATCH(req: NextRequest) {
   try {
+    const user = await getCurrentUser();
+    if (!user) return NextResponse.json({ error: 'Not authenticated. Please login.' }, { status: 401 });
+
     const body = await req.json();
     const jobData = body.job;
 
