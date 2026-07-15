@@ -37,8 +37,9 @@ import { ResumeBuilderDialog } from '@/components/resume-builder-dialog';
 import { CoverLetterBuilderDialog } from '@/components/cover-letter-builder-dialog';
 import { JobFinderDialog } from '@/components/job-finder-dialog';
 import { AISettingsDialog } from '@/components/ai-settings-dialog';
+import { TelegramBotDialog } from '@/components/telegram-bot-dialog';
 import { JobSearchBar } from '@/components/job-search-bar';
-import { FileText as ResumeIcon, Mail as CoverLetterIcon, Sparkles as SparklesIcon, Briefcase as JobFinderIcon, Settings as SettingsIcon } from 'lucide-react';
+import { FileText as ResumeIcon, Mail as CoverLetterIcon, Sparkles as SparklesIcon, Briefcase as JobFinderIcon, Settings as SettingsIcon, Send as TelegramIcon } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────
 interface ProfileInfo {
@@ -1026,6 +1027,7 @@ export default function Home() {
   const [coverLetterBuilderOpen, setCoverLetterBuilderOpen] = useState(false);
   const [jobFinderOpen, setJobFinderOpen] = useState(false);
   const [aiSettingsOpen, setAiSettingsOpen] = useState(false);
+  const [telegramOpen, setTelegramOpen] = useState(false);
   const [runs, setRuns] = useState<RunInfo[]>([]);
   const [tab, setTab] = useState<'all' | 'career' | 'hr'>('all');
 
@@ -1135,6 +1137,15 @@ export default function Home() {
                 className="h-9 w-9"
               >
                 <SettingsIcon className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setTelegramOpen(true)}
+                aria-label={t('telegram.title')}
+                className="h-9 w-9 text-sky-500"
+              >
+                <TelegramIcon className="h-4 w-4" />
               </Button>
               <LanguageSwitcher />
               <ThemeToggle />
@@ -1336,6 +1347,11 @@ export default function Home() {
       <AISettingsDialog
         open={aiSettingsOpen}
         onOpenChange={setAiSettingsOpen}
+      />
+
+      <TelegramBotDialog
+        open={telegramOpen}
+        onOpenChange={setTelegramOpen}
       />
 
       <Toaster />

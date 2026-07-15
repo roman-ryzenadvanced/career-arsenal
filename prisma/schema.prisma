@@ -26,6 +26,7 @@ model Profile {
   uploads       UploadedFile[]
   jobPostings   JobPosting[]
   applications  Application[]
+  telegramBots  TelegramBot[]
 }
 
 model UploadedFile {
@@ -102,4 +103,22 @@ model Application {
 
   @@index([profileId, status])
   @@index([jobId])
+}
+
+model TelegramBot {
+  id            String   @id @default(cuid())
+  profileId     String
+  botToken      String   // Telegram bot token from @BotFather
+  botUsername   String?  // @username of the bot
+  chatId        String?  // Telegram chat ID of the user (set on first message)
+  isActive      Boolean  @default(true)
+  defaultPersona String  @default("recruiter") // which HR persona to use by default
+  lastMessageAt DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  profile       Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@unique([botToken])
+  @@index([profileId])
 }

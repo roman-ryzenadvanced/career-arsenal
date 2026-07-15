@@ -1008,3 +1008,138 @@ Object.keys(jobSearchRu).forEach(k => { EXTENDED_TRANSLATIONS.ru[k] = jobSearchR
 Object.keys(jobSearchHe).forEach(k => { EXTENDED_TRANSLATIONS.he[k] = jobSearchHe[k]; });
 Object.keys(jobSearchFr).forEach(k => { EXTENDED_TRANSLATIONS.fr[k] = jobSearchFr[k]; });
 Object.keys(jobSearchAr).forEach(k => { EXTENDED_TRANSLATIONS.ar[k] = jobSearchAr[k]; });
+
+// ─── Telegram Bot translations ───────────────────────────────────────────────
+const telegramEn: Dict = {
+  'telegram.title': 'Telegram HR Assistant',
+  'telegram.loading': 'Loading Telegram settings…',
+  'telegram.active': 'Active — bot is running',
+  'telegram.inactive': 'Inactive — bot is paused',
+  'telegram.online': 'Online',
+  'telegram.offline': 'Offline',
+  'telegram.persona': 'Persona',
+  'telegram.connected': 'Chat connected',
+  'telegram.activate': 'Activate',
+  'telegram.deactivate': 'Deactivate',
+  'telegram.remove': 'Remove',
+  'telegram.removed': 'Telegram bot removed',
+  'telegram.activated': 'Bot activated!',
+  'telegram.deactivated': 'Bot deactivated',
+  'telegram.howToSetup': 'How to set up your Telegram bot',
+  'telegram.step1': 'Open',
+  'telegram.step2': 'Send /newbot and follow the prompts',
+  'telegram.step3': 'Copy the bot token you receive',
+  'telegram.step4': 'Paste it below and click Save',
+  'telegram.botToken': 'Bot Token',
+  'telegram.tokenHint': 'Get your token from @BotFather on Telegram. Format: 123456789:ABCdef...',
+  'telegram.defaultPersona': 'Default HR Persona',
+  'telegram.recruiter': 'Recruiter',
+  'telegram.compensation': 'Comp Specialist',
+  'telegram.careerCoach': 'Career Coach',
+  'telegram.hrLegal': 'HR & Legal',
+  'telegram.cultureExpert': 'Culture Expert',
+  'telegram.founderAdvisor': 'Founder Advisor',
+  'telegram.testConnection': 'Test Connection',
+  'telegram.testSuccess': 'Connection successful!',
+  'telegram.testFailed': 'Connection failed',
+  'telegram.save': 'Save & Connect',
+  'telegram.saved': 'Bot connected!',
+  'telegram.saveFailed': 'Failed to save',
+  'telegram.loadFailed': 'Failed to load settings',
+  'telegram.invalidToken': 'Invalid token. Format: 123456789:ABCdef...',
+  'telegram.confirmRemove': 'Remove the Telegram bot? You can re-add it later.',
+  'telegram.infoNote': 'Once connected, message your bot on Telegram to chat with your HR assistant. The bot reads your resume and portal context, just like the in-app chat. Switch personas anytime with /persona command.',
+};
+
+const telegramRu: Dict = {
+  'telegram.title': 'Telegram HR-ассистент',
+  'telegram.loading': 'Загрузка настроек Telegram…',
+  'telegram.active': 'Активен — бот работает',
+  'telegram.inactive': 'Неактивен — бот на паузе',
+  'telegram.online': 'В сети',
+  'telegram.offline': 'Не в сети',
+  'telegram.persona': 'Персона',
+  'telegram.connected': 'Чат подключён',
+  'telegram.activate': 'Активировать',
+  'telegram.deactivate': 'Деактивировать',
+  'telegram.remove': 'Удалить',
+  'telegram.removed': 'Бот удалён',
+  'telegram.activated': 'Бот активирован!',
+  'telegram.deactivated': 'Бот деактивирован',
+  'telegram.howToSetup': 'Как настроить Telegram-бота',
+  'telegram.step1': 'Откройте',
+  'telegram.step2': 'Отправьте /newbot и следуйте инструкциям',
+  'telegram.step3': 'Скопируйте полученный токен бота',
+  'telegram.step4': 'Вставьте его ниже и нажмите Сохранить',
+  'telegram.botToken': 'Токен бота',
+  'telegram.tokenHint': 'Получите токен у @BotFather в Telegram. Формат: 123456789:ABCdef...',
+  'telegram.defaultPersona': 'HR-персона по умолчанию',
+  'telegram.recruiter': 'Рекрутер',
+  'telegram.compensation': 'Специалист по компенсациям',
+  'telegram.careerCoach': 'Карьерный коуч',
+  'telegram.hrLegal': 'HR и право',
+  'telegram.cultureExpert': 'Эксперт по культуре',
+  'telegram.founderAdvisor': 'Советник основателя',
+  'telegram.testConnection': 'Проверить соединение',
+  'telegram.testSuccess': 'Соединение успешно!',
+  'telegram.testFailed': 'Соединение не удалось',
+  'telegram.save': 'Сохранить и подключить',
+  'telegram.saved': 'Бот подключён!',
+  'telegram.saveFailed': 'Не удалось сохранить',
+  'telegram.loadFailed': 'Не удалось загрузить',
+  'telegram.invalidToken': 'Неверный токен. Формат: 123456789:ABCdef...',
+  'telegram.confirmRemove': 'Удалить Telegram-бота? Вы сможете добавить его позже.',
+  'telegram.infoNote': 'После подключения напишите боту в Telegram, чтобы общаться с HR-ассистентом. Бот читает ваше резюме и контекст портала. Переключайте персоны командой /persona.',
+};
+
+const telegramHe: Dict = {
+  ...telegramEn,
+  'telegram.title': 'עוזר HR בטלגרם',
+  'telegram.loading': 'טוען הגדרות Telegram…',
+  'telegram.active': 'פעיל — הבוט פועל',
+  'telegram.inactive': 'לא פעיל — הבוט מושהה',
+  'telegram.online': 'מחובר',
+  'telegram.offline': 'מנותק',
+  'telegram.activate': 'הפעל',
+  'telegram.deactivate': 'השהה',
+  'telegram.remove': 'הסר',
+  'telegram.save': 'שמור וחבר',
+  'telegram.saved': 'הבוט חובר!',
+};
+
+const telegramFr: Dict = {
+  ...telegramEn,
+  'telegram.title': 'Assistant RH Telegram',
+  'telegram.loading': 'Chargement des paramètres Telegram…',
+  'telegram.active': 'Actif — le bot fonctionne',
+  'telegram.inactive': 'Inactif — le bot est en pause',
+  'telegram.online': 'En ligne',
+  'telegram.offline': 'Hors ligne',
+  'telegram.activate': 'Activer',
+  'telegram.deactivate': 'Désactiver',
+  'telegram.remove': 'Supprimer',
+  'telegram.save': 'Enregistrer et connecter',
+  'telegram.saved': 'Bot connecté !',
+};
+
+const telegramAr: Dict = {
+  ...telegramEn,
+  'telegram.title': 'مساعد الموارد البشرية على تيليجرام',
+  'telegram.loading': 'جاري تحميل إعدادات Telegram…',
+  'telegram.active': 'نشط — البوت يعمل',
+  'telegram.inactive': 'غير نشط — البوت متوقف',
+  'telegram.online': 'متصل',
+  'telegram.offline': 'غير متصل',
+  'telegram.activate': 'تفعيل',
+  'telegram.deactivate': 'إيقاف',
+  'telegram.remove': 'إزالة',
+  'telegram.save': 'حفظ وربط',
+  'telegram.saved': 'تم ربط البوت!',
+};
+
+// Merge Telegram translations
+Object.keys(telegramEn).forEach(k => { EXTENDED_TRANSLATIONS.en[k] = telegramEn[k]; });
+Object.keys(telegramRu).forEach(k => { EXTENDED_TRANSLATIONS.ru[k] = telegramRu[k]; });
+Object.keys(telegramHe).forEach(k => { EXTENDED_TRANSLATIONS.he[k] = telegramHe[k]; });
+Object.keys(telegramFr).forEach(k => { EXTENDED_TRANSLATIONS.fr[k] = telegramFr[k]; });
+Object.keys(telegramAr).forEach(k => { EXTENDED_TRANSLATIONS.ar[k] = telegramAr[k]; });
