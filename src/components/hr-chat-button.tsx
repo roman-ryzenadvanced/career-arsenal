@@ -25,12 +25,12 @@ interface ChatMessage {
 }
 
 const PERSONAS = [
-  { id: 'recruiter', name: 'Sarah', role: 'Senior Recruiter', icon: '🎯', color: 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-900' },
-  { id: 'compensation', name: 'Marcus', role: 'Comp Specialist', icon: '💰', color: 'bg-green-50 text-green-700 border-green-200 dark:bg-green-950/40 dark:text-green-300 dark:border-green-900' },
-  { id: 'career_coach', name: 'Dr. Priya', role: 'Career Coach', icon: '🧭', color: 'bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950/40 dark:text-violet-300 dark:border-violet-900' },
-  { id: 'hr_legal', name: 'James', role: 'HR & Legal', icon: '⚖️', color: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900' },
-  { id: 'culture', name: 'Elena', role: 'Culture Expert', icon: '🌟', color: 'bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950/40 dark:text-teal-300 dark:border-teal-900' },
-  { id: 'founder', name: 'Alex', role: 'Founder Advisor', icon: '🚀', color: 'bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-900' },
+  { id: 'recruiter', nameKey: 'persona.recruiter.name', roleKey: 'persona.recruiter.role', icon: '🎯', color: 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-900' },
+  { id: 'compensation', nameKey: 'persona.compensation.name', roleKey: 'persona.compensation.role', icon: '💰', color: 'bg-green-50 text-green-700 border-green-200 dark:bg-green-950/40 dark:text-green-300 dark:border-green-900' },
+  { id: 'career_coach', nameKey: 'persona.career_coach.name', roleKey: 'persona.career_coach.role', icon: '🧭', color: 'bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950/40 dark:text-violet-300 dark:border-violet-900' },
+  { id: 'hr_legal', nameKey: 'persona.hr_legal.name', roleKey: 'persona.hr_legal.role', icon: '⚖️', color: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900' },
+  { id: 'culture', nameKey: 'persona.culture.name', roleKey: 'persona.culture.role', icon: '🌟', color: 'bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950/40 dark:text-teal-300 dark:border-teal-900' },
+  { id: 'founder', nameKey: 'persona.founder.name', roleKey: 'persona.founder.role', icon: '🚀', color: 'bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-900' },
 ];
 
 const SKILL_ICONS: Record<string, any> = {
@@ -165,7 +165,7 @@ export function HRChatButton({ onRunSkill, onUpdateTargetRole }: HRChatButtonPro
                 }`}
               >
                 <span className="text-sm">{p.icon}</span>
-                <span>{p.name}</span>
+                <span>{t(p.nameKey)}</span>
               </button>
             ))}
           </div>
@@ -180,8 +180,8 @@ export function HRChatButton({ onRunSkill, onUpdateTargetRole }: HRChatButtonPro
                   <span className="text-2xl">{currentPersona.icon}</span>
                 </div>
                 <div>
-                  <p className="font-semibold text-sm">{currentPersona.name}</p>
-                  <p className="text-xs text-muted-foreground">{currentPersona.role}</p>
+                  <p className="font-semibold text-sm">{t(currentPersona.nameKey)}</p>
+                  <p className="text-xs text-muted-foreground">{t(currentPersona.roleKey)}</p>
                 </div>
                 <p className="text-xs text-muted-foreground max-w-xs mx-auto">
                   {t('chat.welcomePortalAware')}
@@ -270,7 +270,7 @@ export function HRChatButton({ onRunSkill, onUpdateTargetRole }: HRChatButtonPro
           />
           <div className="flex items-center justify-between gap-2">
             <Badge variant="outline" className="text-[10px]">
-              {currentPersona.icon} {currentPersona.name}
+              {currentPersona.icon} {t(currentPersona.nameKey)}
             </Badge>
             <Button
               size="sm"

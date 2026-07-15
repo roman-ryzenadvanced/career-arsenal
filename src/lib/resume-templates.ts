@@ -568,11 +568,11 @@ export function getRandomTemplate(): ResumeTemplate {
 }
 
 export const TEMPLATE_CATEGORIES = [
-  { id: 'all', label: 'All' },
-  { id: 'modern', label: 'Modern' },
-  { id: 'classic', label: 'Classic' },
-  { id: 'creative', label: 'Creative' },
-  { id: 'minimal', label: 'Minimal' },
-  { id: 'executive', label: 'Executive' },
-  { id: 'tech', label: 'Tech' },
+  { id: 'all', labelKey: 'template.category.all' },
+  { id: 'modern', labelKey: 'template.category.modern' },
+  { id: 'classic', labelKey: 'template.category.classic' },
+  { id: 'creative', labelKey: 'template.category.creative' },
+  { id: 'minimal', labelKey: 'template.category.minimal' },
+  { id: 'executive', labelKey: 'template.category.executive' },
+  { id: 'tech', labelKey: 'template.category.tech' },
 ];

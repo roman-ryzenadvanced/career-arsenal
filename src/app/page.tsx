@@ -538,6 +538,7 @@ function ProfilePanel({ profile, onChanged, onCleared }: {
 
 // ─── Skill Card ────────────────────────────────────────────────────────────
 function SkillCard({ skill, onRun }: { skill: Skill; onRun: (s: Skill) => void }) {
+  const { t } = useI18n();
   return (
     <Card className="group flex flex-col hover:shadow-md transition-shadow cursor-pointer" onClick={() => onRun(skill)}>
       <CardHeader className="pb-3">
@@ -547,12 +548,12 @@ function SkillCard({ skill, onRun }: { skill: Skill; onRun: (s: Skill) => void }
           </div>
           <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
-        <CardTitle className="text-sm mt-2">{skill.name}</CardTitle>
-        <CardDescription className="text-xs leading-relaxed">{skill.tagline}</CardDescription>
+        <CardTitle className="text-sm mt-2">{skill.nameKey ? t(skill.nameKey) : skill.name}</CardTitle>
+        <CardDescription className="text-xs leading-relaxed">{skill.taglineKey ? t(skill.taglineKey) : skill.tagline}</CardDescription>
       </CardHeader>
       <CardContent className="pt-0 mt-auto">
         <Badge variant="outline" className="text-[10px]">
-          {skill.category === 'career' ? 'Career' : 'HR / Hiring'}
+          {skill.category === 'career' ? t('skill.category.career') : t('skill.category.hr')}
         </Badge>
       </CardContent>
     </Card>
@@ -608,7 +609,7 @@ function SkillRunDialog({ skill, open, onOpenChange, onSaved }: {
       setResult(data.output);
       setModelUsed(data.modelUsed);
       onSaved();
-      toast({ title: `${skill.name} complete`, description: 'Output is ready below.' });
+      toast({ title: t('toast.skillComplete', { skill: skill.nameKey ? t(skill.nameKey) : skill.name }), description: t('toast.skillCompleteDesc') });
     } catch (e: any) {
       setError(e?.message || 'Network error.');
     } finally {
@@ -646,9 +647,9 @@ function SkillRunDialog({ skill, open, onOpenChange, onSaved }: {
                 <SkillIcon name={skill.icon} className="h-3.5 w-3.5" />
               </div>
             )}
-            {skill?.name}
+            {skill?.nameKey ? t(skill.nameKey) : skill?.name}
           </DialogTitle>
-          <DialogDescription>{skill?.description}</DialogDescription>
+          <DialogDescription>{skill?.descriptionKey ? t(skill.descriptionKey) : skill?.description}</DialogDescription>
         </DialogHeader>
 
         <ScrollArea className="flex-1 max-h-[70vh] pr-4">
@@ -658,7 +659,7 @@ function SkillRunDialog({ skill, open, onOpenChange, onSaved }: {
               {skill?.inputs.map((inp) => (
                 <div key={inp.key}>
                   <Label htmlFor={`inp-${inp.key}`} className="text-xs">
-                    {inp.label}
+                    {inp.labelKey ? t(inp.labelKey) : inp.label}
                     {inp.required && <span className="text-destructive ml-1">*</span>}
                   </Label>
                   {inp.helpText && (
@@ -669,7 +670,7 @@ function SkillRunDialog({ skill, open, onOpenChange, onSaved }: {
                       id={`inp-${inp.key}`}
                       value={inputValues[inp.key] || ''}
                       onChange={(e) => setInputValues((p) => ({ ...p, [inp.key]: e.target.value }))}
-                      placeholder={inp.placeholder}
+                      placeholder={inp.placeholderKey ? t(inp.placeholderKey) : inp.placeholder}
                       className="mt-1 min-h-[100px] text-sm"
                     />
                   ) : inp.type === 'select' ? (
@@ -682,7 +683,9 @@ function SkillRunDialog({ skill, open, onOpenChange, onSaved }: {
                       </SelectTrigger>
                       <SelectContent>
                         {inp.options?.map((opt) => (
-                          <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                          <SelectItem key={opt.value} value={opt.value}>
+                            {opt.labelKey ? t(opt.labelKey) : opt.label}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -692,7 +695,7 @@ function SkillRunDialog({ skill, open, onOpenChange, onSaved }: {
                       type={inp.type === 'number' ? 'number' : 'text'}
                       value={inputValues[inp.key] || ''}
                       onChange={(e) => setInputValues((p) => ({ ...p, [inp.key]: e.target.value }))}
-                      placeholder={inp.placeholder}
+                      placeholder={inp.placeholderKey ? t(inp.placeholderKey) : inp.placeholder}
                       className="mt-1 text-sm"
                     />
                   )}
@@ -720,17 +723,17 @@ function SkillRunDialog({ skill, open, onOpenChange, onSaved }: {
                   <div className="flex items-center gap-2">
                     <Sparkles className="h-3.5 w-3.5 text-muted-foreground" />
                     <span className="text-xs text-muted-foreground">
-                      {t('dialog.generated')} {modelUsed || 'GLM'}
+                      {t('skill.dialog.generated')} {modelUsed || 'GLM'}
                     </span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Button size="sm" variant="ghost" onClick={copy} className="h-7 text-xs">
                       {copied ? <Check className="h-3 w-3 mr-1" /> : <Copy className="h-3 w-3 mr-1" />}
-                      {copied ? t('dialog.copied') : t('dialog.copy')}
+                      {copied ? t('skill.dialog.copied') : t('skill.dialog.copy')}
                     </Button>
                     <Button size="sm" variant="ghost" onClick={download} className="h-7 text-xs">
                       <Download className="h-3 w-3 mr-1" />
-                      {t('dialog.download')}
+                      {t('skill.dialog.download')}
                     </Button>
                   </div>
                 </div>
@@ -744,14 +747,14 @@ function SkillRunDialog({ skill, open, onOpenChange, onSaved }: {
         </ScrollArea>
 
         <DialogFooter className="border-t pt-4">
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>{t('dialog.close')}</Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)}>{t('skill.dialog.close')}</Button>
           <Button onClick={run} disabled={running || !skill}>
             {running ? (
-              <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t('dialog.running')}</>
+              <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t('skill.dialog.running')}</>
             ) : result ? (
-              <><RefreshCw className="mr-2 h-4 w-4" /> {t('dialog.rerun')}</>
+              <><RefreshCw className="mr-2 h-4 w-4" /> {t('skill.dialog.rerun')}</>
             ) : (
-              <><Sparkles className="mr-2 h-4 w-4" /> {t('dialog.runWithGLM')}</>
+              <><Sparkles className="mr-2 h-4 w-4" /> {t('skill.dialog.runWithGLM')}</>
             )}
           </Button>
         </DialogFooter>
@@ -1034,14 +1037,14 @@ export default function Home() {
             <UploadZone onUploaded={setProfile} onProfileLoaded={loadRuns} />
             <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-muted-foreground">
               {[
-                { label: t('skills.career'), icon: 'Compass' },
-                { label: t('hero.badge'), icon: 'FileText' },
-                { label: 'Cover letters', icon: 'Mail' },
-                { label: 'Interview prep', icon: 'Mic' },
-                { label: 'Salary scripts', icon: 'DollarSign' },
-                { label: 'LinkedIn opt', icon: 'Linkedin' },
-                { label: 'Job hunt plan', icon: 'Crosshair' },
-                { label: '+ 9 more', icon: 'Sparkles' },
+                { label: t('hero.quickAction.career'), icon: 'Compass' },
+                { label: t('hero.quickAction.resume'), icon: 'FileText' },
+                { label: t('hero.quickAction.cover'), icon: 'Mail' },
+                { label: t('hero.quickAction.interview'), icon: 'Mic' },
+                { label: t('hero.quickAction.salary'), icon: 'DollarSign' },
+                { label: t('hero.quickAction.linkedin'), icon: 'Linkedin' },
+                { label: t('hero.quickAction.hunt'), icon: 'Crosshair' },
+                { label: t('hero.quickAction.more'), icon: 'Sparkles' },
               ].map((x, i) => (
                 <div key={i} className="flex items-center gap-1.5 px-3 py-2 rounded-md border stagger-card" style={{ animationDelay: `${i * 50}ms` }}>
                   <SkillIcon name={x.icon} className="h-3.5 w-3.5" />

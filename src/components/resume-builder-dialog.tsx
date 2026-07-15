@@ -213,7 +213,7 @@ ${template.render(resumeData)}
                             : 'bg-muted text-muted-foreground hover:bg-accent'
                         }`}
                       >
-                        {cat.label}
+                        {t(cat.labelKey)}
                       </button>
                     ))}
                   </div>
