@@ -1254,3 +1254,58 @@ Object.keys(authFr).forEach(k => { EXTENDED_TRANSLATIONS.fr[k] = authFr[k]; });
 Object.keys(authAr).forEach(k => { EXTENDED_TRANSLATIONS.ar[k] = authAr[k]; });
 // Add auth.logout to all languages
 ['en','ru','he','fr','ar'].forEach(lang => { EXTENDED_TRANSLATIONS[lang as any]['auth.logout'] = lang === 'ru' ? 'Выйти' : lang === 'he' ? 'התנתק' : lang === 'fr' ? 'Déconnexion' : lang === 'ar' ? 'تسجيل الخروج' : 'Logout'; });
+
+// ─── Creative Studio translations ────────────────────────────────────────────
+const creativeEn: Dict = {
+  'creative.title': 'Creative Studio',
+  'creative.chooseType': 'What do you want to create?',
+  'creative.slides': 'Presentation',
+  'creative.landing': 'Landing Page',
+  'creative.app': 'Mini App',
+  'creative.portfolio': 'Portfolio',
+  'creative.doc': 'Document',
+  'creative.prompt': 'Describe what you want to create',
+  'creative.customInstructions': 'Custom instructions',
+  'creative.customPlaceholder': 'e.g. Use dark theme, include animations, add specific sections...',
+  'creative.generate': 'Generate',
+  'creative.generating': 'Creating your content…',
+  'creative.generated': 'Content generated!',
+  'creative.failed': 'Generation failed',
+  'creative.preview': 'Preview',
+  'creative.openNewTab': 'Open in new tab',
+  'creative.download': 'Download',
+  'creative.empty': 'Your creation will appear here',
+  'creative.emptyDesc': 'Choose a type, describe what you want, and let AI build it for you. Presentations, landing pages, mini apps, portfolio sites, and documents — all powered by your resume data.',
+};
+
+const creativeRu: Dict = {
+  'creative.title': 'Креативная студия',
+  'creative.chooseType': 'Что вы хотите создать?',
+  'creative.slides': 'Презентация',
+  'creative.landing': 'Лендинг',
+  'creative.app': 'Мини-приложение',
+  'creative.portfolio': 'Портфолио',
+  'creative.doc': 'Документ',
+  'creative.prompt': 'Опишите, что вы хотите создать',
+  'creative.customInstructions': 'Пользовательские инструкции',
+  'creative.customPlaceholder': 'напр. Тёмная тема, анимации, конкретные секции...',
+  'creative.generate': 'Создать',
+  'creative.generating': 'Создание контента…',
+  'creative.generated': 'Контент создан!',
+  'creative.failed': 'Ошибка создания',
+  'creative.preview': 'Предпросмотр',
+  'creative.openNewTab': 'Открыть в новой вкладке',
+  'creative.download': 'Скачать',
+  'creative.empty': 'Ваше творение появится здесь',
+  'creative.emptyDesc': 'Выберите тип, опишите задачу — AI создаст для вас презентацию, лендинг, приложение или документ.',
+};
+
+const creativeHe: Dict = { ...creativeEn, 'creative.title': 'סטודיו יצירה', 'creative.generate': 'צור', 'creative.preview': 'תצוגה', 'creative.download': 'הורד' };
+const creativeFr: Dict = { ...creativeEn, 'creative.title': 'Studio Créatif', 'creative.generate': 'Générer', 'creative.preview': 'Aperçu', 'creative.download': 'Télécharger' };
+const creativeAr: Dict = { ...creativeEn, 'creative.title': 'استوديو إبداعي', 'creative.generate': 'إنشاء', 'creative.preview': 'معاينة', 'creative.download': 'تحميل' };
+
+Object.keys(creativeEn).forEach(k => { EXTENDED_TRANSLATIONS.en[k] = creativeEn[k]; });
+Object.keys(creativeRu).forEach(k => { EXTENDED_TRANSLATIONS.ru[k] = creativeRu[k]; });
+Object.keys(creativeHe).forEach(k => { EXTENDED_TRANSLATIONS.he[k] = creativeHe[k]; });
+Object.keys(creativeFr).forEach(k => { EXTENDED_TRANSLATIONS.fr[k] = creativeFr[k]; });
+Object.keys(creativeAr).forEach(k => { EXTENDED_TRANSLATIONS.ar[k] = creativeAr[k]; });

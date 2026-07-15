@@ -38,9 +38,10 @@ import { CoverLetterBuilderDialog } from '@/components/cover-letter-builder-dial
 import { JobFinderDialog } from '@/components/job-finder-dialog';
 import { AISettingsDialog } from '@/components/ai-settings-dialog';
 import { TelegramBotDialog } from '@/components/telegram-bot-dialog';
+import { CreativeStudioDialog } from '@/components/creative-studio-dialog';
 import { LoginScreen } from '@/components/login-screen';
 import { JobSearchBar } from '@/components/job-search-bar';
-import { FileText as ResumeIcon, Mail as CoverLetterIcon, Sparkles as SparklesIcon, Briefcase as JobFinderIcon, Settings as SettingsIcon, Send as TelegramIcon } from 'lucide-react';
+import { FileText as ResumeIcon, Mail as CoverLetterIcon, Sparkles as SparklesIcon, Briefcase as JobFinderIcon, Settings as SettingsIcon, Send as TelegramIcon, Palette as CreativeIcon } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────
 interface ProfileInfo {
@@ -1031,6 +1032,7 @@ export default function Home() {
   const [jobFinderOpen, setJobFinderOpen] = useState(false);
   const [aiSettingsOpen, setAiSettingsOpen] = useState(false);
   const [telegramOpen, setTelegramOpen] = useState(false);
+  const [creativeOpen, setCreativeOpen] = useState(false);
   const [runs, setRuns] = useState<RunInfo[]>([]);
   const [tab, setTab] = useState<'all' | 'career' | 'hr'>('all');
 
@@ -1311,7 +1313,7 @@ export default function Home() {
               </div>
 
               {/* Quick Action Builders */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
                 <button
                   onClick={() => setResumeBuilderOpen(true)}
                   className="flex items-center gap-3 p-4 rounded-lg border-2 border-primary/20 bg-primary/5 hover:bg-primary/10 hover:border-primary/40 transition-all text-left group"
@@ -1350,6 +1352,19 @@ export default function Home() {
                     <p className="text-xs text-muted-foreground truncate">LinkedIn · Indeed · Auto-Apply</p>
                   </div>
                   <SparklesIcon className="h-4 w-4 text-emerald-600 shrink-0" />
+                </button>
+                <button
+                  onClick={() => setCreativeOpen(true)}
+                  className="flex items-center gap-3 p-4 rounded-lg border-2 border-violet-500/30 bg-violet-500/5 hover:bg-violet-500/10 hover:border-violet-500/50 transition-all text-left group"
+                >
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-violet-600 text-white group-hover:scale-110 transition-transform">
+                    <CreativeIcon className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm">{t('creative.title')}</p>
+                    <p className="text-xs text-muted-foreground truncate">Slides · Landing · Apps · Portfolio</p>
+                  </div>
+                  <SparklesIcon className="h-4 w-4 text-violet-600 shrink-0" />
                 </button>
               </div>
 
@@ -1403,6 +1418,11 @@ export default function Home() {
       <TelegramBotDialog
         open={telegramOpen}
         onOpenChange={setTelegramOpen}
+      />
+
+      <CreativeStudioDialog
+        open={creativeOpen}
+        onOpenChange={setCreativeOpen}
       />
 
       <Toaster />
