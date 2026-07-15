@@ -161,10 +161,11 @@ export function JobSearchBar({ hasProfile, onUploadClick, onSaveJob, onOpenJobFi
 
   return (
     <div className="mb-6 animate-fade-in-up">
-      {/* Search bar — Google style */}
+      {/* Search bar — Google style, responsive */}
       <div className="relative">
-        <div className={`flex items-center gap-2 border-2 rounded-full px-4 py-2.5 transition-all bg-background shadow-sm hover:shadow-md focus-within:shadow-md focus-within:border-primary/40 ${hasProfile ? 'border-border' : 'border-amber-300/50'}`}>
-          <Search className="h-5 w-5 text-muted-foreground shrink-0" />
+        {/* Main search row */}
+        <div className={`flex items-center gap-1.5 sm:gap-2 border-2 rounded-full px-3 sm:px-4 py-2 sm:py-2.5 transition-all bg-background shadow-sm hover:shadow-md focus-within:shadow-md focus-within:border-primary/40 overflow-hidden ${hasProfile ? 'border-border' : 'border-amber-300/50'}`}>
+          <Search className="h-4 sm:h-5 w-4 sm:w-5 text-muted-foreground shrink-0" />
           <input
             ref={inputRef}
             type="text"
@@ -173,14 +174,57 @@ export function JobSearchBar({ hasProfile, onUploadClick, onSaveJob, onOpenJobFi
             onKeyDown={handleKeyDown}
             placeholder={hasProfile ? t('jobSearch.placeholder') : t('jobSearch.uploadFirst')}
             disabled={!hasProfile && !query}
-            className="flex-1 bg-transparent outline-none text-sm placeholder:text-muted-foreground disabled:cursor-not-allowed"
+            className="flex-1 min-w-0 bg-transparent outline-none text-sm placeholder:text-muted-foreground disabled:cursor-not-allowed"
           />
           {query && (
-            <button onClick={() => { setQuery(''); setResults([]); setHasSearched(false); }} className="text-muted-foreground hover:text-foreground shrink-0">
+            <button onClick={() => { setQuery(''); setResults([]); setHasSearched(false); }} className="text-muted-foreground hover:text-foreground shrink-0 p-0.5">
               <X className="h-4 w-4" />
             </button>
           )}
-          <div className="h-5 w-px bg-border" />
+          {/* Location — hidden on very small screens, shown on sm+ */}
+          <div className="hidden sm:flex items-center gap-1.5 shrink-0">
+            <div className="h-5 w-px bg-border" />
+            <input
+              type="text"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder={t('jobSearch.locationPlaceholder')}
+              disabled={!hasProfile}
+              className="w-24 lg:w-32 bg-transparent outline-none text-sm placeholder:text-muted-foreground disabled:cursor-not-allowed"
+            />
+            <MapPin className="h-4 w-4 text-muted-foreground" />
+          </div>
+          {/* Filters button */}
+          <div className="relative shrink-0">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`p-1.5 rounded-full transition-colors ${showFilters || activeFilters.length > 0 ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+              aria-label="Filters"
+            >
+              <SlidersHorizontal className="h-4 w-4" />
+            </button>
+            {activeFilters.length > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 bg-primary text-primary-foreground text-[9px] rounded-full flex items-center justify-center font-bold">
+                {activeFilters.length}
+              </span>
+            )}
+          </div>
+          {/* Search button */}
+          <Button
+            size="sm"
+            onClick={search}
+            disabled={searching || (!hasProfile && !query)}
+            className="rounded-full h-8 w-8 sm:w-auto sm:px-4 shrink-0 p-0 sm:p-0"
+          >
+            {searching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+            <span className="ml-1 hidden sm:inline">{t('jobSearch.searchBtn')}</span>
+          </Button>
+        </div>
+
+        {/* Location field for mobile (below search bar) */}
+        <div className="sm:hidden mt-2 flex items-center gap-1.5 px-3">
+          <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
           <input
             type="text"
             value={location}
@@ -188,30 +232,8 @@ export function JobSearchBar({ hasProfile, onUploadClick, onSaveJob, onOpenJobFi
             onKeyDown={handleKeyDown}
             placeholder={t('jobSearch.locationPlaceholder')}
             disabled={!hasProfile}
-            className="w-24 sm:w-32 bg-transparent outline-none text-sm placeholder:text-muted-foreground disabled:cursor-not-allowed"
+            className="flex-1 bg-transparent outline-none text-sm placeholder:text-muted-foreground border-b border-border pb-1 disabled:cursor-not-allowed"
           />
-          <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className={`shrink-0 p-1.5 rounded-full transition-colors ${showFilters || activeFilters.length > 0 ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground'}`}
-            aria-label="Filters"
-          >
-            <SlidersHorizontal className="h-4 w-4" />
-            {activeFilters.length > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 bg-primary text-primary-foreground text-[9px] rounded-full flex items-center justify-center font-bold">
-                {activeFilters.length}
-              </span>
-            )}
-          </button>
-          <Button
-            size="sm"
-            onClick={search}
-            disabled={searching || (!hasProfile && !query)}
-            className="rounded-full h-8 px-4 shrink-0"
-          >
-            {searching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-            <span className="ml-1 hidden sm:inline">{t('jobSearch.searchBtn')}</span>
-          </Button>
         </div>
 
         {/* Resume required notice */}
@@ -228,7 +250,7 @@ export function JobSearchBar({ hasProfile, onUploadClick, onSaveJob, onOpenJobFi
 
       {/* Active filter chips */}
       {activeFilters.length > 0 && (
-        <div className="flex items-center gap-1.5 mt-2 px-4 flex-wrap">
+        <div className="flex items-center gap-1.5 mt-2 px-3 flex-wrap">
           <span className="text-xs text-muted-foreground">{t('jobSearch.activeFilters')}:</span>
           {activeFilters.map((f: any, i: number) => (
             <button
@@ -252,7 +274,7 @@ export function JobSearchBar({ hasProfile, onUploadClick, onSaveJob, onOpenJobFi
       {/* Filters panel */}
       {showFilters && (
         <div className="mt-2 p-4 border rounded-lg bg-muted/30 space-y-3 animate-fade-in-up">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3 sm:grid-cols-4">
             {/* Job Type */}
             <div>
               <label className="text-xs font-medium text-muted-foreground mb-1 block flex items-center gap-1">
@@ -352,13 +374,13 @@ export function JobSearchBar({ hasProfile, onUploadClick, onSaveJob, onOpenJobFi
 
           {/* Results list */}
           {!searching && results.length > 0 && (
-            <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1" style={{ WebkitOverflowScrolling: 'touch' }}>
+            <div className="space-y-2 max-h-[60dvh] overflow-y-auto pr-1" style={{ WebkitOverflowScrolling: 'touch' }}>
               {results.map((job, i) => {
                 const jobKey = job.url || job.title + job.company;
                 const isSaving = savingJobKey === jobKey;
                 return (
                   <Card key={i} className="hover:shadow-md transition-shadow group">
-                    <CardContent className="p-3">
+                    <CardContent className="p-2.5 sm:p-3">
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-0.5">
@@ -381,9 +403,9 @@ export function JobSearchBar({ hasProfile, onUploadClick, onSaveJob, onOpenJobFi
                               </span>
                             )}
                           </div>
-                          <p className="text-xs text-muted-foreground line-clamp-2">{job.snippet}</p>
+                          <p className="text-xs text-muted-foreground line-clamp-2 break-words">{job.snippet}</p>
                         </div>
-                        <div className="flex flex-col gap-1 shrink-0">
+                        <div className="flex flex-row sm:flex-col gap-1 shrink-0">
                           {job.url && (
                             <Button
                               size="sm"

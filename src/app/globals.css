@@ -757,3 +757,158 @@ html {
     overscroll-behavior: contain;
   }
 }
+
+/* ─── Mobile overflow prevention — comprehensive fix ──────────────────────── */
+
+/* Ensure all flex containers can shrink and don't overflow */
+.flex {
+  min-width: 0;
+}
+
+/* All inputs should not expand beyond container */
+input, textarea, select {
+  max-width: 100%;
+}
+
+/* Buttons should not overflow on mobile */
+button {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Fix for inline-flex search bar elements */
+.rounded-full {
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+
+/* Prevent SVG icons from causing overflow */
+svg {
+  flex-shrink: 0;
+}
+
+/* Dialog content: full width on mobile with proper margins */
+@media (max-width: 640px) {
+  [data-radix-dialog-content] {
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 0 !important;
+    min-height: 100dvh !important;
+    max-height: 100dvh !important;
+  }
+
+  [data-radix-dialog-overlay] {
+    padding: 0 !important;
+  }
+}
+
+/* Custom dialogs (resume builder, cover letter, job finder, AI settings) */
+@media (max-width: 640px) {
+  .fixed.inset-0.z-\[60\] {
+    padding: 0 !important;
+  }
+
+  .fixed.inset-0.z-\[60\] > div {
+    max-width: 100% !important;
+    width: 100% !important;
+    max-height: 100dvh !important;
+    height: 100dvh !important;
+    border-radius: 0 !important;
+    border: none !important;
+  }
+
+  /* Left panel (inputs) should be full width on mobile, not side-by-side */
+  .fixed.inset-0.z-\[60\] > div > .flex-1 {
+    flex-direction: column !important;
+  }
+
+  .fixed.inset-0.z-\[60\] > div > div > .lg\:w-\[400px\] {
+    width: 100% !important;
+    max-height: 40dvh !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border) !important;
+  }
+}
+
+/* Sheet content: full screen on mobile */
+@media (max-width: 640px) {
+  [data-radix-sheet-content] {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Header: prevent overflow */
+@media (max-width: 640px) {
+  header.sticky > div > div {
+    padding: 0 0.5rem !important;
+  }
+
+  header.sticky .h-14 {
+    height: 3.5rem !important;
+  }
+}
+
+/* Quick action builder cards: stack vertically on very small screens */
+@media (max-width: 380px) {
+  .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-3 {
+    gap: 0.5rem !important;
+  }
+}
+
+/* Tab list: scrollable on mobile */
+@media (max-width: 640px) {
+  [role="tablist"] {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  [role="tablist"] button {
+    white-space: nowrap;
+  }
+}
+
+/* Ensure the main content area doesn't overflow */
+@media (max-width: 640px) {
+  main {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    overflow-x: hidden;
+  }
+}
+
+/* Promo banner: smaller text and tighter spacing on mobile */
+@media (max-width: 640px) {
+  .border-b.bg-gradient-to-r,
+  .border-b.bg-foreground\/\[0\.02\] {
+    padding: 0.375rem 0.5rem !important;
+  }
+
+  .border-b.bg-gradient-to-r a,
+  .border-b.bg-foreground\/\[0\.02\] a {
+    font-size: 10px !important;
+  }
+}
+
+/* Footer: stack vertically on mobile */
+@media (max-width: 640px) {
+  footer .flex.flex-col.sm\:flex-row {
+    gap: 0.75rem !important;
+  }
+}
+
+/* Code blocks and pre: scrollable on mobile */
+pre, code {
+  max-width: 100%;
+  overflow-x: auto;
+  word-wrap: break-word;
+}
+
+/* Tables: scrollable on mobile */
+.prose-sm table {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}
