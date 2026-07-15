@@ -33,6 +33,9 @@ import { useI18n } from '@/lib/i18n-context';
 import { LOCALES } from '@/lib/i18n';
 import { PugLoader } from '@/components/pug-loader';
 import { HRChatButton } from '@/components/hr-chat-button';
+import { ResumeBuilderDialog } from '@/components/resume-builder-dialog';
+import { CoverLetterBuilderDialog } from '@/components/cover-letter-builder-dialog';
+import { FileText as ResumeIcon, Mail as CoverLetterIcon, Sparkles as SparklesIcon } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────
 interface ProfileInfo {
@@ -899,6 +902,8 @@ export default function Home() {
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [activeSkill, setActiveSkill] = useState<Skill | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [resumeBuilderOpen, setResumeBuilderOpen] = useState(false);
+  const [coverLetterBuilderOpen, setCoverLetterBuilderOpen] = useState(false);
   const [runs, setRuns] = useState<RunInfo[]>([]);
   const [tab, setTab] = useState<'all' | 'career' | 'hr'>('all');
 
@@ -1101,6 +1106,36 @@ export default function Home() {
                 </Tabs>
               </div>
 
+              {/* Quick Action Builders */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                <button
+                  onClick={() => setResumeBuilderOpen(true)}
+                  className="flex items-center gap-3 p-4 rounded-lg border-2 border-primary/20 bg-primary/5 hover:bg-primary/10 hover:border-primary/40 transition-all text-left group"
+                >
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground group-hover:scale-110 transition-transform">
+                    <ResumeIcon className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm">{t('resume.builderTitle')}</p>
+                    <p className="text-xs text-muted-foreground truncate">20 templates · Surprise Me · PDF/HTML</p>
+                  </div>
+                  <SparklesIcon className="h-4 w-4 text-primary shrink-0" />
+                </button>
+                <button
+                  onClick={() => setCoverLetterBuilderOpen(true)}
+                  className="flex items-center gap-3 p-4 rounded-lg border-2 border-primary/20 bg-primary/5 hover:bg-primary/10 hover:border-primary/40 transition-all text-left group"
+                >
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground group-hover:scale-110 transition-transform">
+                    <CoverLetterIcon className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm">{t('coverLetter.builderTitle')}</p>
+                    <p className="text-xs text-muted-foreground truncate">Text · HTML · PDF formats</p>
+                  </div>
+                  <SparklesIcon className="h-4 w-4 text-primary shrink-0" />
+                </button>
+              </div>
+
               <div className="skills-grid grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
                 {filteredSkills.map((skill, i) => (
                   <div key={skill.id} className="stagger-card" style={{ animationDelay: `${i * 40}ms` }}>
@@ -1127,6 +1162,17 @@ export default function Home() {
         onOpenChange={setDialogOpen}
         onSaved={loadRuns}
       />
+
+      <ResumeBuilderDialog
+        open={resumeBuilderOpen}
+        onOpenChange={setResumeBuilderOpen}
+      />
+
+      <CoverLetterBuilderDialog
+        open={coverLetterBuilderOpen}
+        onOpenChange={setCoverLetterBuilderOpen}
+      />
+
       <Toaster />
     </div>
   );
