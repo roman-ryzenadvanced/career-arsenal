@@ -624,23 +624,123 @@ function SkillRunDialog({ skill, open, onOpenChange, onSaved }: {
     setTimeout(() => setCopied(false), 1500);
   };
 
-  const download = () => {
+  const download = (format: 'md' | 'html' | 'pdf' | 'doc') => {
     if (!result || !skill) return;
-    const blob = new Blob([result], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${skill.id}-${new Date().toISOString().split('T')[0]}.md`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    const dateStr = new Date().toISOString().split('T')[0];
+    const skillName = skill.nameKey ? t(skill.nameKey) : skill.name;
+
+    if (format === 'md') {
+      const blob = new Blob([result], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${skill.id}-${dateStr}.md`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } else if (format === 'html') {
+      // Wrap markdown in a styled HTML document
+      const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${skillName} — ${dateStr}</title>
+<style>
+  body { font-family: 'Georgia', serif; max-width: 800px; margin: 40px auto; padding: 20px; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #333; padding-bottom: 8px; }
+  h2 { font-size: 1.4em; margin-top: 1.5em; }
+  h3 { font-size: 1.2em; }
+  ul, ol { padding-left: 1.5em; }
+  li { margin: 4px 0; }
+  code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; font-family: monospace; }
+  pre { background: #f4f4f4; padding: 12px; border-radius: 6px; overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+  th { background: #f4f4f4; }
+  blockquote { border-left: 3px solid #ccc; padding-left: 1em; color: #666; font-style: italic; }
+</style>
+</head>
+<body>
+<h1>${skillName}</h1>
+<div id="content"></div>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+  document.getElementById('content').innerHTML = marked.parse(${JSON.stringify(result)});
+</script>
+</body>
+</html>`;
+      const blob = new Blob([html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${skill.id}-${dateStr}.html`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } else if (format === 'pdf') {
+      // Open print dialog with styled HTML
+      const html = `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>${skillName}</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 700px; margin: 0 auto; padding: 40px; line-height: 1.7; color: #000; }
+  h1 { font-size: 1.8em; border-bottom: 2px solid #000; padding-bottom: 8px; }
+  h2 { font-size: 1.4em; margin-top: 1.5em; }
+  h3 { font-size: 1.2em; }
+  ul, ol { padding-left: 1.5em; }
+  li { margin: 4px 0; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; }
+  pre { background: #f0f0f0; padding: 12px; border-radius: 6px; overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { border: 1px solid #999; padding: 8px; }
+  @media print { body { max-width: none; padding: 20px; } }
+</style>
+</head><body>
+<div id="content"></div>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+  document.getElementById('content').innerHTML = marked.parse(${JSON.stringify(result)});
+  setTimeout(function() { window.print(); }, 500);
+</script>
+</body></html>`;
+      const printWindow = window.open('', '_blank');
+      if (!printWindow) return;
+      printWindow.document.write(html);
+      printWindow.document.close();
+    } else if (format === 'doc') {
+      // DOC format — HTML with Word-compatible MIME type
+      const html = `<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="UTF-8"><title>${skillName}</title>
+<style>
+  body { font-family: 'Calibri', sans-serif; font-size: 12pt; line-height: 1.5; }
+  h1 { font-size: 18pt; border-bottom: 2px solid #333; padding-bottom: 4px; }
+  h2 { font-size: 14pt; margin-top: 1.2em; }
+  h3 { font-size: 12pt; }
+  ul, ol { padding-left: 1.5em; }
+  li { margin: 3px 0; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { border: 1px solid #999; padding: 6px; }
+</style>
+</head><body>
+<div id="content"></div>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+  document.getElementById('content').innerHTML = marked.parse(${JSON.stringify(result)});
+</script>
+</body></html>`;
+      const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${skill.id}-${dateStr}.doc`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
-        <DialogHeader>
+      <DialogContent className="max-w-4xl max-h-[92dvh] overflow-hidden flex flex-col">
+        <DialogHeader className="shrink-0">
           <DialogTitle className="flex items-center gap-2">
             {skill && (
               <div className={`flex h-7 w-7 items-center justify-center rounded-md border ${skill.color}`}>
@@ -652,8 +752,9 @@ function SkillRunDialog({ skill, open, onOpenChange, onSaved }: {
           <DialogDescription>{skill?.descriptionKey ? t(skill.descriptionKey) : skill?.description}</DialogDescription>
         </DialogHeader>
 
-        <ScrollArea className="flex-1 max-h-[70vh] pr-4">
-          <div className="space-y-4">
+        {/* Native scrollable area — works on all browsers + mobile */}
+        <div className="flex-1 min-h-0 overflow-y-auto pr-2 -mr-2" style={{ WebkitOverflowScrolling: 'touch' }}>
+          <div className="space-y-4 pb-2">
             {/* Inputs */}
             <div className="space-y-3">
               {skill?.inputs.map((inp) => (
@@ -719,21 +820,34 @@ function SkillRunDialog({ skill, open, onOpenChange, onSaved }: {
 
             {!running && result && (
               <div className="space-y-2 animate-fade-in-up">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <Sparkles className="h-3.5 w-3.5 text-muted-foreground" />
                     <span className="text-xs text-muted-foreground">
                       {t('skill.dialog.generated')} {modelUsed || 'GLM'}
                     </span>
                   </div>
-                  <div className="flex items-center gap-1">
+                  <div className="flex flex-wrap items-center gap-1">
                     <Button size="sm" variant="ghost" onClick={copy} className="h-7 text-xs">
                       {copied ? <Check className="h-3 w-3 mr-1" /> : <Copy className="h-3 w-3 mr-1" />}
                       {copied ? t('skill.dialog.copied') : t('skill.dialog.copy')}
                     </Button>
-                    <Button size="sm" variant="ghost" onClick={download} className="h-7 text-xs">
+                    <div className="w-px h-4 bg-border mx-0.5" />
+                    <Button size="sm" variant="ghost" onClick={() => download('md')} className="h-7 text-xs">
                       <Download className="h-3 w-3 mr-1" />
-                      {t('skill.dialog.download')}
+                      {t('skill.dialog.exportMD')}
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={() => download('html')} className="h-7 text-xs">
+                      <Download className="h-3 w-3 mr-1" />
+                      {t('skill.dialog.exportHTML')}
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={() => download('pdf')} className="h-7 text-xs">
+                      <Download className="h-3 w-3 mr-1" />
+                      {t('skill.dialog.exportPDF')}
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={() => download('doc')} className="h-7 text-xs">
+                      <Download className="h-3 w-3 mr-1" />
+                      {t('skill.dialog.exportDOC')}
                     </Button>
                   </div>
                 </div>
@@ -744,9 +858,9 @@ function SkillRunDialog({ skill, open, onOpenChange, onSaved }: {
               </div>
             )}
           </div>
-        </ScrollArea>
+        </div>
 
-        <DialogFooter className="border-t pt-4">
+        <DialogFooter className="shrink-0 border-t pt-4">
           <Button variant="ghost" onClick={() => onOpenChange(false)}>{t('skill.dialog.close')}</Button>
           <Button onClick={run} disabled={running || !skill}>
             {running ? (
