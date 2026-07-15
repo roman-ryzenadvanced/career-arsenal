@@ -161,8 +161,28 @@ export async function POST(req: NextRequest) {
       reply = "I'm having trouble connecting to my brain right now. Give me a moment and try again. 🤖";
     }
 
-    // Send the reply via Telegram
-    await sendTelegramMessage(bot.botToken, chatId, reply);
+    // Extract file generation markers and send files as Telegram documents
+    const fileRegex = /\[ACTION:GENERATE_FILE:([^:]+):([^:]+):([\s\S]+?)\]/g;
+    let fileMatch;
+    const generatedFiles: { name: string; type: string; content: string }[] = [];
+    while ((fileMatch = fileRegex.exec(reply)) !== null) {
+      const fileName = fileMatch[1].trim();
+      const fileType = fileMatch[2].trim();
+      let content = fileMatch[3].trim().replace(/\\n/g, '\n');
+      generatedFiles.push({ name: fileName, type: fileType, content });
+    }
+    // Remove file markers from reply
+    reply = reply.replace(fileRegex, '').trim();
+
+    // Send the text reply
+    if (reply) {
+      await sendTelegramMessage(bot.botToken, chatId, reply);
+    }
+
+    // Send each generated file as a document
+    for (const file of generatedFiles) {
+      await sendTelegramDocument(bot.botToken, chatId, file.name, file.content, file.type);
+    }
 
     return NextResponse.json({ ok: true });
   } catch (err: any) {
@@ -228,4 +248,34 @@ async function sendChatAction(token: string, chatId: string, action: string) {
       body: JSON.stringify({ chat_id: chatId, action }),
     });
   } catch {}
+}
+
+async function sendTelegramDocument(token: string, chatId: string, fileName: string, content: string, fileType: string) {
+  try {
+    // Create a Blob from the content
+    const mime = fileType === 'html' || fileType === 'slides' || fileType === 'code'
+      ? 'text/html'
+      : fileType === 'md'
+      ? 'text/markdown'
+      : 'text/plain';
+
+    // Use FormData to send the document
+    const formData = new FormData();
+    formData.append('chat_id', chatId);
+    formData.append('caption', `📄 ${fileName}`);
+
+    const blob = new Blob([content], { type: mime });
+    formData.append('document', blob, fileName);
+
+    await fetch(`https://api.telegram.org/bot${token}/sendDocument`, {
+      method: 'POST',
+      body: formData,
+    });
+  } catch (err) {
+    console.error('Failed to send Telegram document:', err);
+    // Fallback: send as text message (truncated)
+    try {
+      await sendTelegramMessage(token, chatId, `📄 ${fileName}:\n\n${content.substring(0, 3000)}${content.length > 3000 ? '...' : ''}`);
+    } catch {}
+  }
 }

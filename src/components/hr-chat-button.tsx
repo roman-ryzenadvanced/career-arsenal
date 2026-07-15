@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { MessageCircle, Send, Sparkles, User, Zap, Target, Play, FileText, Mail, Mic, DollarSign, Linkedin, Crosshair, Compass, ClipboardCheck, Gift, Rocket, GitBranch, ShieldCheck, HeartHandshake, FileSignature, Users, TrendingUp } from 'lucide-react';
+import { MessageCircle, Send, Sparkles, User, Zap, Target, Play, FileText, Mail, Mic, DollarSign, Linkedin, Crosshair, Compass, ClipboardCheck, Gift, Rocket, GitBranch, ShieldCheck, HeartHandshake, FileSignature, Users, TrendingUp, Eye, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -13,9 +13,12 @@ import { PugLoader } from '@/components/pug-loader';
 import ReactMarkdown from 'react-markdown';
 
 interface ChatAction {
-  type: 'run_skill' | 'update_target_role';
+  type: 'run_skill' | 'update_target_role' | 'generate_file';
   skillId?: string;
   value?: string;
+  fileName?: string;
+  fileType?: string;
+  content?: string;
 }
 
 interface ChatMessage {
@@ -120,7 +123,46 @@ export function HRChatButton({ onRunSkill, onUpdateTargetRole }: HRChatButtonPro
         title: t('chat.targetRoleUpdated'),
         description: action.value,
       });
+    } else if (action.type === 'generate_file' && action.fileName && action.content) {
+      // Download the file
+      const mime = action.fileType === 'html' || action.fileType === 'slides' || action.fileType === 'code'
+        ? 'text/html'
+        : action.fileType === 'md'
+        ? 'text/markdown'
+        : 'text/plain';
+      const blob = new Blob([action.content], { type: mime });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = action.fileName;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast({
+        title: '📄 File downloaded',
+        description: action.fileName,
+      });
     }
+  };
+
+  const previewFile = (action: ChatAction) => {
+    if (action.type !== 'generate_file' || !action.content) return;
+    // Open preview in new tab
+    const previewWindow = window.open('', '_blank');
+    if (!previewWindow) return;
+    if (action.fileType === 'html' || action.fileType === 'slides' || action.fileType === 'code') {
+      previewWindow.document.write(action.content);
+    } else if (action.fileType === 'md') {
+      previewWindow.document.write(`
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${action.fileName}</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:20px;line-height:1.7;color:#1a1a1a}h1{border-bottom:2px solid #333}code{background:#f4f4f4;padding:2px 6px;border-radius:3px}pre{background:#f4f4f4;padding:12px;border-radius:6px;overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ddd;padding:8px}</style>
+</head><body><div id="content"></div>
+<script>document.getElementById('content').innerHTML=marked.parse(${JSON.stringify(action.content)});</script>
+</body></html>`);
+    } else {
+      previewWindow.document.write(`<pre style="font-family:monospace;padding:20px;white-space:pre-wrap;">${action.content.replace(/</g, '&lt;')}</pre>`);
+    }
+    previewWindow.document.close();
   };
 
   const currentPersona = PERSONAS.find((p) => p.id === selectedPersona) || PERSONAS[0];
@@ -238,7 +280,7 @@ export function HRChatButton({ onRunSkill, onUpdateTargetRole }: HRChatButtonPro
                 {msg.actions && msg.actions.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 pl-9 w-full">
                     {msg.actions.map((action, ai) => (
-                      <ActionBadge key={ai} action={action} onClick={() => handleAction(action)} />
+                      <ActionBadge key={ai} action={action} onClick={() => handleAction(action)} onPreview={() => previewFile(action)} />
                     ))}
                   </div>
                 )}
@@ -288,8 +330,8 @@ export function HRChatButton({ onRunSkill, onUpdateTargetRole }: HRChatButtonPro
   );
 }
 
-// Action badge component — renders as a clickable button
-function ActionBadge({ action, onClick }: { action: ChatAction; onClick: () => void }) {
+// Action badge component — renders as a clickable button or file card
+function ActionBadge({ action, onClick, onPreview }: { action: ChatAction; onClick: () => void; onPreview?: () => void }) {
   const { t } = useI18n();
 
   if (action.type === 'run_skill' && action.skillId) {
@@ -317,6 +359,48 @@ function ActionBadge({ action, onClick }: { action: ChatAction; onClick: () => v
         <span>{t('chat.updateTargetRole')}</span>
         <span className="text-muted-foreground truncate max-w-[120px]">{action.value}</span>
       </button>
+    );
+  }
+
+  // File card — shows file icon, name, type, preview + download buttons
+  if (action.type === 'generate_file' && action.fileName) {
+    const fileIcon = action.fileType === 'slides' ? '📊' :
+                     action.fileType === 'code' ? '💻' :
+                     action.fileType === 'html' ? '🌐' :
+                     action.fileType === 'md' ? '📄' : '📎';
+    const fileSize = action.content ? Math.round(action.content.length / 1024 * 10) / 10 : 0;
+    return (
+      <div className="rounded-lg border bg-foreground/[0.03] overflow-hidden max-w-full">
+        {/* File header */}
+        <div className="flex items-center gap-2 p-2.5 border-b bg-foreground/[0.02]">
+          <span className="text-lg shrink-0">{fileIcon}</span>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-semibold truncate">{action.fileName}</p>
+            <p className="text-[10px] text-muted-foreground">
+              {action.fileType?.toUpperCase()} · {fileSize} KB
+            </p>
+          </div>
+        </div>
+        {/* Actions */}
+        <div className="flex gap-1 p-2">
+          {onPreview && (
+            <button
+              onClick={onPreview}
+              className="flex-1 inline-flex items-center justify-center gap-1 px-2 py-1.5 rounded-md bg-primary/10 hover:bg-primary/20 text-xs font-medium text-primary transition-all"
+            >
+              <Eye className="h-3 w-3" />
+              Preview
+            </button>
+          )}
+          <button
+            onClick={onClick}
+            className="flex-1 inline-flex items-center justify-center gap-1 px-2 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-medium transition-all"
+          >
+            <Download className="h-3 w-3" />
+            Download
+          </button>
+        </div>
+      </div>
     );
   }
 

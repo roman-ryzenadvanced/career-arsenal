@@ -153,14 +153,43 @@ async function buildPortalContext(userId: string): Promise<string> {
     ctx += `- ${skill.name} (${skill.id}): ${skill.tagline}\n`;
   }
 
-  ctx += `\n=== END PORTAL CONTEXT ===\n\nIMPORTANT: You have full access to the user's resume and portal activity above. Reference specific details from their resume when giving advice. If you recommend running a specific skill, use this exact format on a new line so the portal can render an action button:\n[ACTION:RUN_SKILL:skill-id-here]\nFor example: [ACTION:RUN_SKILL:resume-architect]\nYou can also suggest updating their target role:\n[ACTION:UPDATE_TARGET_ROLE:desired role text]\n\nOnly include action markers when genuinely helpful. Never fabricate skill IDs — use only the ones listed above.`;
+  ctx += `\n=== END PORTAL CONTEXT ===\n\nIMPORTANT: You have full access to the user's resume and portal activity above. Reference specific details from their resume when giving advice.
+
+You can generate files for the user directly in the chat. Use these action markers:
+
+1. Run a portal skill:
+[ACTION:RUN_SKILL:skill-id-here]
+Example: [ACTION:RUN_SKILL:resume-architect]
+
+2. Update target role:
+[ACTION:UPDATE_TARGET_ROLE:desired role text]
+
+3. Generate a file (resume, cover letter, slides, code, document):
+[ACTION:GENERATE_FILE:filename:type:content]
+Where:
+- filename = the file name (e.g. "tailored-resume.md")
+- type = "md" | "html" | "txt" | "code" | "slides" | "pdf"
+- content = the FULL file content (can be multi-line, use \\n for newlines within the marker)
+
+Example resume:
+[ACTION:GENERATE_FILE:tailored-resume.md:md:# John Doe\\n## Summary\\nExperienced engineer...\\n## Experience\\n- Built X]
+
+Example slides:
+[ACTION:GENERATE_FILE:career-pitch.html:slides:<!DOCTYPE html>...slide content...]
+
+Example code:
+[ACTION:GENERATE_FILE:portfolio-site.html:code:<!DOCTYPE html>...full HTML...]
+
+The portal will render these as downloadable file cards with preview. Generate files when the user asks for a resume, cover letter, presentation, code snippet, or any document. Always provide COMPLETE, ready-to-use content — never placeholders.
+
+Only include action markers when genuinely helpful. Never fabricate skill IDs — use only the ones listed above.`;
 
   return ctx;
 }
 
 // Extract action markers from the AI reply
-function extractActions(reply: string): { cleanedReply: string; actions: Array<{ type: string; skillId?: string; value?: string }> } {
-  const actions: Array<{ type: string; skillId?: string; value?: string }> = [];
+function extractActions(reply: string): { cleanedReply: string; actions: Array<{ type: string; skillId?: string; value?: string; fileName?: string; fileType?: string; content?: string }> } {
+  const actions: Array<{ type: string; skillId?: string; value?: string; fileName?: string; fileType?: string; content?: string }> = [];
   let cleanedReply = reply;
 
   // Match [ACTION:RUN_SKILL:skill-id]
@@ -177,6 +206,19 @@ function extractActions(reply: string): { cleanedReply: string; actions: Array<{
     actions.push({ type: 'update_target_role', value: match[1] });
   }
   cleanedReply = cleanedReply.replace(roleRegex, '').trim();
+
+  // Match [ACTION:GENERATE_FILE:filename:type:content]
+  // Content can contain anything except ] at the end (we use a greedy match up to the last ])
+  const fileRegex = /\[ACTION:GENERATE_FILE:([^:]+):([^:]+):([\s\S]+?)\]/g;
+  while ((match = fileRegex.exec(reply)) !== null) {
+    const fileName = match[1].trim();
+    const fileType = match[2].trim();
+    let content = match[3].trim();
+    // Unescape \\n to actual newlines
+    content = content.replace(/\\n/g, '\n');
+    actions.push({ type: 'generate_file', fileName, fileType, content });
+  }
+  cleanedReply = cleanedReply.replace(fileRegex, '').trim();
 
   return { cleanedReply, actions };
 }
