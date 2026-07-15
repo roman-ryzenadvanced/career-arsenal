@@ -885,3 +885,126 @@ Object.keys(aiSettingsRu).forEach(k => { EXTENDED_TRANSLATIONS.ru[k] = aiSetting
 Object.keys(aiSettingsHe).forEach(k => { EXTENDED_TRANSLATIONS.he[k] = aiSettingsHe[k]; });
 Object.keys(aiSettingsFr).forEach(k => { EXTENDED_TRANSLATIONS.fr[k] = aiSettingsFr[k]; });
 Object.keys(aiSettingsAr).forEach(k => { EXTENDED_TRANSLATIONS.ar[k] = aiSettingsAr[k]; });
+
+// ─── Job Search Bar translations ─────────────────────────────────────────────
+const jobSearchEn: Dict = {
+  'jobSearch.placeholder': 'Search for jobs... (e.g. Senior Backend Engineer)',
+  'jobSearch.uploadFirst': 'Upload your resume to start searching for jobs',
+  'jobSearch.locationPlaceholder': 'Location',
+  'jobSearch.searchBtn': 'Search',
+  'jobSearch.resumeRequired': 'You need to upload your resume first to search for jobs.',
+  'jobSearch.uploadNow': 'Upload now →',
+  'jobSearch.activeFilters': 'Filters',
+  'jobSearch.clearAll': 'Clear all',
+  'jobSearch.jobType': 'Job Type',
+  'jobSearch.experienceLevel': 'Experience',
+  'jobSearch.datePosted': 'Date Posted',
+  'jobSearch.workMode': 'Work Mode',
+  'jobSearch.any': 'Any',
+  'jobSearch.anytime': 'Any time',
+  'jobSearch.today': 'Today',
+  'jobSearch.pastWeek': 'Past week',
+  'jobSearch.pastMonth': 'Past month',
+  'jobSearch.fullTime': 'Full-time',
+  'jobSearch.contract': 'Contract',
+  'jobSearch.partTime': 'Part-time',
+  'jobSearch.internship': 'Internship',
+  'jobSearch.entryLevel': 'Entry level',
+  'jobSearch.midLevel': 'Mid level',
+  'jobSearch.senior': 'Senior',
+  'jobSearch.executive': 'Executive',
+  'jobSearch.resultsFound': 'Results found',
+  'jobSearch.jobsFound': 'jobs found',
+  'jobSearch.resultsFor': 'results for',
+  'jobSearch.searching': 'Searching across LinkedIn, Indeed, Glassdoor...',
+  'jobSearch.noResults': 'No jobs found. Try different keywords.',
+  'jobSearch.tryDifferent': 'Try broader terms, different location, or remove filters.',
+  'jobSearch.openJobFinder': 'Open Job Finder',
+};
+
+const jobSearchRu: Dict = {
+  'jobSearch.placeholder': 'Поиск вакансий... (напр. Senior Backend Engineer)',
+  'jobSearch.uploadFirst': 'Загрузите резюме для поиска работы',
+  'jobSearch.locationPlaceholder': 'Локация',
+  'jobSearch.searchBtn': 'Искать',
+  'jobSearch.resumeRequired': 'Сначала загрузите резюме для поиска работы.',
+  'jobSearch.uploadNow': 'Загрузить →',
+  'jobSearch.activeFilters': 'Фильтры',
+  'jobSearch.clearAll': 'Очистить',
+  'jobSearch.jobType': 'Тип',
+  'jobSearch.experienceLevel': 'Опыт',
+  'jobSearch.datePosted': 'Дата',
+  'jobSearch.workMode': 'Формат',
+  'jobSearch.any': 'Любой',
+  'jobSearch.anytime': 'За всё время',
+  'jobSearch.today': 'Сегодня',
+  'jobSearch.pastWeek': 'За неделю',
+  'jobSearch.pastMonth': 'За месяц',
+  'jobSearch.fullTime': 'Полная',
+  'jobSearch.contract': 'Контракт',
+  'jobSearch.partTime': 'Частичная',
+  'jobSearch.internship': 'Стажировка',
+  'jobSearch.entryLevel': 'Начальный',
+  'jobSearch.midLevel': 'Средний',
+  'jobSearch.senior': 'Старший',
+  'jobSearch.executive': 'Руководитель',
+  'jobSearch.resultsFound': 'Результаты найдены',
+  'jobSearch.jobsFound': 'вакансий',
+  'jobSearch.resultsFor': 'результатов для',
+  'jobSearch.searching': 'Поиск по LinkedIn, Indeed, Glassdoor...',
+  'jobSearch.noResults': 'Вакансии не найдены. Попробуйте другие ключевые слова.',
+  'jobSearch.tryDifferent': 'Попробуйте более общие термины или другую локацию.',
+  'jobSearch.openJobFinder': 'Открыть поиск работы',
+};
+
+const jobSearchHe: Dict = {
+  ...jobSearchEn,
+  'jobSearch.placeholder': 'חפש משרות... (לדוגמה: מהנדס בכיר)',
+  'jobSearch.uploadFirst': 'העלה את קורות החיים שלך כדי להתחיל לחפש',
+  'jobSearch.locationPlaceholder': 'מיקום',
+  'jobSearch.searchBtn': 'חיפוש',
+  'jobSearch.resumeRequired': 'עליך להעלות קורות חיים תחילה.',
+  'jobSearch.uploadNow': 'העלה עכשיו →',
+  'jobSearch.activeFilters': 'מסננים',
+  'jobSearch.clearAll': 'נקה הכל',
+  'jobSearch.searching': 'מחפש ב-LinkedIn, Indeed, Glassdoor...',
+  'jobSearch.noResults': 'לא נמצאו משרות. נסה מילות מפתח שונות.',
+  'jobSearch.openJobFinder': 'פתח מאתר עבודה',
+};
+
+const jobSearchFr: Dict = {
+  ...jobSearchEn,
+  'jobSearch.placeholder': 'Rechercher des emplois... (ex: Ingénieur Senior)',
+  'jobSearch.uploadFirst': 'Téléchargez votre CV pour commencer la recherche',
+  'jobSearch.locationPlaceholder': 'Lieu',
+  'jobSearch.searchBtn': 'Rechercher',
+  'jobSearch.resumeRequired': 'Vous devez d\'abord télécharger votre CV.',
+  'jobSearch.uploadNow': 'Télécharger →',
+  'jobSearch.activeFilters': 'Filtres',
+  'jobSearch.clearAll': 'Tout effacer',
+  'jobSearch.searching': 'Recherche sur LinkedIn, Indeed, Glassdoor...',
+  'jobSearch.noResults': 'Aucun emploi trouvé. Essayez d\'autres mots-clés.',
+  'jobSearch.openJobFinder': 'Ouvrir le chercheur d\'emploi',
+};
+
+const jobSearchAr: Dict = {
+  ...jobSearchEn,
+  'jobSearch.placeholder': 'ابحث عن وظائف... (مثال: مهندس أول)',
+  'jobSearch.uploadFirst': 'ارفع سيرتك الذاتية للبدء في البحث',
+  'jobSearch.locationPlaceholder': 'الموقع',
+  'jobSearch.searchBtn': 'بحث',
+  'jobSearch.resumeRequired': 'يجب رفع سيرتك الذاتية أولاً للبحث عن وظائف.',
+  'jobSearch.uploadNow': 'ارفع الآن ←',
+  'jobSearch.activeFilters': 'مرشحات',
+  'jobSearch.clearAll': 'مسح الكل',
+  'jobSearch.searching': 'البحث في LinkedIn و Indeed و Glassdoor...',
+  'jobSearch.noResults': 'لم يتم العثور على وظائف. جرب كلمات مختلفة.',
+  'jobSearch.openJobFinder': 'افتح باحث الوظائف',
+};
+
+// Merge job search translations
+Object.keys(jobSearchEn).forEach(k => { EXTENDED_TRANSLATIONS.en[k] = jobSearchEn[k]; });
+Object.keys(jobSearchRu).forEach(k => { EXTENDED_TRANSLATIONS.ru[k] = jobSearchRu[k]; });
+Object.keys(jobSearchHe).forEach(k => { EXTENDED_TRANSLATIONS.he[k] = jobSearchHe[k]; });
+Object.keys(jobSearchFr).forEach(k => { EXTENDED_TRANSLATIONS.fr[k] = jobSearchFr[k]; });
+Object.keys(jobSearchAr).forEach(k => { EXTENDED_TRANSLATIONS.ar[k] = jobSearchAr[k]; });

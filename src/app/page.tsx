@@ -37,6 +37,7 @@ import { ResumeBuilderDialog } from '@/components/resume-builder-dialog';
 import { CoverLetterBuilderDialog } from '@/components/cover-letter-builder-dialog';
 import { JobFinderDialog } from '@/components/job-finder-dialog';
 import { AISettingsDialog } from '@/components/ai-settings-dialog';
+import { JobSearchBar } from '@/components/job-search-bar';
 import { FileText as ResumeIcon, Mail as CoverLetterIcon, Sparkles as SparklesIcon, Briefcase as JobFinderIcon, Settings as SettingsIcon } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────
@@ -1222,6 +1223,17 @@ export default function Home() {
 
             {/* Right: skill grid */}
             <section>
+              {/* Google-style job search bar */}
+              <JobSearchBar
+                hasProfile={!!profile}
+                onUploadClick={() => {
+                  // Scroll to top where upload zone is, or trigger clear to show upload state
+                  clearProfile();
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                onOpenJobFinder={() => setJobFinderOpen(true)}
+              />
+
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
                 <div>
                   <h2 className="text-lg font-semibold">{t('skills.title')}</h2>
