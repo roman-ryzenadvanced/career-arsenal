@@ -1,0 +1,586 @@
+/**
+ * i18n translations for skills, HR personas, and resume templates.
+ * These are loaded alongside the main i18n.ts translations.
+ *
+ * Keys follow the pattern: 'skill.{id}.{field}', 'persona.{id}.{field}', 'template.{id}.{field}'
+ */
+
+import { type Locale } from './i18n';
+
+type Dict = Record<string, string>;
+
+// ─── Skill translations ─────────────────────────────────────────────────────
+
+const skillEn: Dict = {
+  'skill.career-gps.name': 'Career GPS',
+  'skill.career-gps.tagline': 'Strategic career planning, skill gap analysis, role transition roadmaps.',
+  'skill.career-gps.description': 'Treats your career like a product. Audits your current state, defines 1/3/5-year targets, identifies gaps, and produces a concrete quarterly action plan. Use this first if you\'re unsure of your direction.',
+  'skill.career-gps.input.aspiration': 'Career aspiration (vague or specific)',
+  'skill.career-gps.input.aspirationPlaceholder': 'e.g. I want to become a COO at a Series A Web3 startup in 2 years, or: I\'m considering switching from ops to product.',
+  'skill.career-gps.input.horizon': 'Planning horizon',
+  'skill.career-gps.input.horizon1': '1-year tactical',
+  'skill.career-gps.input.horizon3': '3-year mid-term',
+  'skill.career-gps.input.horizon5': '5-year strategic',
+
+  'skill.resume-architect.name': 'Resume Architect',
+  'skill.resume-architect.tagline': 'Generate ATS-optimized, role-targeted resumes from your career data.',
+  'skill.resume-architect.description': 'Reverse-engineers the target job posting, extracts structured career data from your profile, and assembles an ATS-optimized single-column resume that mirrors the employer\'s language.',
+  'skill.resume-architect.input.jobPosting': 'Target job posting (paste full text — drives keyword matching)',
+  'skill.resume-architect.input.jobPostingPlaceholder': 'Paste the job description here. The more complete it is, the better the keyword match.',
+  'skill.resume-architect.input.format': 'Resume format',
+  'skill.resume-architect.input.formatMid': 'Mid-level (3-7 yrs)',
+  'skill.resume-architect.input.formatSenior': 'Senior/Staff (8+ yrs)',
+  'skill.resume-architect.input.formatEntry': 'Entry-level (0-2 yrs)',
+
+  'skill.cover-letter-craft.name': 'Cover Letter Craft',
+  'skill.cover-letter-craft.tagline': 'Customized cover letters following the 4-paragraph formula.',
+  'skill.cover-letter-craft.description': 'Writes a cover letter that follows the proven 4-paragraph formula: Why THIS company, Why YOU, What you\'ll DO, Call to action. Never generic.',
+  'skill.cover-letter-craft.input.jobPosting': 'Target job posting',
+  'skill.cover-letter-craft.input.jobPostingPlaceholder': 'Paste the job description.',
+  'skill.cover-letter-craft.input.companyResearch': 'What you know about the company (recent news, products, mission, culture)',
+  'skill.cover-letter-craft.input.companyResearchPlaceholder': 'e.g. Just raised Series A led by a16z, building developer tools for Solana...',
+
+  'skill.linkedin-optimizer.name': 'LinkedIn Optimizer',
+  'skill.linkedin-optimizer.tagline': 'Turn your LinkedIn profile into a recruiter magnet and networking machine.',
+  'skill.linkedin-optimizer.description': 'Scores your profile across 10 dimensions, then rewrites your headline, summary, and experience bullets to maximize recruiter search visibility and conversions.',
+  'skill.linkedin-optimizer.input.targetRole': 'Target role or career direction',
+  'skill.linkedin-optimizer.input.targetRolePlaceholder': 'e.g. Senior Backend Engineer | Rust • Distributed Systems',
+  'skill.linkedin-optimizer.input.focusAreas': 'Areas you most want feedback on (comma-separated)',
+  'skill.linkedin-optimizer.input.focusAreasPlaceholder': 'e.g. headline, about, experience bullets',
+
+  'skill.interview-commander.name': 'Interview Commander',
+  'skill.interview-commander.tagline': 'Mock interviews, STAR stories, behavioral + technical prep.',
+  'skill.interview-commander.description': 'Generates role-specific mock interview questions, then drafts model answers using the STAR framework based on your profile. Covers behavioral, technical, and case-study rounds.',
+  'skill.interview-commander.input.role': 'Role you\'re interviewing for',
+  'skill.interview-commander.input.rolePlaceholder': 'e.g. Senior Backend Engineer at a Series A fintech startup',
+  'skill.interview-commander.input.rounds': 'Interview rounds to prep for',
+  'skill.interview-commander.input.roundsBehavioral': 'Behavioral (STAR stories)',
+  'skill.interview-commander.input.roundsTechnical': 'Technical (system design / coding)',
+  'skill.interview-commander.input.roundsCase': 'Case study / take-home',
+  'skill.interview-commander.input.roundsAll': 'All of the above',
+  'skill.interview-commander.input.weakSpots': 'Weak spots you\'re worried about (optional)',
+  'skill.interview-commander.input.weakSpotsPlaceholder': 'e.g. I tend to ramble in behavioral, I freeze on system design...',
+
+  'skill.salary-negotiator.name': 'Salary Negotiator',
+  'skill.salary-negotiator.tagline': 'Market data + negotiation scripts to maximize your offer.',
+  'skill.salary-negotiator.description': 'Analyzes your current offer, benchmarks against market data, identifies your leverage, and produces word-for-word negotiation scripts for the initial counter, the second round, and the final close.',
+  'skill.salary-negotiator.input.offerDetails': 'Current offer or target compensation details',
+  'skill.salary-negotiator.input.offerDetailsPlaceholder': 'e.g. Base $180k, 0.1% equity (4-yr vest, 1-yr cliff), $20k sign-on, no bonus.',
+  'skill.salary-negotiator.input.competingOffers': 'Competing offers or current comp (leverage)',
+  'skill.salary-negotiator.input.competingOffersPlaceholder': 'e.g. Current comp is $165k base + $30k RSUs.',
+  'skill.salary-negotiator.input.priorities': 'What matters most to you (cash, equity, level, flexibility)',
+  'skill.salary-negotiator.input.prioritiesPlaceholder': 'e.g. Maximize base, willing to give up some equity.',
+
+  'skill.job-switch-advisor.name': 'Job Switch Advisor',
+  'skill.job-switch-advisor.tagline': 'Decide whether to switch jobs — or stay and negotiate.',
+  'skill.job-switch-advisor.description': 'Uses the weighted decision matrix. Scores stay vs. switch across 8 factors and gives a clear recommendation with the threshold to act.',
+  'skill.job-switch-advisor.input.currentSituation': 'Current job situation — what\'s pushing you to consider leaving?',
+  'skill.job-switch-advisor.input.currentSituationPlaceholder': 'e.g. 3 years at current company, promoted once, no path to senior.',
+  'skill.job-switch-advisor.input.opportunity': 'Specific opportunity you\'re considering (or \'general market\')',
+  'skill.job-switch-advisor.input.opportunityPlaceholder': 'e.g. Senior Engineer role at a Series A startup, $190k base.',
+
+  'skill.jobhunter-master.name': 'JobHunter Master',
+  'skill.jobhunter-master.tagline': 'Aggressive, multi-channel job hunt strategy beyond Easy Apply.',
+  'skill.jobhunter-master.description': 'Builds a 30-day job hunt plan: target company list, research checklist, multi-channel approach, connection-request templates, cold email templates, and follow-up cadence.',
+  'skill.jobhunter-master.input.targetDescription': 'Target role, stage, and location',
+  'skill.jobhunter-master.input.targetDescriptionPlaceholder': 'e.g. Senior Backend Engineer at Series A/B Web3 startups, remote.',
+  'skill.jobhunter-master.input.timeline': 'Search timeline',
+  'skill.jobhunter-master.input.timelineExploring': 'Just exploring (1-3 mo)',
+  'skill.jobhunter-master.input.timelineActive': 'Active search (1-2 mo to offers)',
+  'skill.jobhunter-master.input.timelineUrgent': 'Urgent (offer in 4 weeks)',
+  'skill.jobhunter-master.input.weeklyHours': 'Hours per week you can dedicate to the hunt',
+  'skill.jobhunter-master.input.weeklyHoursPlaceholder': 'e.g. 10',
+
+  'skill.hr-job-description-forge.name': 'JD Forge',
+  'skill.hr-job-description-forge.tagline': 'Write job descriptions that attract the right candidates.',
+  'skill.hr-job-description-forge.description': 'Generates a complete job posting with role mission, responsibilities, must-have vs. nice-to-have requirements, compensation transparency, and a screening section.',
+  'skill.hr-job-description-forge.input.role': 'Role title and seniority',
+  'skill.hr-job-description-forge.input.rolePlaceholder': 'e.g. Senior Backend Engineer (Rust)',
+  'skill.hr-job-description-forge.input.companyContext': 'Company context (stage, mission, team size, tech stack)',
+  'skill.hr-job-description-forge.input.companyContextPlaceholder': 'e.g. Series A Web3 infrastructure startup, 25 people.',
+  'skill.hr-job-description-forge.input.mustHaves': 'Non-negotiable requirements (optional)',
+  'skill.hr-job-description-forge.input.mustHavesPlaceholder': 'e.g. 5+ yrs production Rust, distributed systems.',
+
+  'skill.hr-candidate-hunter.name': 'Candidate Hunter',
+  'skill.hr-candidate-hunter.tagline': 'Agentic LinkedIn sourcing strategy — find humans, not applications.',
+  'skill.hr-candidate-hunter.description': 'Builds a candidate sourcing playbook: LinkedIn search queries, target company lists to poach from, personalized outreach templates per candidate archetype, and a 4-touch follow-up cadence.',
+  'skill.hr-candidate-hunter.input.role': 'Role you\'re sourcing for',
+  'skill.hr-candidate-hunter.input.rolePlaceholder': 'e.g. Senior Rust Backend Engineer',
+  'skill.hr-candidate-hunter.input.companyContext': 'Your company context (what makes this role exciting)',
+  'skill.hr-candidate-hunter.input.companyContextPlaceholder': 'e.g. Well-funded Series A Web3 startup, founder ex-FAANG.',
+
+  'skill.hr-interview-designer.name': 'Interview Designer',
+  'skill.hr-interview-designer.tagline': 'Structured interview loops with rubrics and anti-bias guardrails.',
+  'skill.hr-interview-designer.description': 'Designs a complete interview loop: 4-5 panels with specific questions, evaluation rubrics, calibration guidance, anti-bias reminders, and a debrief template.',
+  'skill.hr-interview-designer.input.role': 'Role',
+  'skill.hr-interview-designer.input.rolePlaceholder': 'e.g. Senior Backend Engineer',
+  'skill.hr-interview-designer.input.loopFormat': 'Interview loop format',
+  'skill.hr-interview-designer.input.loopStandard': 'Standard (4 panels: coding, system design, behavioral, bar-raiser)',
+  'skill.hr-interview-designer.input.loopLean': 'Startup lean (3 panels)',
+  'skill.hr-interview-designer.input.loopExecutive': 'Executive (5+ panels incl. founder 1:1)',
+
+  'skill.hr-offer-architect.name': 'Offer Architect',
+  'skill.hr-offer-architect.tagline': 'Design competitive offers that win without overpaying.',
+  'skill.hr-offer-architect.description': 'Given the candidate\'s profile, your comp band, and competing offers, produces an offer recommendation with base/equity/bonus breakdown, justification, and a fallback negotiation range.',
+  'skill.hr-offer-architect.input.candidate': 'Candidate profile (level, experience, current comp if known)',
+  'skill.hr-offer-architect.input.candidatePlaceholder': 'e.g. 7 yrs backend experience, currently Senior Engineer at fintech.',
+  'skill.hr-offer-architect.input.compBand': 'Your company\'s comp band for this level',
+  'skill.hr-offer-architect.input.compBandPlaceholder': 'e.g. Senior Engineer band: $170-200k base, 0.1-0.25% equity.',
+  'skill.hr-offer-architect.input.competingOffers': 'Known competing offers (optional)',
+  'skill.hr-offer-architect.input.competingOffersPlaceholder': 'e.g. Competing offer: $195k base + 0.3% equity.',
+
+  'skill.hr-onboarding-commander.name': 'Onboarding Commander',
+  'skill.hr-onboarding-commander.tagline': '30-60-90 day onboarding plans that get new hires productive fast.',
+  'skill.hr-onboarding-commander.description': 'Builds a role-specific 30-60-90 day onboarding plan: week-by-week milestones, key relationships, training resources, success metrics, and check-in cadence.',
+  'skill.hr-onboarding-commander.input.role': 'Role being onboarded',
+  'skill.hr-onboarding-commander.input.rolePlaceholder': 'e.g. Senior Backend Engineer',
+  'skill.hr-onboarding-commander.input.companyContext': 'Company + team context (stack, processes, current team size)',
+  'skill.hr-onboarding-commander.input.companyContextPlaceholder': 'e.g. Series A startup, 15 engineers, Rust + Kubernetes.',
+
+  'skill.hr-talent-pipeline.name': 'Talent Pipeline',
+  'skill.hr-talent-pipeline.tagline': 'Build a proactive pipeline of candidates before you need them.',
+  'skill.hr-talent-pipeline.description': 'Designs a 6-month pipeline strategy: which roles to pipeline, sourcing channels, nurture sequences, quarterly engagement touchpoints, and conversion metrics.',
+  'skill.hr-talent-pipeline.input.hiringPlan': '6-month hiring plan (roles + count)',
+  'skill.hr-talent-pipeline.input.hiringPlanPlaceholder': 'e.g. 3 backend engineers, 2 frontend, 1 designer, 1 PM.',
+  'skill.hr-talent-pipeline.input.companyContext': 'Company context (stage, brand strength, location)',
+  'skill.hr-talent-pipeline.input.companyContextPlaceholder': 'e.g. Series A, 30 people, emerging brand in Web3 infra.',
+
+  'skill.hr-retention-radar.name': 'Retention Radar',
+  'skill.hr-retention-radar.tagline': 'Identify flight risks before they resign, and intervene.',
+  'skill.hr-retention-radar.description': 'Builds a retention risk assessment framework: 10 flight-risk signals, intervention playbooks per signal, stay-interview question bank, and a quarterly retention audit template.',
+  'skill.hr-retention-radar.input.teamContext': 'Team context (size, tenure distribution, recent changes)',
+  'skill.hr-retention-radar.input.teamContextPlaceholder': 'e.g. 12-person engineering team, avg tenure 2.5 yrs.',
+  'skill.hr-retention-radar.input.concerns': 'Specific retention concerns (optional)',
+  'skill.hr-retention-radar.input.concernsPlaceholder': 'e.g. Two senior engineers seem disengaged in 1:1s.',
+
+  'skill.hr-culture-architect.name': 'Culture Architect',
+  'skill.hr-culture-architect.tagline': 'Design and codify company culture intentionally.',
+  'skill.hr-culture-architect.description': 'Helps you articulate your company\'s operating principles, rituals, and anti-patterns. Produces a culture document, hiring filter questions, and a quarterly culture audit.',
+  'skill.hr-culture-architect.input.companyStage': 'Company stage and size',
+  'skill.hr-culture-architect.input.companyStagePlaceholder': 'e.g. Series A, 25 people, scaling to 50 in 12 months.',
+  'skill.hr-culture-architect.input.valuesRaw': 'What do you stand for? (raw brainstorm)',
+  'skill.hr-culture-architect.input.valuesRawPlaceholder': 'e.g. We reward ownership, speed, and honesty.',
+
+  // Category labels
+  'skill.category.career': 'Career',
+  'skill.category.hr': 'HR / Hiring',
+
+  // Dialog labels
+  'skill.dialog.required': '*',
+  'skill.dialog.runWithGLM': 'Run with GLM',
+  'skill.dialog.running': 'Running on GLM…',
+  'skill.dialog.rerun': 'Re-run',
+  'skill.dialog.close': 'Close',
+  'skill.dialog.copy': 'Copy',
+  'skill.dialog.copied': 'Copied',
+  'skill.dialog.download': '.md',
+  'skill.dialog.generated': 'Generated via',
+  'skill.dialog.runFailed': 'Run failed',
+
+  // Hero quick-action labels
+  'hero.quickAction.career': 'Career planning',
+  'hero.quickAction.resume': 'Resume rewrite',
+  'hero.quickAction.cover': 'Cover letters',
+  'hero.quickAction.interview': 'Interview prep',
+  'hero.quickAction.salary': 'Salary scripts',
+  'hero.quickAction.linkedin': 'LinkedIn opt',
+  'hero.quickAction.hunt': 'Job hunt plan',
+  'hero.quickAction.more': '+ 9 more',
+};
+
+const skillRu: Dict = {
+  'skill.career-gps.name': 'Карьерный GPS',
+  'skill.career-gps.tagline': 'Стратегическое карьерное планирование, анализ пробелов, дорожные карты перехода.',
+  'skill.career-gps.description': 'Относится к вашей карьере как к продукту. Аудит текущего состояния, определение целей на 1/3/5 лет, выявление пробелов и составление конкретного плана действий.',
+  'skill.career-gps.input.aspiration': 'Карьерные амбиции (общие или конкретные)',
+  'skill.career-gps.input.aspirationPlaceholder': 'напр. Хочу стать COO в Series A Web3 стартапе через 2 года.',
+  'skill.career-gps.input.horizon': 'Горизонт планирования',
+  'skill.career-gps.input.horizon1': '1 год (тактический)',
+  'skill.career-gps.input.horizon3': '3 года (среднесрочный)',
+  'skill.career-gps.input.horizon5': '5 лет (стратегический)',
+
+  'skill.resume-architect.name': 'Архитектор резюме',
+  'skill.resume-architect.tagline': 'Создание ATS-оптимизированных резюме под конкретную роль.',
+  'skill.resume-architect.description': 'Реверс-инжиниринг вакансии, извлечение структурированных данных и сборка ATS-оптимизированного резюме на языке работодателя.',
+  'skill.resume-architect.input.jobPosting': 'Целевая вакансия (вставьте полный текст)',
+  'skill.resume-architect.input.jobPostingPlaceholder': 'Вставьте описание вакансии здесь.',
+  'skill.resume-architect.input.format': 'Формат резюме',
+  'skill.resume-architect.input.formatMid': 'Средний (3-7 лет)',
+  'skill.resume-architect.input.formatSenior': 'Старший (8+ лет)',
+  'skill.resume-architect.input.formatEntry': 'Начальный (0-2 года)',
+
+  'skill.cover-letter-craft.name': 'Сопроводительное письмо',
+  'skill.cover-letter-craft.tagline': 'Индивидуальные сопроводительные письма по формуле из 4 абзацев.',
+  'skill.cover-letter-craft.description': 'Пишет сопроводительное письмо по проверенной формуле: Почему ЭТА компания, Почему ВЫ, Что вы сделаете, Призыв к действию.',
+  'skill.cover-letter-craft.input.jobPosting': 'Целевая вакансия',
+  'skill.cover-letter-craft.input.jobPostingPlaceholder': 'Вставьте описание вакансии.',
+  'skill.cover-letter-craft.input.companyResearch': 'Что вы знаете о компании',
+  'skill.cover-letter-craft.input.companyResearchPlaceholder': 'напр. Недавно получили Series A от a16z...',
+
+  'skill.linkedin-optimizer.name': 'Оптимизатор LinkedIn',
+  'skill.linkedin-optimizer.tagline': 'Превратите профиль LinkedIn в магнит для рекрутеров.',
+  'skill.linkedin-optimizer.description': 'Оценивает профиль по 10 параметрам и переписывает заголовок, описание и опыт для максимальной видимости.',
+  'skill.linkedin-optimizer.input.targetRole': 'Целевая роль или направление',
+  'skill.linkedin-optimizer.input.targetRolePlaceholder': 'напр. Senior Backend Engineer | Rust • Distributed Systems',
+  'skill.linkedin-optimizer.input.focusAreas': 'Области для обратной связи (через запятую)',
+  'skill.linkedin-optimizer.input.focusAreasPlaceholder': 'напр. заголовок, описание, опыт',
+
+  'skill.interview-commander.name': 'Командир собеседований',
+  'skill.interview-commander.tagline': 'Пробные собеседования, STAR-истории, подготовка.',
+  'skill.interview-commander.description': 'Генерирует ролевые вопросы для пробных собеседований и составляет ответы по фреймворку STAR.',
+  'skill.interview-commander.input.role': 'Роль, на которую проходите собеседование',
+  'skill.interview-commander.input.rolePlaceholder': 'напр. Senior Backend Engineer в Series A финтехе',
+  'skill.interview-commander.input.rounds': 'Этапы собеседования',
+  'skill.interview-commander.input.roundsBehavioral': 'Поведенческие (STAR)',
+  'skill.interview-commander.input.roundsTechnical': 'Технические (дизайн систем / код)',
+  'skill.interview-commander.input.roundsCase': 'Кейс / домашнее задание',
+  'skill.interview-commander.input.roundsAll': 'Все вышеперечисленное',
+  'skill.interview-commander.input.weakSpots': 'Слабые места (необязательно)',
+  'skill.interview-commander.input.weakSpotsPlaceholder': 'напр. Я часто начинаю распространяться на поведенческих...',
+
+  'skill.salary-negotiator.name': 'Переговорщик о зарплате',
+  'skill.salary-negotiator.tagline': 'Рыночные данные + скрипты переговоров для максимизации оффера.',
+  'skill.salary-negotiator.description': 'Анализирует текущий оффер, сравнивает с рынком, выявляет ваши козыри и создает скрипты для переговоров.',
+  'skill.salary-negotiator.input.offerDetails': 'Текущий оффер или целевая компенсация',
+  'skill.salary-negotiator.input.offerDetailsPlaceholder': 'напр. База $180k, 0.1% акций, $20k подписной бонус.',
+  'skill.salary-negotiator.input.competingOffers': 'Конкурирующие офферы или текущая зарплата',
+  'skill.salary-negotiator.input.competingOffersPlaceholder': 'напр. Текущая компенсация $165k + $30k RSU.',
+  'skill.salary-negotiator.input.priorities': 'Что важнее всего (наличные, акции, уровень)',
+  'skill.salary-negotiator.input.prioritiesPlaceholder': 'напр. Максимизировать базу.',
+
+  'skill.job-switch-advisor.name': 'Советник по смене работы',
+  'skill.job-switch-advisor.tagline': 'Решите, стоит ли менять работу — или остаться и торговаться.',
+  'skill.job-switch-advisor.description': 'Использует взвешенную матрицу решений. Оценивает остаться vs сменить по 8 факторам и дает четкую рекомендацию.',
+  'skill.job-switch-advisor.input.currentSituation': 'Текущая рабочая ситуация — что подталкивает к уходу?',
+  'skill.job-switch-advisor.input.currentSituationPlaceholder': 'напр. 3 года в компании, одно повышение, нет пути к senior.',
+  'skill.job-switch-advisor.input.opportunity': 'Конкретная возможность (или \'общий рынок\')',
+  'skill.job-switch-advisor.input.opportunityPlaceholder': 'напр. Senior Engineer в Series A стартапе, $190k база.',
+
+  'skill.jobhunter-master.name': 'Мастер охоты за работой',
+  'skill.jobhunter-master.tagline': 'Агрессивная многоканальная стратегия поиска работы.',
+  'skill.jobhunter-master.description': 'Составляет 30-дневный план: список целевых компаний, чек-лист исследований, шаблоны для связи и follow-up.',
+  'skill.jobhunter-master.input.targetDescription': 'Целевая роль, стадия и локация',
+  'skill.jobhunter-master.input.targetDescriptionPlaceholder': 'напр. Senior Backend Engineer в Series A/B Web3 стартапах, удаленно.',
+  'skill.jobhunter-master.input.timeline': 'Сроки поиска',
+  'skill.jobhunter-master.input.timelineExploring': 'Просто изучаю (1-3 мес)',
+  'skill.jobhunter-master.input.timelineActive': 'Активный поиск (1-2 мес до офферов)',
+  'skill.jobhunter-master.input.timelineUrgent': 'Срочно (оффер за 4 недели)',
+  'skill.jobhunter-master.input.weeklyHours': 'Часов в неделю на поиск',
+  'skill.jobhunter-master.input.weeklyHoursPlaceholder': 'напр. 10',
+
+  'skill.hr-job-description-forge.name': 'Кузнец вакансий',
+  'skill.hr-job-description-forge.tagline': 'Пишите вакансии, которые привлекают нужных кандидатов.',
+  'skill.hr-job-description-forge.description': 'Генерирует полное описание вакансии с миссией, обязанностями, требованиями и компенсацией.',
+  'skill.hr-job-description-forge.input.role': 'Название роли и уровень',
+  'skill.hr-job-description-forge.input.rolePlaceholder': 'напр. Senior Backend Engineer (Rust)',
+  'skill.hr-job-description-forge.input.companyContext': 'Контекст компании (стадия, миссия, команда, стек)',
+  'skill.hr-job-description-forge.input.companyContextPlaceholder': 'напр. Series A Web3 инфраструктурный стартап, 25 человек.',
+  'skill.hr-job-description-forge.input.mustHaves': 'Обязательные требования (необязательно)',
+  'skill.hr-job-description-forge.input.mustHavesPlaceholder': 'напр. 5+ лет Rust, распределенные системы.',
+
+  'skill.hr-candidate-hunter.name': 'Охотник за кандидатами',
+  'skill.hr-candidate-hunter.tagline': 'Стратегия поиска кандидатов в LinkedIn — находите людей, а не заявки.',
+  'skill.hr-candidate-hunter.description': 'Составляет playbook поиска: поисковые запросы LinkedIn, списки компаний для переманивания, шаблоны outreach.',
+  'skill.hr-candidate-hunter.input.role': 'Роль для поиска',
+  'skill.hr-candidate-hunter.input.rolePlaceholder': 'напр. Senior Rust Backend Engineer',
+  'skill.hr-candidate-hunter.input.companyContext': 'Контекст компании (что делает роль привлекательной)',
+  'skill.hr-candidate-hunter.input.companyContextPlaceholder': 'напр. Series A Web3 стартап, основатель ex-FAANG.',
+
+  'skill.hr-interview-designer.name': 'Дизайнер собеседований',
+  'skill.hr-interview-designer.tagline': 'Структурированные циклы собеседований с рубриками и защитой от предвзятости.',
+  'skill.hr-interview-designer.description': 'Проектирует полный цикл: 4-5 этапов с вопросами, оценочными рубриками и антибайас напоминаниями.',
+  'skill.hr-interview-designer.input.role': 'Роль',
+  'skill.hr-interview-designer.input.rolePlaceholder': 'напр. Senior Backend Engineer',
+  'skill.hr-interview-designer.input.loopFormat': 'Формат цикла собеседований',
+  'skill.hr-interview-designer.input.loopStandard': 'Стандартный (4 этапа: код, системный дизайн, поведенческое, bar-raiser)',
+  'skill.hr-interview-designer.input.loopLean': 'Стартап (3 этапа)',
+  'skill.hr-interview-designer.input.loopExecutive': 'Руководящий (5+ этапов, вкл. 1:1 с основателем)',
+
+  'skill.hr-offer-architect.name': 'Архитектор офферов',
+  'skill.hr-offer-architect.tagline': 'Создавайте конкурентные офферы, которые выигрывают без переплат.',
+  'skill.hr-offer-architect.description': 'С учетом профиля кандидата и вашей вилки ЗП, производит рекомендацию оффера с разбивкой база/акции/бонус.',
+  'skill.hr-offer-architect.input.candidate': 'Профиль кандидата (уровень, опыт, текущая ЗП)',
+  'skill.hr-offer-architect.input.candidatePlaceholder': 'напр. 7 лет бэкенд, сейчас Senior Engineer в финтехе.',
+  'skill.hr-offer-architect.input.compBand': 'Вилка ЗП вашей компании для этого уровня',
+  'skill.hr-offer-architect.input.compBandPlaceholder': 'напр. Senior: $170-200k база, 0.1-0.25% акции.',
+  'skill.hr-offer-architect.input.competingOffers': 'Конкурирующие офферы (необязательно)',
+  'skill.hr-offer-architect.input.competingOffersPlaceholder': 'напр. Конкурент: $195k база + 0.3% акции.',
+
+  'skill.hr-onboarding-commander.name': 'Командир онбординга',
+  'skill.hr-onboarding-commander.tagline': 'Планы онбординга 30-60-90 дней для быстрой продуктивности.',
+  'skill.hr-onboarding-commander.description': 'Составляет ролевой план 30-60-90: недельные里程碑, ключевые связи, ресурсы, метрики.',
+  'skill.hr-onboarding-commander.input.role': 'Роль для онбординга',
+  'skill.hr-onboarding-commander.input.rolePlaceholder': 'напр. Senior Backend Engineer',
+  'skill.hr-onboarding-commander.input.companyContext': 'Контекст компании и команды (стек, процессы, размер)',
+  'skill.hr-onboarding-commander.input.companyContextPlaceholder': 'напр. Series A стартап, 15 инженеров, Rust + Kubernetes.',
+
+  'skill.hr-talent-pipeline.name': 'Пайплайн талантов',
+  'skill.hr-talent-pipeline.tagline': 'Стройте проактивный пайплайн кандидатов до того, как они понадобятся.',
+  'skill.hr-talent-pipeline.description': 'Стратегия на 6 месяцев: какие роли в пайплайне, каналы поиска, nurture-серии, метрики.',
+  'skill.hr-talent-pipeline.input.hiringPlan': 'План найма на 6 месяцев (роли + количество)',
+  'skill.hr-talent-pipeline.input.hiringPlanPlaceholder': 'напр. 3 бэкенд, 2 фронтенд, 1 дизайнер, 1 PM.',
+  'skill.hr-talent-pipeline.input.companyContext': 'Контекст компании (стадия, бренд, локация)',
+  'skill.hr-talent-pipeline.input.companyContextPlaceholder': 'напр. Series A, 30 человек, развивающийся бренд в Web3.',
+
+  'skill.hr-retention-radar.name': 'Радар удержания',
+  'skill.hr-retention-radar.tagline': 'Выявляйте риски ухода до того, как они уволятся.',
+  'skill.hr-retention-radar.description': 'Фреймворк оценки рисков: 10 сигналов, планы вмешательства, банк вопросов для stay-interview.',
+  'skill.hr-retention-radar.input.teamContext': 'Контекст команды (размер, тенур, недавние изменения)',
+  'skill.hr-retention-radar.input.teamContextPlaceholder': 'напр. 12 инженеров, средний тенур 2.5 года.',
+  'skill.hr-retention-radar.input.concerns': 'Конкретные опасения (необязательно)',
+  'skill.hr-retention-radar.input.concernsPlaceholder': 'напр. Два senior инженера кажутся демотивированными.',
+
+  'skill.hr-culture-architect.name': 'Архитектор культуры',
+  'skill.hr-culture-architect.tagline': 'Проектируйте и кодифицируйте культуру компании осознанно.',
+  'skill.hr-culture-architect.description': 'Помогает сформулировать операционные принципы, ритуалы и антипаттерны. Создает документ культуры и вопросы для найма.',
+  'skill.hr-culture-architect.input.companyStage': 'Стадия и размер компании',
+  'skill.hr-culture-architect.input.companyStagePlaceholder': 'напр. Series A, 25 человек, рост до 50 за 12 месяцев.',
+  'skill.hr-culture-architect.input.valuesRaw': 'За что вы выступаете? (мозговой штурм)',
+  'skill.hr-culture-architect.input.valuesRawPlaceholder': 'напр. Мы вознаграждаем ответственность, скорость и честность.',
+
+  'skill.category.career': 'Карьера',
+  'skill.category.hr': 'HR / Найм',
+
+  'skill.dialog.required': '*',
+  'skill.dialog.runWithGLM': 'Запустить с GLM',
+  'skill.dialog.running': 'Выполняется на GLM…',
+  'skill.dialog.rerun': 'Перезапустить',
+  'skill.dialog.close': 'Закрыть',
+  'skill.dialog.copy': 'Копировать',
+  'skill.dialog.copied': 'Скопировано',
+  'skill.dialog.download': '.md',
+  'skill.dialog.generated': 'Сгенерировано через',
+  'skill.dialog.runFailed': 'Ошибка запуска',
+
+  'hero.quickAction.career': 'Карьерное планирование',
+  'hero.quickAction.resume': 'Перезапись резюме',
+  'hero.quickAction.cover': 'Сопроводительные письма',
+  'hero.quickAction.interview': 'Подготовка к собеседованию',
+  'hero.quickAction.salary': 'Скрипты переговоров',
+  'hero.quickAction.linkedin': 'Оптимизация LinkedIn',
+  'hero.quickAction.hunt': 'План поиска работы',
+  'hero.quickAction.more': '+ ещё 9',
+};
+
+// For Hebrew, French, Arabic — use English as fallback for now (these are long strings)
+// but translate the critical UI labels
+const skillHe: Dict = {
+  ...skillEn, // fallback for long descriptions
+  'skill.category.career': 'קריירה',
+  'skill.category.hr': 'HR / גיוס',
+  'skill.dialog.required': '*',
+  'skill.dialog.runWithGLM': 'הפעל עם GLM',
+  'skill.dialog.running': 'מופעל על GLM…',
+  'skill.dialog.rerun': 'הפעל שוב',
+  'skill.dialog.close': 'סגור',
+  'skill.dialog.copy': 'העתק',
+  'skill.dialog.copied': 'הועתק',
+  'skill.dialog.download': '.md',
+  'skill.dialog.generated': 'נוצר על ידי',
+  'skill.dialog.runFailed': 'הרצה נכשלה',
+  'hero.quickAction.career': 'תכנון קריירה',
+  'hero.quickAction.resume': 'שכתוב קורות חיים',
+  'hero.quickAction.cover': 'מכתבי פנייה',
+  'hero.quickAction.interview': 'הכנה לראיון',
+  'hero.quickAction.salary': 'סקריפטי משא ומתן',
+  'hero.quickAction.linkedin': 'אופטימיזציית LinkedIn',
+  'hero.quickAction.hunt': 'תכנית חיפוש עבודה',
+  'hero.quickAction.more': '+ עוד 9',
+};
+
+const skillFr: Dict = {
+  ...skillEn, // fallback
+  'skill.category.career': 'Carrière',
+  'skill.category.hr': 'RH / Recrutement',
+  'skill.dialog.required': '*',
+  'skill.dialog.runWithGLM': 'Lancer avec GLM',
+  'skill.dialog.running': 'Exécution sur GLM…',
+  'skill.dialog.rerun': 'Relancer',
+  'skill.dialog.close': 'Fermer',
+  'skill.dialog.copy': 'Copier',
+  'skill.dialog.copied': 'Copié',
+  'skill.dialog.download': '.md',
+  'skill.dialog.generated': 'Généré via',
+  'skill.dialog.runFailed': 'Échec de l\'exécution',
+  'hero.quickAction.career': 'Planification de carrière',
+  'hero.quickAction.resume': 'Réécriture de CV',
+  'hero.quickAction.cover': 'Lettres de motivation',
+  'hero.quickAction.interview': 'Préparation d\'entretien',
+  'hero.quickAction.salary': 'Scripts de négociation',
+  'hero.quickAction.linkedin': 'Optimisation LinkedIn',
+  'hero.quickAction.hunt': 'Plan de recherche',
+  'hero.quickAction.more': '+ 9 autres',
+};
+
+const skillAr: Dict = {
+  ...skillEn, // fallback
+  'skill.category.career': 'المسار المهني',
+  'skill.category.hr': 'الموارد البشرية / التوظيف',
+  'skill.dialog.required': '*',
+  'skill.dialog.runWithGLM': 'تشغيل مع GLM',
+  'skill.dialog.running': 'جاري التشغيل على GLM…',
+  'skill.dialog.rerun': 'إعادة التشغيل',
+  'skill.dialog.close': 'إغلاق',
+  'skill.dialog.copy': 'نسخ',
+  'skill.dialog.copied': 'تم النسخ',
+  'skill.dialog.download': '.md',
+  'skill.dialog.generated': 'تم الإنشاء عبر',
+  'skill.dialog.runFailed': 'فشل التشغيل',
+  'hero.quickAction.career': 'تخطيط المسار المهني',
+  'hero.quickAction.resume': 'إعادة كتابة السيرة',
+  'hero.quickAction.cover': 'خطابات التغطية',
+  'hero.quickAction.interview': 'التحضير للمقابلة',
+  'hero.quickAction.salary': 'سيناريوهات التفاوض',
+  'hero.quickAction.linkedin': 'تحسين LinkedIn',
+  'hero.quickAction.hunt': 'خطة البحث عن عمل',
+  'hero.quickAction.more': '+ 9 أخرى',
+};
+
+// ─── Persona translations ───────────────────────────────────────────────────
+const personaEn: Dict = {
+  'persona.recruiter.name': 'Sarah',
+  'persona.recruiter.role': 'Senior Recruiter',
+  'persona.compensation.name': 'Marcus',
+  'persona.compensation.role': 'Comp Specialist',
+  'persona.career_coach.name': 'Dr. Priya',
+  'persona.career_coach.role': 'Career Coach',
+  'persona.hr_legal.name': 'James',
+  'persona.hr_legal.role': 'HR & Legal',
+  'persona.culture.name': 'Elena',
+  'persona.culture.role': 'Culture Expert',
+  'persona.founder.name': 'Alex',
+  'persona.founder.role': 'Founder Advisor',
+};
+
+const personaRu: Dict = {
+  'persona.recruiter.name': 'Сара',
+  'persona.recruiter.role': 'Старший рекрутер',
+  'persona.compensation.name': 'Маркус',
+  'persona.compensation.role': 'Специалист по компенсациям',
+  'persona.career_coach.name': 'Доктор Прия',
+  'persona.career_coach.role': 'Карьерный коуч',
+  'persona.hr_legal.name': 'Джеймс',
+  'persona.hr_legal.role': 'HR и право',
+  'persona.culture.name': 'Елена',
+  'persona.culture.role': 'Эксперт по культуре',
+  'persona.founder.name': 'Алекс',
+  'persona.founder.role': 'Советник основателя',
+};
+
+const personaHe: Dict = {
+  'persona.recruiter.name': 'שרה',
+  'persona.recruiter.role': 'רקרוטרית בכירה',
+  'persona.compensation.name': 'מרקוס',
+  'persona.compensation.role': 'מומחה פיצויים',
+  'persona.career_coach.name': 'ד״ר פריה',
+  'persona.career_coach.role': 'מאמנת קריירה',
+  'persona.hr_legal.name': 'ג׳יימס',
+  'persona.hr_legal.role': 'HR ומשפט',
+  'persona.culture.name': 'אלנה',
+  'persona.culture.role': 'מומחית תרבות',
+  'persona.founder.name': 'אלכס',
+  'persona.founder.role': 'יועץ מייסדים',
+};
+
+const personaFr: Dict = {
+  'persona.recruiter.name': 'Sarah',
+  'persona.recruiter.role': 'Recruteuse Senior',
+  'persona.compensation.name': 'Marcus',
+  'persona.compensation.role': 'Spécialiste Comp',
+  'persona.career_coach.name': 'Dr. Priya',
+  'persona.career_coach.role': 'Coach de Carrière',
+  'persona.hr_legal.name': 'James',
+  'persona.hr_legal.role': 'RH & Juridique',
+  'persona.culture.name': 'Elena',
+  'persona.culture.role': 'Experte Culture',
+  'persona.founder.name': 'Alex',
+  'persona.founder.role': 'Conseiller Fondateur',
+};
+
+const personaAr: Dict = {
+  'persona.recruiter.name': 'سارة',
+  'persona.recruiter.role': 'مسؤولة توظيف أولى',
+  'persona.compensation.name': 'ماركوس',
+  'persona.compensation.role': 'أخصائي تعويضات',
+  'persona.career_coach.name': 'د. بريا',
+  'persona.career_coach.role': 'مدربة مهنية',
+  'persona.hr_legal.name': 'جيمس',
+  'persona.hr_legal.role': 'الموارد البشرية والقانون',
+  'persona.culture.name': 'إيلينا',
+  'persona.culture.role': 'خبيرة ثقافة',
+  'persona.founder.name': 'أليكس',
+  'persona.founder.role': 'مستشار المؤسسين',
+};
+
+// ─── Resume template translations ───────────────────────────────────────────
+const templateEn: Dict = {
+  'template.category.all': 'All',
+  'template.category.modern': 'Modern',
+  'template.category.classic': 'Classic',
+  'template.category.creative': 'Creative',
+  'template.category.minimal': 'Minimal',
+  'template.category.executive': 'Executive',
+  'template.category.tech': 'Tech',
+  // Template names stay in English (proper nouns / brand-like)
+  // but descriptions can be translated
+};
+
+const templateRu: Dict = {
+  'template.category.all': 'Все',
+  'template.category.modern': 'Современные',
+  'template.category.classic': 'Классические',
+  'template.category.creative': 'Креативные',
+  'template.category.minimal': 'Минималистичные',
+  'template.category.executive': 'Для руководителей',
+  'template.category.tech': 'Технические',
+};
+
+const templateHe: Dict = {
+  'template.category.all': 'הכל',
+  'template.category.modern': 'מודרני',
+  'template.category.classic': 'קלאסי',
+  'template.category.creative': 'יצירתי',
+  'template.category.minimal': 'מינימליסטי',
+  'template.category.executive': 'בכיר',
+  'template.category.tech': 'טכנולוגי',
+};
+
+const templateFr: Dict = {
+  'template.category.all': 'Tous',
+  'template.category.modern': 'Moderne',
+  'template.category.classic': 'Classique',
+  'template.category.creative': 'Créatif',
+  'template.category.minimal': 'Minimaliste',
+  'template.category.executive': 'Exécutif',
+  'template.category.tech': 'Tech',
+};
+
+const templateAr: Dict = {
+  'template.category.all': 'الكل',
+  'template.category.modern': 'حديث',
+  'template.category.classic': 'كلاسيكي',
+  'template.category.creative': 'إبداعي',
+  'template.category.minimal': 'بسيط',
+  'template.category.executive': 'تنفيذي',
+  'template.category.tech': 'تقني',
+};
+
+// ─── Combine all ─────────────────────────────────────────────────────────────
+export const EXTENDED_TRANSLATIONS: Record<Locale, Dict> = {
+  en: { ...skillEn, ...personaEn, ...templateEn },
+  ru: { ...skillRu, ...personaRu, ...templateRu },
+  he: { ...skillHe, ...personaHe, ...templateHe },
+  fr: { ...skillFr, ...personaFr, ...templateFr },
+  ar: { ...skillAr, ...personaAr, ...templateAr },
+};
+
+export function tExtended(locale: Locale, key: string, params?: Record<string, string | number>): string {
+  const dict = EXTENDED_TRANSLATIONS[locale] || EXTENDED_TRANSLATIONS.en;
+  let str = dict[key] || EXTENDED_TRANSLATIONS.en[key] || key;
+  if (params) {
+    for (const [k, v] of Object.entries(params)) {
+      str = str.replace(`{${k}}`, String(v));
+    }
+  }
+  return str;
+}
