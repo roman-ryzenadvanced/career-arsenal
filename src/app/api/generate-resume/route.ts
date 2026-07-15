@@ -19,13 +19,15 @@ export const maxDuration = 120;
 
 export async function PATCH(req: NextRequest) {
   try {
+    const user = await getCurrentUser();
+    if (!user) return NextResponse.json({ error: 'Not authenticated. Please login.' }, { status: 401 });
     const body = await req.json();
     const jobPosting: string = body.jobPosting || '';
     const customInstructions: string = body.customInstructions || '';
     const format: string = body.format || 'senior';
 
     // Load profile
-    const profile = await db.profile.findFirst({ orderBy: { createdAt: 'desc' } });
+    const profile = await db.profile.findFirst({ where: { userId: user.id }, orderBy: { createdAt: 'desc' } });
     if (!profile || !profile.rawText) {
       return NextResponse.json(
         { error: 'No profile found. Please upload your resume or LinkedIn export first.' },

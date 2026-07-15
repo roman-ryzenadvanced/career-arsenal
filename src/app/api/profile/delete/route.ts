@@ -5,13 +5,19 @@
  */
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { getCurrentUser, getCurrentProfile } from '@/lib/auth';
+import { getCurrentUser } from '@/lib/auth';
 
 export const runtime = 'nodejs';
 
 export async function DELETE() {
   try {
-    const profile = await db.profile.findFirst({ orderBy: { createdAt: 'desc' } });
+    const user = await getCurrentUser();
+    if (!user) return NextResponse.json({ error: 'Not authenticated.' }, { status: 401 });
+
+    const profile = await db.profile.findFirst({
+      where: { userId: user.id },
+      orderBy: { createdAt: 'desc' },
+    });
     if (!profile) {
       return NextResponse.json({ ok: true, deleted: false, message: 'Nothing to delete.' });
     }

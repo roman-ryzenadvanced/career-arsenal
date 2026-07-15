@@ -1175,8 +1175,8 @@ export default function Home() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="hidden sm:flex"
                 onClick={handleLogout}
+                className="text-xs shrink-0"
               >
                 {t('auth.logout') || 'Logout'}
               </Button>

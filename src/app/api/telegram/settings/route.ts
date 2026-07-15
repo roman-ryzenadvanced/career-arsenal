@@ -46,7 +46,7 @@ export async function PATCH(req: NextRequest) {
     const body = await req.json();
     const action: string = body.action || 'save';
 
-    const profile = await db.profile.findFirst({ orderBy: { createdAt: 'desc' } });
+    const profile = await db.profile.findFirst({ where: { userId: user.id }, orderBy: { createdAt: 'desc' } });
     if (!profile) {
       return NextResponse.json({ error: 'No profile found. Upload your resume first.' }, { status: 404 });
     }
@@ -149,7 +149,7 @@ export async function PATCH(req: NextRequest) {
 // DELETE — remove bot
 export async function DELETE() {
   try {
-    const profile = await db.profile.findFirst({ orderBy: { createdAt: 'desc' } });
+    const profile = await db.profile.findFirst({ where: { userId: user.id }, orderBy: { createdAt: 'desc' } });
     if (!profile) return NextResponse.json({ ok: true });
 
     const bot = await db.telegramBot.findFirst({

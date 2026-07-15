@@ -20,6 +20,8 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const user = await getCurrentUser();
+    if (!user) return NextResponse.json({ error: 'Not authenticated. Please login.' }, { status: 401 });
     const { id: jobId } = await params;
     const body = await req.json().catch(() => ({}));
     const coverLetterFormat: string = body.coverLetterFormat || 'html';
@@ -31,7 +33,7 @@ export async function PATCH(
     }
 
     // Load the user's profile
-    const profile = await db.profile.findFirst({ orderBy: { createdAt: 'desc' } });
+    const profile = await db.profile.findFirst({ where: { userId: user.id }, orderBy: { createdAt: 'desc' } });
     if (!profile || !profile.rawText) {
       return NextResponse.json(
         { error: 'No profile found. Upload your resume first.' },

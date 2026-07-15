@@ -41,7 +41,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'Job title and company are required.' }, { status: 400 });
     }
 
-    const profile = await db.profile.findFirst({ orderBy: { createdAt: 'desc' } });
+    const profile = await db.profile.findFirst({ where: { userId: user.id }, orderBy: { createdAt: 'desc' } });
     if (!profile) {
       return NextResponse.json({ error: 'No profile found. Upload your resume first.' }, { status: 404 });
     }

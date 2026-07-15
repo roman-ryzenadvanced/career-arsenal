@@ -21,6 +21,8 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const user = await getCurrentUser();
+    if (!user) return NextResponse.json({ error: 'Not authenticated. Please login.' }, { status: 401 });
     const { id: skillId } = await params;
     const skill = getSkill(skillId);
     if (!skill) {
@@ -41,7 +43,7 @@ export async function POST(
     }
 
     // Load profile
-    const profile = await db.profile.findFirst({ orderBy: { createdAt: 'desc' } });
+    const profile = await db.profile.findFirst({ where: { userId: user.id }, orderBy: { createdAt: 'desc' } });
     if (!profile || !profile.rawText) {
       return NextResponse.json(
         { error: 'No profile found. Please upload your resume or LinkedIn export first.' },

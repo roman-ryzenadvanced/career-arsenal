@@ -1,29 +1,29 @@
 /**
  * /api/profile
- * - GET: return current profile
+ * - GET: return current profile (auth-scoped)
  * - PATCH: dual-purpose:
  *   • JSON body with { file: { text, sourceKind, fileName, fileSize } } → save parsed CV
  *   • JSON body with { fullName, targetRole, targetContext } → update metadata
  *
- * Files are parsed CLIENT-SIDE (in the browser) and only the extracted text
- * is sent to the server. This avoids the edge layer's body size limit and
- * multipart corruption issues.
+ * All operations are scoped to the authenticated user.
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { getCurrentUser, getCurrentProfile } from '@/lib/auth';
+import { getCurrentUser } from '@/lib/auth';
 
 export const runtime = 'nodejs';
 export const maxDuration = 30;
 
 export async function GET() {
   const user = await getCurrentUser();
-    if (!user) return NextResponse.json({ error: 'Not authenticated. Please login.' }, { status: 401 });
-    const profile = await db.profile.findFirst({
-      where: { userId: user.id },
-      orderBy: { createdAt: 'desc' },
-      include: { _count: { select: { skillRuns: true, uploads: true } } },
-    });
+  if (!user) return NextResponse.json({ error: 'Not authenticated. Please login.' }, { status: 401 });
+
+  const profile = await db.profile.findFirst({
+    where: { userId: user.id },
+    orderBy: { createdAt: 'desc' },
+    include: { _count: { select: { skillRuns: true, uploads: true } } },
+  });
+
   if (!profile) return NextResponse.json({ profile: null });
 
   return NextResponse.json({
@@ -49,22 +49,25 @@ export async function GET() {
 
 export async function PATCH(req: NextRequest) {
   try {
+    const user = await getCurrentUser();
+    if (!user) return NextResponse.json({ error: 'Not authenticated. Please login.' }, { status: 401 });
+
     const body = await req.json();
 
     // Save parsed CV text (parsed client-side)
     if (body.file && body.file.text) {
-      return handleSaveParsedText(body.file);
+      return handleSaveParsedText(body.file, user.id);
     }
 
     // Metadata update
-    return handleMetadataUpdate(body);
+    return handleMetadataUpdate(body, user.id);
   } catch (err: any) {
     console.error('PATCH error:', err);
     return NextResponse.json({ error: 'Request failed.', detail: err?.message }, { status: 500 });
   }
 }
 
-async function handleSaveParsedText(file: { text: string; sourceKind: string; fileName: string; fileSize: number }) {
+async function handleSaveParsedText(file: { text: string; sourceKind: string; fileName: string; fileSize: number }, userId: string) {
   try {
     const extractedText = (file.text || '').trim();
     if (extractedText.length < 50) {
@@ -75,7 +78,10 @@ async function handleSaveParsedText(file: { text: string; sourceKind: string; fi
     }
 
     const sourceKind = file.sourceKind === 'linkedin' ? 'linkedin' : 'resume';
-    const existing = await db.profile.findFirst({ orderBy: { createdAt: 'desc' } });
+    const existing = await db.profile.findFirst({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+    });
 
     let profile;
     if (existing) {
@@ -87,7 +93,7 @@ async function handleSaveParsedText(file: { text: string; sourceKind: string; fi
       });
     } else {
       profile = await db.profile.create({
-        data: { userId: user.id, rawText: extractedText, sourceKind, fileName: file.fileName },
+        data: { userId, rawText: extractedText, sourceKind, fileName: file.fileName },
       });
     }
 
@@ -124,8 +130,12 @@ async function handleSaveParsedText(file: { text: string; sourceKind: string; fi
   }
 }
 
-async function handleMetadataUpdate(body: any) {
-  const profile = await db.profile.findFirst({ orderBy: { createdAt: 'desc' } });
+async function handleMetadataUpdate(body: any, userId: string) {
+  const profile = await db.profile.findFirst({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+  });
+
   if (!profile) {
     return NextResponse.json({ error: 'No profile found. Upload a resume first.' }, { status: 404 });
   }
