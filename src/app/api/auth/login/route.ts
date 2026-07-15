@@ -2,7 +2,7 @@
  * PATCH /api/auth/login
  *
  * Verifies a Telegram bot token and creates a user session.
- * If the user doesn't exist, creates them. Sets a session cookie.
+ * If the user doesn't exist, creates them + auto-pairs the Telegram bot.
  *
  * Body: { botToken: string }
  * Returns: { ok: true, user: { id, botUsername }, isNewUser: boolean }
@@ -10,6 +10,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { generateSessionToken } from '@/lib/auth';
+import { cookies } from 'next/headers';
 
 export const runtime = 'nodejs';
 export const maxDuration = 30;
@@ -32,7 +33,6 @@ export async function PATCH(req: NextRequest) {
     }
 
     const botUsername = tgData.result.username;
-    const botFirstName = tgData.result.first_name;
 
     // Check if user already exists
     let user = await db.user.findUnique({ where: { botToken } });
@@ -49,8 +49,8 @@ export async function PATCH(req: NextRequest) {
         },
       });
 
-      // Create a TelegramBot record (auto-pair)
-      await db.telegramBot.create({
+      // Auto-pair: Create a TelegramBot record linked to the user
+      const tgBot = await db.telegramBot.create({
         data: {
           userId: user.id,
           botToken,
@@ -60,11 +60,22 @@ export async function PATCH(req: NextRequest) {
         },
       });
 
-      // Set the webhook automatically
+      // Link the bot to a profile if one exists (or will be created later)
+      // We don't require a profile at signup — the bot works once a profile is uploaded
+      // The webhook will look up the bot by token, not by profileId
+
+      // Set the webhook with a secret_token so we can identify which bot sent the message
+      const webhookSecret = user.id; // Use user ID as secret
       try {
         const webhookUrl = `https://ats-jobs.space-z.ai/api/telegram/webhook`;
-        await fetch(`https://api.telegram.org/bot${botToken}/setWebhook?url=${webhookUrl}`);
-      } catch {}
+        await fetch(`https://api.telegram.org/bot${botToken}/setWebhook?url=${webhookUrl}&secret_token=${webhookSecret}`, {
+          method: 'POST',
+        });
+        console.log(`Webhook set for bot @${botUsername} with secret ${webhookSecret}`);
+      } catch (webhookErr) {
+        console.error('Failed to set webhook:', webhookErr);
+        // Non-fatal — user can still use the web app
+      }
     } else {
       // Update session token for returning user
       user = await db.user.update({
@@ -74,6 +85,15 @@ export async function PATCH(req: NextRequest) {
           botUsername,
         },
       });
+
+      // Re-set webhook in case it was lost
+      const webhookSecret = user.id;
+      try {
+        const webhookUrl = `https://ats-jobs.space-z.ai/api/telegram/webhook`;
+        await fetch(`https://api.telegram.org/bot${botToken}/setWebhook?url=${webhookUrl}&secret_token=${webhookSecret}`, {
+          method: 'POST',
+        });
+      } catch {}
     }
 
     // Set session cookie
@@ -83,6 +103,7 @@ export async function PATCH(req: NextRequest) {
       isNewUser,
     });
 
+    const cookieStore = await cookies();
     response.cookies.set('career-arsenal-session', user.sessionToken!, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

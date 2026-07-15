@@ -1,26 +1,43 @@
 /**
  * /api/telegram/settings
  *
- * GET: return current Telegram bot settings (token masked)
- * PATCH: save/update Telegram bot token + test connection
- *   Body: { action: 'save' | 'test' | 'activate' | 'deactivate', botToken?, defaultPersona? }
+ * GET: return current Telegram bot settings + paired status
+ * PATCH: save/update Telegram bot token + test connection + activate/deactivate
  * DELETE: remove Telegram bot integration
+ *
+ * Does NOT require a Profile — the bot is linked to the User, not the Profile.
+ * The bot works once the user uploads a resume (the webhook looks up the profile by userId).
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { getCurrentUser, getCurrentProfile } from '@/lib/auth';
+import { getCurrentUser } from '@/lib/auth';
+import { cookies } from 'next/headers';
 
 export const runtime = 'nodejs';
 export const maxDuration = 30;
 
-// GET — return current Telegram bot config
+// GET — return current Telegram bot config + paired status
 export async function GET() {
   try {
     const user = await getCurrentUser();
-    if (!user) return NextResponse.json({ error: 'Not authenticated. Please login.' }, { status: 401 });
-    const profile = await getCurrentProfile(user.id);
+    if (!user) return NextResponse.json({ error: 'Not authenticated.' }, { status: 401 });
 
-    if (!bot) return NextResponse.json({ bot: null });
+    const bot = await db.telegramBot.findFirst({
+      where: { userId: user.id },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (!bot) return NextResponse.json({ bot: null, paired: false });
+
+    // Check if the webhook is actually set by querying Telegram
+    let webhookActive = false;
+    try {
+      const whRes = await fetch(`https://api.telegram.org/bot${bot.botToken}/getWebhookInfo`);
+      const whData = await whRes.json();
+      if (whData.ok && whData.result.url) {
+        webhookActive = true;
+      }
+    } catch {}
 
     return NextResponse.json({
       bot: {
@@ -33,6 +50,8 @@ export async function GET() {
         lastMessageAt: bot.lastMessageAt,
         hasToken: true,
       },
+      paired: bot.isActive && webhookActive,
+      webhookActive,
     });
   } catch (err: any) {
     console.error('Telegram GET error:', err);
@@ -43,13 +62,11 @@ export async function GET() {
 // PATCH — save token, test connection, activate/deactivate
 export async function PATCH(req: NextRequest) {
   try {
+    const user = await getCurrentUser();
+    if (!user) return NextResponse.json({ error: 'Not authenticated.' }, { status: 401 });
+
     const body = await req.json();
     const action: string = body.action || 'save';
-
-    const profile = await db.profile.findFirst({ where: { userId: user.id }, orderBy: { createdAt: 'desc' } });
-    if (!profile) {
-      return NextResponse.json({ error: 'No profile found. Upload your resume first.' }, { status: 404 });
-    }
 
     // ─── Test connection ──────────────────────────────────────────────
     if (action === 'test') {
@@ -76,6 +93,14 @@ export async function PATCH(req: NextRequest) {
         where: { id: existing.id },
         data: { isActive: action === 'activate' },
       });
+
+      // Re-set or delete webhook
+      if (action === 'activate') {
+        await setWebhook(existing.botToken, user.id);
+      } else {
+        await fetch(`https://api.telegram.org/bot${existing.botToken}/deleteWebhook`);
+      }
+
       return NextResponse.json({ ok: true, isActive: action === 'activate' });
     }
 
@@ -100,7 +125,7 @@ export async function PATCH(req: NextRequest) {
       // Get bot info
       const botInfo = await getBotInfo(botToken);
 
-      // Upsert
+      // Upsert — find existing by userId (not by token, since token might change)
       const existing = await db.telegramBot.findFirst({
         where: { userId: user.id },
         orderBy: { createdAt: 'desc' },
@@ -108,6 +133,12 @@ export async function PATCH(req: NextRequest) {
 
       let bot;
       if (existing) {
+        // Delete old webhook if token changed
+        if (existing.botToken !== botToken) {
+          try {
+            await fetch(`https://api.telegram.org/bot${existing.botToken}/deleteWebhook`);
+          } catch {}
+        }
         bot = await db.telegramBot.update({
           where: { id: existing.id },
           data: {
@@ -129,8 +160,14 @@ export async function PATCH(req: NextRequest) {
         });
       }
 
-      // Set webhook
-      await setWebhook(botToken);
+      // Also update the User's botToken if it changed
+      await db.user.update({
+        where: { id: user.id },
+        data: { botToken, botUsername: botInfo.username },
+      });
+
+      // Set webhook with secret_token = userId
+      await setWebhook(botToken, user.id);
 
       return NextResponse.json({
         ok: true,
@@ -149,8 +186,8 @@ export async function PATCH(req: NextRequest) {
 // DELETE — remove bot
 export async function DELETE() {
   try {
-    const profile = await db.profile.findFirst({ where: { userId: user.id }, orderBy: { createdAt: 'desc' } });
-    if (!profile) return NextResponse.json({ ok: true });
+    const user = await getCurrentUser();
+    if (!user) return NextResponse.json({ error: 'Not authenticated.' }, { status: 401 });
 
     const bot = await db.telegramBot.findFirst({
       where: { userId: user.id },
@@ -158,7 +195,6 @@ export async function DELETE() {
     });
 
     if (bot) {
-      // Delete webhook before removing
       try {
         await fetch(`https://api.telegram.org/bot${bot.botToken}/deleteWebhook`);
       } catch {}
@@ -201,15 +237,21 @@ async function getBotInfo(token: string): Promise<{ id: number; username: string
   };
 }
 
-async function setWebhook(token: string): Promise<void> {
-  // Get the public URL — we can't know it for sure, so we use long polling fallback
-  // The webhook URL would be: https://ats-jobs.space-z.ai/api/telegram/webhook
-  // But we need the user to have a public URL. For now, we just try.
+async function setWebhook(token: string, userId: string): Promise<void> {
   const webhookUrl = `https://ats-jobs.space-z.ai/api/telegram/webhook`;
   try {
-    await fetch(`https://api.telegram.org/bot${token}/setWebhook?url=${webhookUrl}`);
-  } catch {
-    // If webhook fails, the bot can still work with getUpdates (polling)
+    const res = await fetch(`https://api.telegram.org/bot${token}/setWebhook`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        url: webhookUrl,
+        secret_token: userId,
+      }),
+    });
+    const data = await res.json();
+    console.log(`Webhook set result for user ${userId}:`, data.ok, data.description || '');
+  } catch (err) {
+    console.error('Failed to set webhook:', err);
   }
 }
 

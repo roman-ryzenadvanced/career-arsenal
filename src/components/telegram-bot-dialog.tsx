@@ -38,6 +38,8 @@ export function TelegramBotDialog({ open, onOpenChange }: TelegramBotDialogProps
   const { t } = useI18n();
   const { toast } = useToast();
   const [bot, setBot] = useState<BotInfo | null>(null);
+  const [paired, setPaired] = useState(false);
+  const [webhookActive, setWebhookActive] = useState(false);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [testing, setTesting] = useState(false);
@@ -55,9 +57,13 @@ export function TelegramBotDialog({ open, onOpenChange }: TelegramBotDialogProps
         setBot(data.bot);
         setToken(data.bot.botToken);
         setPersona(data.bot.defaultPersona);
+        setPaired(data.paired || false);
+        setWebhookActive(data.webhookActive || false);
       } else {
         setBot(null);
         setToken('');
+        setPaired(false);
+        setWebhookActive(false);
       }
     } catch (e: any) {
       toast({ title: t('telegram.loadFailed'), description: e?.message, variant: 'destructive' });
@@ -175,7 +181,7 @@ export function TelegramBotDialog({ open, onOpenChange }: TelegramBotDialogProps
             <>
               {/* Status card */}
               {bot && (
-                <Card className={bot.isActive ? 'border-sky-500/30 bg-sky-500/5' : 'border-muted'}>
+                <Card className={paired ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-red-500/30 bg-red-500/5'}>
                   <CardContent className="p-4 space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -189,15 +195,35 @@ export function TelegramBotDialog({ open, onOpenChange }: TelegramBotDialogProps
                           </p>
                         </div>
                       </div>
-                      <Badge variant={bot.isActive ? 'default' : 'secondary'} className="text-xs">
-                        {bot.isActive ? '🟢 ' + t('telegram.online') : '🔴 ' + t('telegram.offline')}
-                      </Badge>
+                      {/* Paired/unpaired indicator with green/red dot */}
+                      <div className="flex items-center gap-1.5">
+                        <span className={`h-2.5 w-2.5 rounded-full ${paired ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
+                        <Badge variant="outline" className={`text-xs ${paired ? 'text-emerald-600 border-emerald-500/50' : 'text-red-600 border-red-500/50'}`}>
+                          {paired ? t('telegram.paired') : t('telegram.notPaired')}
+                        </Badge>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
+                      <span className="flex items-center gap-1">
+                        <span className={`h-1.5 w-1.5 rounded-full ${webhookActive ? 'bg-emerald-500' : 'bg-red-500'}`} />
+                        {webhookActive ? t('telegram.webhookActive') : t('telegram.webhookInactive')}
+                      </span>
+                      <span>•</span>
                       <span>{t('telegram.persona')}: {bot.defaultPersona}</span>
-                      {bot.chatId && <span>✅ {t('telegram.connected')}</span>}
+                      {bot.chatId && (
+                        <>
+                          <span>•</span>
+                          <span className="flex items-center gap-1">
+                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                            {t('telegram.chatConnected')}
+                          </span>
+                        </>
+                      )}
                       {bot.lastMessageAt && (
-                        <span>📅 {new Date(bot.lastMessageAt).toLocaleDateString()}</span>
+                        <>
+                          <span>•</span>
+                          <span>📅 {new Date(bot.lastMessageAt).toLocaleDateString()}</span>
+                        </>
                       )}
                     </div>
                     <div className="flex gap-2 pt-1">

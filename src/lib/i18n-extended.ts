@@ -1049,6 +1049,11 @@ const telegramEn: Dict = {
   'telegram.invalidToken': 'Invalid token. Format: 123456789:ABCdef...',
   'telegram.confirmRemove': 'Remove the Telegram bot? You can re-add it later.',
   'telegram.infoNote': 'Once connected, message your bot on Telegram to chat with your HR assistant. The bot reads your resume and portal context, just like the in-app chat. Switch personas anytime with /persona command.',
+'telegram.paired': 'Paired',
+  'telegram.notPaired': 'Not Paired',
+  'telegram.webhookActive': 'Webhook active',
+  'telegram.webhookInactive': 'Webhook inactive',
+  'telegram.chatConnected': 'Chat connected',
 };
 
 const telegramRu: Dict = {
@@ -1090,6 +1095,11 @@ const telegramRu: Dict = {
   'telegram.invalidToken': 'Неверный токен. Формат: 123456789:ABCdef...',
   'telegram.confirmRemove': 'Удалить Telegram-бота? Вы сможете добавить его позже.',
   'telegram.infoNote': 'После подключения напишите боту в Telegram, чтобы общаться с HR-ассистентом. Бот читает ваше резюме и контекст портала. Переключайте персоны командой /persona.',
+'telegram.paired': 'Подключён',
+  'telegram.notPaired': 'Не подключён',
+  'telegram.webhookActive': 'Webhook активен',
+  'telegram.webhookInactive': 'Webhook неактивен',
+  'telegram.chatConnected': 'Чат подключён',
 };
 
 const telegramHe: Dict = {
@@ -1136,6 +1146,23 @@ const telegramAr: Dict = {
   'telegram.save': 'حفظ وربط',
   'telegram.saved': 'تم ربط البوت!',
 };
+
+// Add paired status to all languages
+EXTENDED_TRANSLATIONS.he['telegram.paired'] = 'מחובר';
+EXTENDED_TRANSLATIONS.he['telegram.notPaired'] = 'לא מחובר';
+EXTENDED_TRANSLATIONS.he['telegram.webhookActive'] = 'Webhook פעיל';
+EXTENDED_TRANSLATIONS.he['telegram.webhookInactive'] = 'Webhook לא פעיל';
+EXTENDED_TRANSLATIONS.he['telegram.chatConnected'] = 'צ\"אט מחובר';
+EXTENDED_TRANSLATIONS.fr['telegram.paired'] = 'Connecté';
+EXTENDED_TRANSLATIONS.fr['telegram.notPaired'] = 'Non connecté';
+EXTENDED_TRANSLATIONS.fr['telegram.webhookActive'] = 'Webhook actif';
+EXTENDED_TRANSLATIONS.fr['telegram.webhookInactive'] = 'Webhook inactif';
+EXTENDED_TRANSLATIONS.fr['telegram.chatConnected'] = 'Chat connecté';
+EXTENDED_TRANSLATIONS.ar['telegram.paired'] = 'متصل';
+EXTENDED_TRANSLATIONS.ar['telegram.notPaired'] = 'غير متصل';
+EXTENDED_TRANSLATIONS.ar['telegram.webhookActive'] = 'Webhook نشط';
+EXTENDED_TRANSLATIONS.ar['telegram.webhookInactive'] = 'Webhook غير نشط';
+EXTENDED_TRANSLATIONS.ar['telegram.chatConnected'] = 'الدردشة متصلة';
 
 // Merge Telegram translations
 Object.keys(telegramEn).forEach(k => { EXTENDED_TRANSLATIONS.en[k] = telegramEn[k]; });
