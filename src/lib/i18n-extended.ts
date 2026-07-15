@@ -1143,3 +1143,77 @@ Object.keys(telegramRu).forEach(k => { EXTENDED_TRANSLATIONS.ru[k] = telegramRu[
 Object.keys(telegramHe).forEach(k => { EXTENDED_TRANSLATIONS.he[k] = telegramHe[k]; });
 Object.keys(telegramFr).forEach(k => { EXTENDED_TRANSLATIONS.fr[k] = telegramFr[k]; });
 Object.keys(telegramAr).forEach(k => { EXTENDED_TRANSLATIONS.ar[k] = telegramAr[k]; });
+
+// ─── Auth/Login translations ────────────────────────────────────────────────
+const authEn: Dict = {
+  'auth.subtitle': 'Your AI-powered career platform. Login with your Telegram bot token.',
+  'auth.existingUser': 'I have a bot token',
+  'auth.newUser': 'I\'m new — guide me',
+  'auth.tokenIsLogin': 'Your Telegram bot token is your login. No password needed.',
+  'auth.loginTitle': 'Welcome back',
+  'auth.loginDesc': 'Enter your Telegram bot token to access your account.',
+  'auth.signupTitle': 'Create your account',
+  'auth.signupDesc': 'Generate a Telegram bot and use its token as your login.',
+  'auth.howToGetToken': 'How to get a bot token',
+  'auth.step1': 'Open',
+  'auth.step2': 'Send /newbot and follow the prompts',
+  'auth.step3': 'Choose a name and username for your bot',
+  'auth.step4': 'Copy the token BotFather gives you',
+  'auth.step5': 'Paste it below and click Create Account',
+  'auth.botToken': 'Bot Token',
+  'auth.login': 'Login',
+  'auth.createAccount': 'Create Account',
+  'auth.creatingAccount': 'Creating your account…',
+  'auth.loginFailed': 'Login failed',
+  'auth.invalidToken': 'Invalid token. Format: 123456789:ABCdef...',
+  'auth.welcomeNew': 'Welcome to Career Arsenal!',
+  'auth.welcomeBack': 'Welcome back!',
+  'auth.accountCreated': 'Account created with bot {bot}. Your Telegram bot is now paired!',
+  'auth.loggedInAs': 'Logged in as {bot}',
+  'auth.back': 'Back',
+  'auth.notLoggedIn': 'Please login to continue',
+  'auth.logout': 'Logout',
+};
+
+const authRu: Dict = {
+  'auth.subtitle': 'Ваша AI-платформа для карьеры. Войдите через токен Telegram-бота.',
+  'auth.existingUser': 'У меня есть токен',
+  'auth.newUser': 'Я новый — помогите',
+  'auth.tokenIsLogin': 'Токен Telegram-бота — это ваш логин. Без пароля.',
+  'auth.loginTitle': 'С возвращением',
+  'auth.loginDesc': 'Введите токен вашего Telegram-бота для входа.',
+  'auth.signupTitle': 'Создать аккаунт',
+  'auth.signupDesc': 'Создайте Telegram-бота и используйте его токен как логин.',
+  'auth.howToGetToken': 'Как получить токен бота',
+  'auth.step1': 'Откройте',
+  'auth.step2': 'Отправьте /newbot и следуйте инструкциям',
+  'auth.step3': 'Выберите имя и username для бота',
+  'auth.step4': 'Скопируйте токен от BotFather',
+  'auth.step5': 'Вставьте его ниже и нажмите Создать аккаунт',
+  'auth.botToken': 'Токен бота',
+  'auth.login': 'Войти',
+  'auth.createAccount': 'Создать аккаунт',
+  'auth.creatingAccount': 'Создание аккаунта…',
+  'auth.loginFailed': 'Вход не удался',
+  'auth.invalidToken': 'Неверный токен. Формат: 123456789:ABCdef...',
+  'auth.welcomeNew': 'Добро пожаловать в Career Arsenal!',
+  'auth.welcomeBack': 'С возвращением!',
+  'auth.accountCreated': 'Аккаунт создан с ботом {bot}. Ваш Telegram-бот подключён!',
+  'auth.loggedInAs': 'Вход выполнен как {bot}',
+  'auth.back': 'Назад',
+  'auth.notLoggedIn': 'Войдите для продолжения',
+  'auth.logout': 'Выйти',
+  'auth.logout': 'Выйти',
+};
+
+const authHe: Dict = { ...authEn, 'auth.subtitle': 'פלטפורמת הקריירה שלך מופעלת AI. התחבר עם טוקן בוט Telegram.', 'auth.existingUser': 'יש לי טוקן', 'auth.newUser': 'אני חדש', 'auth.login': 'התחבר', 'auth.createAccount': 'צור חשבון', 'auth.back': 'חזור', 'auth.botToken': 'טוקן בוט' };
+const authFr: Dict = { ...authEn, 'auth.subtitle': 'Votre plateforme carrière propulsée par AI. Connectez-vous avec votre token Telegram.', 'auth.existingUser': 'J\'ai un token', 'auth.newUser': 'Je suis nouveau', 'auth.login': 'Connexion', 'auth.createAccount': 'Créer un compte', 'auth.back': 'Retour', 'auth.botToken': 'Token du bot' };
+const authAr: Dict = { ...authEn, 'auth.subtitle': 'منصة المسار المهني بالذكاء الاصطناعي. سجل باستخدام رمز بوت تيليجرام.', 'auth.existingUser': 'لدي رمز', 'auth.newUser': 'أنا جديد', 'auth.login': 'تسجيل الدخول', 'auth.createAccount': 'إنشاء حساب', 'auth.back': 'رجوع', 'auth.botToken': 'رمز البوت' };
+
+Object.keys(authEn).forEach(k => { EXTENDED_TRANSLATIONS.en[k] = authEn[k]; });
+Object.keys(authRu).forEach(k => { EXTENDED_TRANSLATIONS.ru[k] = authRu[k]; });
+Object.keys(authHe).forEach(k => { EXTENDED_TRANSLATIONS.he[k] = authHe[k]; });
+Object.keys(authFr).forEach(k => { EXTENDED_TRANSLATIONS.fr[k] = authFr[k]; });
+Object.keys(authAr).forEach(k => { EXTENDED_TRANSLATIONS.ar[k] = authAr[k]; });
+// Add auth.logout to all languages
+['en','ru','he','fr','ar'].forEach(lang => { EXTENDED_TRANSLATIONS[lang as any]['auth.logout'] = lang === 'ru' ? 'Выйти' : lang === 'he' ? 'התנתק' : lang === 'fr' ? 'Déconnexion' : lang === 'ar' ? 'تسجيل الخروج' : 'Logout'; });

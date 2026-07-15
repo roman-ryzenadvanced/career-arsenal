@@ -19,6 +19,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { ALL_SKILLS } from '@/lib/skills';
 import ZAI from 'z-ai-web-dev-sdk';
+import { getCurrentUser, getCurrentProfile } from '@/lib/auth';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
@@ -111,16 +112,13 @@ PORTAL ACCESS: You can see the user's resume to assess their startup fit. You ca
 
 // Build the portal context string that gets injected into the system prompt
 async function buildPortalContext(): Promise<string> {
-  const profile = await db.profile.findFirst({
-    orderBy: { createdAt: 'desc' },
-    include: {
-      skillRuns: {
-        orderBy: { createdAt: 'desc' },
-        take: 10,
-        select: { skillId: true, skillName: true, createdAt: true },
-      },
-    },
-  });
+  const user = await getCurrentUser();
+    if (!user) return NextResponse.json({ error: 'Not authenticated. Please login.' }, { status: 401 });
+    const profile = await db.profile.findFirst({
+      where: { userId: user.id },
+      orderBy: { createdAt: 'desc' },
+      include: { _count: { select: { skillRuns: true, uploads: true } } },
+    });
 
   if (!profile) {
     return `\n\n=== PORTAL CONTEXT ===\nThe user has NOT uploaded a resume yet. Suggest they upload one to get personalized advice. You can still give general guidance.\n=== END CONTEXT ===\n`;

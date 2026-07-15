@@ -8,27 +8,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getSkill } from '@/lib/skills';
 import ZAI from 'z-ai-web-dev-sdk';
+import { getCurrentUser, getCurrentProfile } from '@/lib/auth';
 
 export const runtime = 'nodejs';
 export const maxDuration = 120;
 
 export async function GET() {
-  const profile = await db.profile.findFirst({ orderBy: { createdAt: 'desc' } });
-  if (!profile) return NextResponse.json({ runs: [] });
-
-  const runs = await db.skillRun.findMany({
-    where: { profileId: profile.id },
-    orderBy: { createdAt: 'desc' },
-    take: 50,
-    select: {
-      id: true,
-      skillId: true,
-      skillName: true,
-      output: true,
-      modelUsed: true,
-      createdAt: true,
-    },
-  });
+  const user = await getCurrentUser();
+    if (!user) return NextResponse.json({ error: 'Not authenticated. Please login.' }, { status: 401 });
+    const profile = await getCurrentProfile(user.id);
 
   return NextResponse.json({ runs });
 }

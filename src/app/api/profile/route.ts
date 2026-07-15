@@ -11,15 +11,19 @@
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { getCurrentUser, getCurrentProfile } from '@/lib/auth';
 
 export const runtime = 'nodejs';
 export const maxDuration = 30;
 
 export async function GET() {
-  const profile = await db.profile.findFirst({
-    orderBy: { createdAt: 'desc' },
-    include: { _count: { select: { skillRuns: true, uploads: true } } },
-  });
+  const user = await getCurrentUser();
+    if (!user) return NextResponse.json({ error: 'Not authenticated. Please login.' }, { status: 401 });
+    const profile = await db.profile.findFirst({
+      where: { userId: user.id },
+      orderBy: { createdAt: 'desc' },
+      include: { _count: { select: { skillRuns: true, uploads: true } } },
+    });
   if (!profile) return NextResponse.json({ profile: null });
 
   return NextResponse.json({
@@ -83,7 +87,7 @@ async function handleSaveParsedText(file: { text: string; sourceKind: string; fi
       });
     } else {
       profile = await db.profile.create({
-        data: { rawText: extractedText, sourceKind, fileName: file.fileName },
+        data: { userId: user.id, rawText: extractedText, sourceKind, fileName: file.fileName },
       });
     }
 

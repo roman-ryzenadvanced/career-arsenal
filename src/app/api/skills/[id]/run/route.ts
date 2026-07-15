@@ -11,6 +11,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getSkill } from '@/lib/skills';
 import ZAI from 'z-ai-web-dev-sdk';
+import { getCurrentUser, getCurrentProfile } from '@/lib/auth';
 
 export const runtime = 'nodejs';
 export const maxDuration = 120;

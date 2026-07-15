@@ -1,5 +1,6 @@
 // Prisma schema for Career Arsenal platform
-// Single user (no auth) — the platform stores one local profile + many skill runs
+// Multi-user — Telegram bot token is the login/identity.
+// Each user has their own Profile, skill runs, jobs, applications, and Telegram bot.
 
 generator client {
   provider = "prisma-client-js"
@@ -10,44 +11,60 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Profile {
+model User {
   id            String   @id @default(cuid())
-  fullName      String?
-  rawText       String   // raw extracted text from uploaded resume/LinkedIn export
-  sourceKind    String   @default("resume") // "resume" | "linkedin"
-  fileName      String?
-  parsedJson    String?  // structured extraction (skills, experience, education) as JSON string
-  targetRole    String?
-  targetContext String?  // additional context user provides (target company, goals, etc.)
+  botToken      String   @unique // Telegram bot token — used as login
+  botUsername   String?  // @username of the bot
+  sessionToken  String?  // random session token for browser auth
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
+  profiles      Profile[]
+  telegramBots  TelegramBot[]
+}
+
+model Profile {
+  id            String   @id @default(cuid())
+  userId        String   // Changed: now scoped to User, not standalone
+  fullName      String?
+  rawText       String   // raw extracted text from uploaded resume/LinkedIn export
+  sourceKind    String   @default("resume")
+  fileName      String?
+  parsedJson    String?
+  targetRole    String?
+  targetContext String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   skillRuns     SkillRun[]
   uploads       UploadedFile[]
   jobPostings   JobPosting[]
   applications  Application[]
   telegramBots  TelegramBot[]
+
+  @@index([userId])
 }
 
 model UploadedFile {
-  id          String   @id @default(cuid())
-  profileId   String
-  fileName    String
-  fileType    String   // mime type
-  fileSize    Int
-  extractedText String // extracted plain text from this file
-  createdAt   DateTime @default(now())
+  id            String   @id @default(cuid())
+  profileId     String
+  fileName      String
+  fileType      String
+  fileSize      Int
+  extractedText String
+  createdAt     DateTime @default(now())
 
-  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profile       Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
 }
 
 model SkillRun {
   id          String   @id @default(cuid())
   profileId   String
-  skillId     String   // e.g. "resume-architect", "cover-letter-craft"
+  skillId     String
   skillName   String
-  input       String   // JSON string of inputs the user provided for this run
-  output      String   // the LLM-generated output (markdown)
+  input       String
+  output      String
   modelUsed   String?
   createdAt   DateTime @default(now())
 
@@ -64,14 +81,14 @@ model JobPosting {
   company       String
   location      String?
   url           String?
-  description   String?  // full job description text
-  source        String   @default("web_search") // "web_search" | "manual" | "linkedin"
+  description   String?
+  source        String   @default("web_search")
   salaryRange   String?
-  jobType       String?  // "full-time" | "contract" | "part-time"
+  jobType       String?
   remote        Boolean  @default(false)
-  matchScore    Int?     // 0-100, AI-calculated fit score
-  matchReason   String?  // why this job matches (or doesn't)
-  status        String   @default("saved") // "saved" | "applied" | "interviewing" | "offered" | "rejected"
+  matchScore    Int?
+  matchReason   String?
+  status        String   @default("saved")
   appliedAt     DateTime?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -84,41 +101,40 @@ model JobPosting {
 }
 
 model Application {
-  id            String   @id @default(cuid())
-  profileId     String
-  jobId         String
-  // Auto-generated materials
-  tailoredResume     String?  // markdown resume tailored to this job
-  coverLetter        String?  // cover letter for this job
-  coverLetterFormat  String?  @default("html") // "text" | "html" | "pdf"
-  // Submission tracking
-  status        String   @default("draft") // "draft" | "ready" | "submitted" | "responded"
-  submittedAt   DateTime?
-  notes         String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                  String   @id @default(cuid())
+  profileId           String
+  jobId               String
+  tailoredResume      String?
+  coverLetter         String?
+  coverLetterFormat   String?  @default("html")
+  status              String   @default("draft")
+  submittedAt         DateTime?
+  notes               String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
-  profile       Profile    @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  job           JobPosting @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  profile             Profile    @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  job                 JobPosting @relation(fields: [jobId], references: [id], onDelete: Cascade)
 
   @@index([profileId, status])
   @@index([jobId])
 }
 
 model TelegramBot {
-  id            String   @id @default(cuid())
-  profileId     String
-  botToken      String   // Telegram bot token from @BotFather
-  botUsername   String?  // @username of the bot
-  chatId        String?  // Telegram chat ID of the user (set on first message)
-  isActive      Boolean  @default(true)
-  defaultPersona String  @default("recruiter") // which HR persona to use by default
-  lastMessageAt DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id              String   @id @default(cuid())
+  userId          String   // Changed: now scoped to User
+  profileId       String?  // Optional link to active profile
+  botToken        String   @unique
+  botUsername     String?
+  chatId          String?
+  isActive        Boolean  @default(true)
+  defaultPersona  String   @default("recruiter")
+  lastMessageAt   DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  profile       Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profile         Profile? @relation(fields: [profileId], references: [id], onDelete: SetNull)
 
-  @@unique([botToken])
-  @@index([profileId])
+  @@index([userId])
 }

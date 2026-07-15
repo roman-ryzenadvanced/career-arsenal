@@ -8,20 +8,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import ZAI from 'z-ai-web-dev-sdk';
+import { getCurrentUser, getCurrentProfile } from '@/lib/auth';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
 
 // GET — list all saved jobs
 export async function GET() {
-  const profile = await db.profile.findFirst({ orderBy: { createdAt: 'desc' } });
-  if (!profile) return NextResponse.json({ jobs: [] });
-
-  const jobs = await db.jobPosting.findMany({
-    where: { profileId: profile.id },
-    orderBy: { createdAt: 'desc' },
-    include: { _count: { select: { applications: true } } },
-  });
+  const user = await getCurrentUser();
+    if (!user) return NextResponse.json({ error: 'Not authenticated. Please login.' }, { status: 401 });
+    const profile = await db.profile.findFirst({
+      where: { userId: user.id },
+      orderBy: { createdAt: 'desc' },
+      include: { _count: { select: { skillRuns: true, uploads: true } } },
+    });
 
   return NextResponse.json({
     jobs: jobs.map((j) => ({

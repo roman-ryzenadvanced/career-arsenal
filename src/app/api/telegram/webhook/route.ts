@@ -11,6 +11,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import ZAI from 'z-ai-web-dev-sdk';
+import { getCurrentUser, getCurrentProfile } from '@/lib/auth';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
@@ -57,13 +58,14 @@ export async function POST(req: NextRequest) {
     const text = message.text.trim();
     const firstName = message.from?.first_name || 'there';
 
-    // Find the bot by matching the chat — we need to find which bot received this
-    // Telegram webhooks are per-bot, but since we use a single endpoint,
-    // we search all active bots. In production, you'd use separate webhook URLs per bot.
-    // For this implementation, we match by the most recent active bot.
+    // Find the bot by looking up all active bots with a profile
+    // In multi-user mode, each user has their own bot — we need to match the incoming
+    // message to the right user. Telegram doesn't send the bot token in the webhook payload,
+    // so we match by checking which bot has this chatId, or fall back to the most recent.
     const bots = await db.telegramBot.findMany({
-      where: { isActive: true },
-      include: { profile: true },
+      where: { isActive: true, profileId: { not: null } },
+      include: { profile: true, user: true },
+      orderBy: { lastMessageAt: 'desc' },
     });
 
     if (bots.length === 0) {

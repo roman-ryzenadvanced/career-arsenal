@@ -8,6 +8,7 @@
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { getCurrentUser, getCurrentProfile } from '@/lib/auth';
 
 export const runtime = 'nodejs';
 export const maxDuration = 30;
@@ -15,13 +16,9 @@ export const maxDuration = 30;
 // GET — return current Telegram bot config
 export async function GET() {
   try {
-    const profile = await db.profile.findFirst({ orderBy: { createdAt: 'desc' } });
-    if (!profile) return NextResponse.json({ bot: null });
-
-    const bot = await db.telegramBot.findFirst({
-      where: { profileId: profile.id },
-      orderBy: { createdAt: 'desc' },
-    });
+    const user = await getCurrentUser();
+    if (!user) return NextResponse.json({ error: 'Not authenticated. Please login.' }, { status: 401 });
+    const profile = await getCurrentProfile(user.id);
 
     if (!bot) return NextResponse.json({ bot: null });
 
@@ -57,7 +54,7 @@ export async function PATCH(req: NextRequest) {
     // ─── Test connection ──────────────────────────────────────────────
     if (action === 'test') {
       const existing = await db.telegramBot.findFirst({
-        where: { profileId: profile.id },
+        where: { userId: user.id },
         orderBy: { createdAt: 'desc' },
       });
       if (!existing) {
@@ -69,7 +66,7 @@ export async function PATCH(req: NextRequest) {
     // ─── Activate / Deactivate ────────────────────────────────────────
     if (action === 'activate' || action === 'deactivate') {
       const existing = await db.telegramBot.findFirst({
-        where: { profileId: profile.id },
+        where: { userId: user.id },
         orderBy: { createdAt: 'desc' },
       });
       if (!existing) {
@@ -105,7 +102,7 @@ export async function PATCH(req: NextRequest) {
 
       // Upsert
       const existing = await db.telegramBot.findFirst({
-        where: { profileId: profile.id },
+        where: { userId: user.id },
         orderBy: { createdAt: 'desc' },
       });
 
@@ -123,7 +120,7 @@ export async function PATCH(req: NextRequest) {
       } else {
         bot = await db.telegramBot.create({
           data: {
-            profileId: profile.id,
+            userId: user.id,
             botToken,
             botUsername: botInfo.username,
             isActive: true,
@@ -156,7 +153,7 @@ export async function DELETE() {
     if (!profile) return NextResponse.json({ ok: true });
 
     const bot = await db.telegramBot.findFirst({
-      where: { profileId: profile.id },
+      where: { userId: user.id },
       orderBy: { createdAt: 'desc' },
     });
 

@@ -38,6 +38,7 @@ import { CoverLetterBuilderDialog } from '@/components/cover-letter-builder-dial
 import { JobFinderDialog } from '@/components/job-finder-dialog';
 import { AISettingsDialog } from '@/components/ai-settings-dialog';
 import { TelegramBotDialog } from '@/components/telegram-bot-dialog';
+import { LoginScreen } from '@/components/login-screen';
 import { JobSearchBar } from '@/components/job-search-bar';
 import { FileText as ResumeIcon, Mail as CoverLetterIcon, Sparkles as SparklesIcon, Briefcase as JobFinderIcon, Settings as SettingsIcon, Send as TelegramIcon } from 'lucide-react';
 
@@ -1019,6 +1020,8 @@ function AuthorFooter() {
 // ─── Main Page ────────────────────────────────────────────────────────────
 export default function Home() {
   const { t } = useI18n();
+  const [authUser, setAuthUser] = useState<{ id: string; botUsername: string | null } | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [profile, setProfile] = useState<ProfileInfo | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [activeSkill, setActiveSkill] = useState<Skill | null>(null);
@@ -1054,10 +1057,36 @@ export default function Home() {
     }
   }, []);
 
+  // Check auth on mount
   useEffect(() => {
-    loadProfile();
-    loadRuns();
-  }, [loadProfile, loadRuns]);
+    (async () => {
+      try {
+        const res = await fetch('/api/auth/me', { cache: 'no-store' });
+        const data = await res.json();
+        if (data.user) {
+          setAuthUser(data.user);
+        }
+      } catch {}
+      setAuthLoading(false);
+    })();
+  }, []);
+
+  // Load profile + runs when authenticated
+  useEffect(() => {
+    if (authUser) {
+      loadProfile();
+      loadRuns();
+    } else {
+      setLoadingProfile(false);
+    }
+  }, [authUser, loadProfile, loadRuns]);
+
+  const handleLogout = async () => {
+    await fetch('/api/auth/me', { method: 'POST' });
+    setAuthUser(null);
+    setProfile(null);
+    setRuns([]);
+  };
 
   const clearProfile = useCallback(async () => {
     setProfile(null);
@@ -1071,7 +1100,6 @@ export default function Home() {
     setDialogOpen(true);
   };
 
-  // Open a skill by ID (used by HR chat actions)
   const openSkillById = useCallback((skillId: string) => {
     const skill = ALL_SKILLS.find((s) => s.id === skillId);
     if (skill) {
@@ -1082,7 +1110,6 @@ export default function Home() {
     }
   }, []);
 
-  // Update target role from chat action
   const updateTargetRoleFromChat = useCallback(async (role: string) => {
     try {
       const res = await fetch('/api/profile', {
@@ -1097,6 +1124,22 @@ export default function Home() {
       console.error('Failed to update target role from chat:', e);
     }
   }, [loadProfile]);
+
+  // Show login screen if not authenticated
+  if (!authLoading && !authUser) {
+    return <LoginScreen onLoggedIn={() => {
+      window.location.reload();
+    }} />;
+  }
+
+  // Show loading while checking auth
+  if (authLoading) {
+    return (
+      <div className="min-h-[100dvh] flex items-center justify-center">
+        <PugLoader message="Loading..." size="md" />
+      </div>
+    );
+  }
 
   const filteredSkills = tab === 'all' ? ALL_SKILLS : tab === 'career' ? CAREER_SKILLS : HR_SKILLS;
 
@@ -1128,6 +1171,14 @@ export default function Home() {
                 }}
               >
                 <RefreshCw className="h-3.5 w-3.5 mr-1.5" /> {t('nav.refresh')}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="hidden sm:flex"
+                onClick={handleLogout}
+              >
+                {t('auth.logout') || 'Logout'}
               </Button>
               <Button
                 variant="ghost"
