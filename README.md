@@ -1,10 +1,32 @@
-# Career Arsenal — 16 AI Skills + HR Live Chat · Powered by GLM
+# Career Arsenal — 16 AI Skills + HR Live Chat + Job Finder · Powered by GLM
 
-> Upload your resume or LinkedIn export once. Run all 16 career & hiring skills, chat live with AI-powered HR experts, and get everything you need for your job search — all powered by Z.ai GLM, free.
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-ats--jobs.space--z.ai-success?style=for-the-badge)](https://ats-jobs.space-z.ai)
+
+> **Try it now:** [https://ats-jobs.space-z.ai](https://ats-jobs.space-z.ai)
+
+Upload your resume or LinkedIn export once. Run all 16 career & hiring skills, chat live with AI-powered HR experts, search for jobs across LinkedIn/Indeed/Glassdoor, and get everything you need for your job search — all powered by Z.ai GLM, free.
 
 Built with [Next.js 16](https://nextjs.org), [TypeScript](https://www.typescriptlang.org/), [Tailwind CSS 4](https://tailwindcss.com), [shadcn/ui](https://ui.shadcn.com/), [Prisma](https://www.prisma.io/), and the [`z-ai-web-dev-sdk`](https://www.npmjs.com/package/z-ai-web-dev-sdk).
 
 The 16 skills are based on the open-source [Career Arsenal](https://github.com/roman-ryzenadvanced/Job-Hunter-Linkedin-Skill-Hermes-OpenClaw-ClaudeCode-Comet) skill collection.
+
+---
+
+## 🚀 Live Demo
+
+**URL:** [https://ats-jobs.space-z.ai](https://ats-jobs.space-z.ai)
+
+| Feature | How to try |
+|---|---|
+| **Upload Resume** | Drop a PDF/DOCX/TXT resume on the landing page |
+| **16 AI Skills** | Click any skill card → fill inputs → "Run with GLM" |
+| **HR Live Chat** | Click the floating chat button (bottom-right) → pick a persona → ask anything |
+| **Resume Builder** | Click "Resume Builder" card → paste job posting → choose from 20 templates |
+| **Cover Letter Builder** | Click "Cover Letter Builder" card → choose format (Text/HTML/PDF) |
+| **Job Finder** | Click "Job Finder" card → search LinkedIn/Indeed/Glassdoor → save → auto-apply |
+| **Google-style Job Search** | Use the search bar on the dashboard → filter by type/experience/date |
+| **AI Provider Settings** | Click the gear icon (⚙️) in the header → view/switch provider |
+| **Multi-language** | Click the globe icon (🌐) → switch between EN/RU/HE/FR/AR |
 
 ---
 
