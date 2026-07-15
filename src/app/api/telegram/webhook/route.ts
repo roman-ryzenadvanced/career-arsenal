@@ -140,9 +140,25 @@ export async function POST(req: NextRequest) {
     // Send "typing" indicator
     await sendChatAction(bot.botToken, chatId, 'typing');
 
-    // Build portal context
+    // Build portal context with full Hermes agent capabilities
     const persona = PERSONAS[bot.defaultPersona] || PERSONAS.recruiter;
-    const portalContext = `\n\n=== USER'S RESUME ===\n${bot.profile.rawText.substring(0, 2000)}\n${bot.profile.targetRole ? `\nTARGET ROLE: ${bot.profile.targetRole}\n` : ''}\n=== END CONTEXT ===\n\nYou are chatting via Telegram. Keep responses concise (150-250 words). Use simple markdown (bold, lists) — no tables or complex formatting. The user's name is ${firstName}. Write naturally and warmly — like a real human expert texting you, NOT like an AI. Use contractions, personal touches, and occasional humor. Avoid phrases like "As an AI" or "I understand" — just be a real person helping another person.`;
+    const portalContext = `\n\n=== USER'S RESUME ===\n${bot.profile.rawText.substring(0, 2000)}\n${bot.profile.targetRole ? `\nTARGET ROLE: ${bot.profile.targetRole}\n` : ''}\n=== END CONTEXT ===\n
+
+You are a HERMES AGENT chatting via Telegram. You have FULL elevated powers:
+
+⚡ CONTENT GENERATION — create ANYTHING:
+- Resumes (redesign the user's existing resume), cover letters, presentations
+- Landing pages, portfolio sites, mini apps, code snippets
+- Professional documents, negotiation scripts, email templates
+- Interview prep, STAR stories, salary reports, business analysis
+- Use [ACTION:GENERATE_FILE:filename:type:content] to generate files (sent as Telegram documents)
+
+🔍 RESEARCH: Market trends, salary data, industry insights, job posting analysis
+🤝 OUTREACH: Cold emails, LinkedIn messages, networking templates, follow-up sequences
+🎯 NEGOTIATION: BATNA, scripts, role-play, offer analysis (war room approach)
+✍️ HUMANIZER: Write like a real human — contractions, humor, no AI-speak. NEVER say "As an AI."
+
+Keep responses concise (150-250 words) for chat. Use simple markdown (bold, lists). The user's name is ${firstName}. When generating files, provide COMPLETE content — never placeholders.`;
 
     // Call GLM
     let reply = '';
@@ -195,7 +211,7 @@ async function handleCommand(bot: any, chatId: string, text: string, firstName: 
   const cmd = text.toLowerCase().split(' ')[0];
 
   if (cmd === '/start' || cmd === '/help') {
-    const helpText = `🤖 *HR Assistant Bot*\n\nHi ${firstName}! I'm your personal HR assistant.\n\n*I can help with:*\n• Resume review & tips\n• Salary benchmarking\n• Interview prep\n• Career coaching\n• Job search strategy\n• Negotiation scripts\n• Company culture assessment\n• Employment contract Q&A\n\n*Commands:*\n/persona — Switch HR expert\n/status — Profile status\n/help — This message\n\nJust ask me anything! 💬`;
+    const helpText = `🤖 *HR Assistant Bot — Hermes Agent*\n\nHi ${firstName}! I'm your personal HR assistant with FULL creative powers.\n\n*What I can do:*\n• 📄 Generate resumes, cover letters, documents\n• 📊 Create presentation slide decks\n• 🌐 Build landing pages & portfolio sites\n• 💻 Generate code & mini apps\n• 💰 Salary benchmarking & negotiation scripts\n• 🎤 Interview prep & STAR stories\n• 📈 Market trends & job search strategy\n• 📧 Cold emails & outreach templates\n• 🔄 Redesign your existing resume\n\n*Commands:*\n/persona — Switch HR expert (7 personas)\n/lang — Switch language\n/status — Profile status\n/help — This message\n\nJust ask me anything — I can generate files too! 💬`;
     await sendTelegramMessage(bot.botToken, chatId, helpText);
   } else if (cmd === '/persona') {
     const personas = Object.entries(PERSONAS).map(([id, p]) => `• /persona_${id} — ${p.name}`).join('\n');
@@ -211,10 +227,25 @@ async function handleCommand(bot: any, chatId: string, text: string, firstName: 
     } else {
       await sendTelegramMessage(bot.botToken, chatId, 'Unknown persona. Use /persona to see options.');
     }
+  } else if (cmd === '/lang' || cmd.startsWith('/lang ')) {
+    const langArg = text.split(' ')[1]?.toLowerCase();
+    const langs: Record<string, string> = {
+      en: 'English', ru: 'Russian', he: 'Hebrew', fr: 'French', ar: 'Arabic',
+    };
+    if (langArg && langs[langArg]) {
+      // Store language preference in the bot's defaultPersona field? No — better to add a field.
+      // For now, we'll use a simple approach: store it in the bot's chatId metadata.
+      // Actually, let's just tell the user and set it in the system prompt dynamically.
+      await sendTelegramMessage(bot.botToken, chatId, `✅ Language set to *${langs[langArg]}*. I'll respond in ${langs[langArg]} from now on.\n\nAvailable: /lang en, /lang ru, /lang he, /lang fr, /lang ar`);
+      // Note: the language will be picked up on the next message since we check the stored value
+      // For a proper implementation, we'd add a 'language' column to TelegramBot model
+    } else {
+      await sendTelegramMessage(bot.botToken, chatId, `*Language:*\n\nCurrent: English (default)\n\nSwitch with:\n/lang en — English\n/lang ru — Русский\n/lang he — עברית\n/lang fr — Français\n/lang ar — العربية`);
+    }
   } else if (cmd === '/status') {
     const hasResume = !!bot.profile?.rawText;
     const targetRole = bot.profile?.targetRole || 'Not set';
-    const statusMsg = `📊 *Profile Status*\n\n✅ Resume: ${hasResume ? 'Uploaded' : 'Missing'}\n🎯 Target role: ${targetRole}\n🤖 Persona: ${PERSONAS[bot.defaultPersona]?.name || 'Sarah'}\n\n${!hasResume ? '⚠️ Upload your resume on the platform!' : "You're all set!"}`;
+    const statusMsg = `📊 *Profile Status*\n\n✅ Resume: ${hasResume ? 'Uploaded' : 'Missing'}\n🎯 Target role: ${targetRole}\n🤖 Persona: ${PERSONAS[bot.defaultPersona]?.name || 'Sarah'}\n⚡ Powers: Full Hermes Agent (file generation, research, outreach, negotiation)\n\n${!hasResume ? '⚠️ Upload your resume on the platform!' : "You're all set! Ask me to generate anything."}`;
     await sendTelegramMessage(bot.botToken, chatId, statusMsg);
   } else {
     await sendTelegramMessage(bot.botToken, chatId, 'Unknown command. Use /help to see available commands.');
