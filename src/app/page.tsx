@@ -35,7 +35,8 @@ import { PugLoader } from '@/components/pug-loader';
 import { HRChatButton } from '@/components/hr-chat-button';
 import { ResumeBuilderDialog } from '@/components/resume-builder-dialog';
 import { CoverLetterBuilderDialog } from '@/components/cover-letter-builder-dialog';
-import { FileText as ResumeIcon, Mail as CoverLetterIcon, Sparkles as SparklesIcon } from 'lucide-react';
+import { JobFinderDialog } from '@/components/job-finder-dialog';
+import { FileText as ResumeIcon, Mail as CoverLetterIcon, Sparkles as SparklesIcon, Briefcase as JobFinderIcon } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────
 interface ProfileInfo {
@@ -1021,6 +1022,7 @@ export default function Home() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [resumeBuilderOpen, setResumeBuilderOpen] = useState(false);
   const [coverLetterBuilderOpen, setCoverLetterBuilderOpen] = useState(false);
+  const [jobFinderOpen, setJobFinderOpen] = useState(false);
   const [runs, setRuns] = useState<RunInfo[]>([]);
   const [tab, setTab] = useState<'all' | 'career' | 'hr'>('all');
 
@@ -1224,7 +1226,7 @@ export default function Home() {
               </div>
 
               {/* Quick Action Builders */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
                 <button
                   onClick={() => setResumeBuilderOpen(true)}
                   className="flex items-center gap-3 p-4 rounded-lg border-2 border-primary/20 bg-primary/5 hover:bg-primary/10 hover:border-primary/40 transition-all text-left group"
@@ -1250,6 +1252,19 @@ export default function Home() {
                     <p className="text-xs text-muted-foreground truncate">Text · HTML · PDF formats</p>
                   </div>
                   <SparklesIcon className="h-4 w-4 text-primary shrink-0" />
+                </button>
+                <button
+                  onClick={() => setJobFinderOpen(true)}
+                  className="flex items-center gap-3 p-4 rounded-lg border-2 border-emerald-500/30 bg-emerald-500/5 hover:bg-emerald-500/10 hover:border-emerald-500/50 transition-all text-left group"
+                >
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-600 text-white group-hover:scale-110 transition-transform">
+                    <JobFinderIcon className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm">{t('jobFinder.title')}</p>
+                    <p className="text-xs text-muted-foreground truncate">LinkedIn · Indeed · Auto-Apply</p>
+                  </div>
+                  <SparklesIcon className="h-4 w-4 text-emerald-600 shrink-0" />
                 </button>
               </div>
 
@@ -1288,6 +1303,11 @@ export default function Home() {
       <CoverLetterBuilderDialog
         open={coverLetterBuilderOpen}
         onOpenChange={setCoverLetterBuilderOpen}
+      />
+
+      <JobFinderDialog
+        open={jobFinderOpen}
+        onOpenChange={setJobFinderOpen}
       />
 
       <Toaster />

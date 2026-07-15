@@ -24,6 +24,8 @@ model Profile {
 
   skillRuns     SkillRun[]
   uploads       UploadedFile[]
+  jobPostings   JobPosting[]
+  applications  Application[]
 }
 
 model UploadedFile {
@@ -52,4 +54,52 @@ model SkillRun {
 
   @@index([profileId, skillId])
   @@index([createdAt])
+}
+
+model JobPosting {
+  id            String   @id @default(cuid())
+  profileId     String
+  title         String
+  company       String
+  location      String?
+  url           String?
+  description   String?  // full job description text
+  source        String   @default("web_search") // "web_search" | "manual" | "linkedin"
+  salaryRange   String?
+  jobType       String?  // "full-time" | "contract" | "part-time"
+  remote        Boolean  @default(false)
+  matchScore    Int?     // 0-100, AI-calculated fit score
+  matchReason   String?  // why this job matches (or doesn't)
+  status        String   @default("saved") // "saved" | "applied" | "interviewing" | "offered" | "rejected"
+  appliedAt     DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  profile       Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  applications  Application[]
+
+  @@index([profileId, status])
+  @@index([createdAt])
+}
+
+model Application {
+  id            String   @id @default(cuid())
+  profileId     String
+  jobId         String
+  // Auto-generated materials
+  tailoredResume     String?  // markdown resume tailored to this job
+  coverLetter        String?  // cover letter for this job
+  coverLetterFormat  String?  @default("html") // "text" | "html" | "pdf"
+  // Submission tracking
+  status        String   @default("draft") // "draft" | "ready" | "submitted" | "responded"
+  submittedAt   DateTime?
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  profile       Profile    @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  job           JobPosting @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@index([profileId, status])
+  @@index([jobId])
 }
