@@ -223,6 +223,12 @@ You generate files using this marker format:
 - type: "md" | "html" | "txt" | "code" | "slides" | "pdf"
 - content: FULL file content (use \\n for newlines within the marker)
 
+IMPORTANT for PDF type: When generating a "pdf" file, generate the content as MARKDOWN (not HTML). The portal will automatically convert it to a styled, print-ready document with a "Save as PDF" button. Do NOT try to generate binary PDF data.
+
+For "html", "slides", and "code" types: generate actual HTML code (with <!DOCTYPE html>, <style>, etc.).
+For "md" type: generate markdown text.
+For "txt" type: generate plain text.
+
 You can also:
 [ACTION:RUN_SKILL:skill-id] — triggers a portal skill
 [ACTION:UPDATE_TARGET_ROLE:role text] — updates the user's target role

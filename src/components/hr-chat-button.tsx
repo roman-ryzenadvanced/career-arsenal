@@ -128,34 +128,130 @@ export function HRChatButton({ onRunSkill, onUpdateTargetRole }: HRChatButtonPro
         description: action.value,
       });
     } else if (action.type === 'generate_file' && action.fileName && action.content) {
-      // Download the file
-      const mime = action.fileType === 'html' || action.fileType === 'slides' || action.fileType === 'code'
+      const ft = action.fileType || 'txt';
+
+      if (ft === 'pdf') {
+        // PDF = open print dialog with styled HTML (user saves as PDF from browser)
+        // If content is markdown, convert to HTML first
+        let htmlContent = action.content;
+        if (!htmlContent.trim().startsWith('<') && !htmlContent.trim().startsWith('<!DOCTYPE')) {
+          // It's markdown — wrap in styled HTML
+          htmlContent = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${action.fileName}</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+@page { margin: 1.5cm; }
+body { font-family: Georgia, serif; max-width: 210mm; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+h1 { font-size: 22pt; border-bottom: 2px solid #333; padding-bottom: 4px; }
+h2 { font-size: 14pt; margin-top: 1.2em; text-transform: uppercase; letter-spacing: 1px; }
+h3 { font-size: 12pt; }
+ul, ol { padding-left: 1.5em; }
+li { margin: 3px 0; }
+table { border-collapse: collapse; width: 100%; }
+th, td { border: 1px solid #999; padding: 6px; }
+code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; }
+@media print { body { max-width: none; } }
+</style>
+</head><body><div id="content"></div>
+<script>
+document.getElementById('content').innerHTML = marked.parse(${JSON.stringify(action.content)});
+setTimeout(function() { window.print(); }, 300);
+</script>
+</body></html>`;
+        }
+        const printWindow = window.open('', '_blank');
+        if (!printWindow) {
+          toast({ title: 'Please allow popups to generate PDF' });
+          return;
+        }
+        printWindow.document.write(htmlContent);
+        printWindow.document.close();
+        toast({ title: '📄 PDF ready', description: 'Use your browser\'s Print → Save as PDF' });
+        return;
+      }
+
+      // For all other types — download as file
+      const mime = ft === 'html' || ft === 'slides' || ft === 'code'
         ? 'text/html'
-        : action.fileType === 'md'
+        : ft === 'md'
         ? 'text/markdown'
         : 'text/plain';
-      const blob = new Blob([action.content], { type: mime });
+
+      // Fix filename extension if it doesn't match the type
+      let fileName = action.fileName;
+      const ext = ft === 'html' || ft === 'slides' || ft === 'code' ? '.html' : ft === 'md' ? '.md' : '.txt';
+      if (!fileName.endsWith(ext) && !fileName.endsWith('.html') && !fileName.endsWith('.md') && !fileName.endsWith('.txt')) {
+        fileName = fileName + ext;
+      }
+
+      // If content is markdown but type is html, convert to HTML
+      let content = action.content;
+      if ((ft === 'html' || ft === 'slides' || ft === 'code') && !content.trim().startsWith('<') && !content.trim().startsWith('<!DOCTYPE')) {
+        // Content is markdown but supposed to be HTML — wrap it
+        content = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${fileName}</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:20px;line-height:1.7;color:#1a1a1a}h1{border-bottom:2px solid #333}h2{margin-top:1.2em}code{background:#f4f4f4;padding:2px 6px;border-radius:3px}pre{background:#f4f4f4;padding:12px;border-radius:6px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ddd;padding:8px}</style>
+</head><body><div id="content"></div>
+<script>document.getElementById('content').innerHTML=marked.parse(${JSON.stringify(content)})</script>
+</body></html>`;
+      }
+
+      const blob = new Blob([content], { type: mime });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = action.fileName;
+      a.download = fileName;
       a.click();
       URL.revokeObjectURL(url);
       toast({
         title: '📄 File downloaded',
-        description: action.fileName,
+        description: fileName,
       });
     }
   };
 
   const previewFile = (action: ChatAction) => {
     if (action.type !== 'generate_file' || !action.content) return;
+    const ft = action.fileType || 'txt';
     // Open preview in new tab
     const previewWindow = window.open('', '_blank');
     if (!previewWindow) return;
-    if (action.fileType === 'html' || action.fileType === 'slides' || action.fileType === 'code') {
-      previewWindow.document.write(action.content);
-    } else if (action.fileType === 'md') {
+
+    if (ft === 'pdf') {
+      // PDF preview = styled HTML with print button
+      let htmlContent = action.content;
+      if (!htmlContent.trim().startsWith('<') && !htmlContent.trim().startsWith('<!DOCTYPE')) {
+        htmlContent = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${action.fileName}</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+@page { margin: 1.5cm; }
+body { font-family: Georgia, serif; max-width: 210mm; margin: 0 auto; padding: 20px; line-height: 1.6; color: #1a1a1a; }
+h1 { font-size: 22pt; border-bottom: 2px solid #333; padding-bottom: 4px; }
+h2 { font-size: 14pt; margin-top: 1.2em; text-transform: uppercase; letter-spacing: 1px; }
+h3 { font-size: 12pt; }
+ul, ol { padding-left: 1.5em; }
+li { margin: 3px 0; }
+table { border-collapse: collapse; width: 100%; }
+th, td { border: 1px solid #999; padding: 6px; }
+</style>
+</head><body><div id="content"></div>
+<div style="text-align:center;padding:20px;"><button onclick="window.print()" style="padding:10px 20px;font-size:14px;cursor:pointer;">🖨️ Save as PDF</button></div>
+<script>document.getElementById('content').innerHTML=marked.parse(${JSON.stringify(action.content)});</script>
+</body></html>`;
+      }
+      previewWindow.document.write(htmlContent);
+    } else if (ft === 'html' || ft === 'slides' || ft === 'code') {
+      // If content is actually markdown (not HTML), wrap it
+      if (action.content.trim().startsWith('<') || action.content.trim().startsWith('<!DOCTYPE')) {
+        previewWindow.document.write(action.content);
+      } else {
+        previewWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${action.fileName}</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:20px;line-height:1.7;color:#1a1a1a}h1{border-bottom:2px solid #333}code{background:#f4f4f4;padding:2px 6px;border-radius:3px}pre{background:#f4f4f4;padding:12px;border-radius:6px;overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ddd;padding:8px}</style>
+</head><body><div id="content"></div>
+<script>document.getElementById('content').innerHTML=marked.parse(${JSON.stringify(action.content)});</script>
+</body></html>`);
+      }
+    } else if (ft === 'md') {
       previewWindow.document.write(`
 <!DOCTYPE html><html><head><meta charset="UTF-8"><title>${action.fileName}</title>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
