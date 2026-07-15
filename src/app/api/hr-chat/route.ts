@@ -29,6 +29,17 @@ interface ChatMessage {
   content: string;
 }
 
+// Shared file preview store — used by both hr-chat and file-preview routes
+export const filePreviewStore = new Map<string, { content: string; fileName: string; fileType: string; createdAt: number }>();
+
+// Auto-cleanup
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, val] of filePreviewStore.entries()) {
+    if (now - val.createdAt > 3600000) filePreviewStore.delete(key);
+  }
+}, 600000);
+
 const PERSONAS: Record<string, { name: string; systemPrompt: string }> = {
   recruiter: {
     name: 'Sarah — Senior Recruiter',
@@ -269,7 +280,14 @@ function extractActions(reply: string): { cleanedReply: string; actions: Array<{
     let content = match[3].trim();
     // Unescape \\n to actual newlines
     content = content.replace(/\\n/g, '\n');
-    actions.push({ type: 'generate_file', fileName, fileType, content });
+    // Generate a preview URL using the file-preview endpoint
+    const previewId = Math.random().toString(36).substring(2, 15);
+    // Store in the global fileStore (same as /api/file-preview)
+    // We need to import the store — but since it's in another route file,
+    // we'll use a different approach: store it in a module-level Map here
+    filePreviewStore.set(previewId, { content, fileName, fileType, createdAt: Date.now() });
+    const previewUrl = `/api/file-preview?id=${previewId}`;
+    actions.push({ type: 'generate_file', fileName, fileType, content, previewUrl });
   }
   cleanedReply = cleanedReply.replace(fileRegex, '').trim();
 

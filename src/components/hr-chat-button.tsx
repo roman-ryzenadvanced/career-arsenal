@@ -19,6 +19,7 @@ interface ChatAction {
   fileName?: string;
   fileType?: string;
   content?: string;
+  previewUrl?: string;
 }
 
 interface ChatMessage {
@@ -127,9 +128,12 @@ export function HRChatButton({ onRunSkill, onUpdateTargetRole }: HRChatButtonPro
         title: t('chat.targetRoleUpdated'),
         description: action.value,
       });
+    } else if (action.type === 'generate_file' && action.previewUrl) {
+      // Open the server-side preview URL directly — works even with cached JS
+      window.open(action.previewUrl, '_blank');
+      toast({ title: '📄 File opened', description: 'Use the toolbar to download or save as PDF' });
     } else if (action.type === 'generate_file' && action.fileName && action.content) {
-      // Use server-side endpoint to generate the file preview page
-      // This avoids CDN caching issues with client-side blob downloads
+      // Fallback: no preview URL — use server-side download endpoint
       try {
         const dlRes = await fetch('/api/download-file', {
           method: 'POST',
@@ -151,14 +155,11 @@ export function HRChatButton({ onRunSkill, onUpdateTargetRole }: HRChatButtonPro
             toast({ title: 'Please allow popups to view files' });
           }
         } else {
-          // Fallback: server endpoint failed — use client-side blob download
           fallbackDownload(action);
         }
       } catch (e: any) {
-        // Fallback: network error — use client-side blob download
         fallbackDownload(action);
       }
-      return;
     }
   };
 
