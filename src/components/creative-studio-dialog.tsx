@@ -28,7 +28,7 @@ const CREATION_TYPES = [
 ];
 
 export function CreativeStudioDialog({ open, onOpenChange }: CreativeStudioDialogProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const { toast } = useToast();
   const [selectedType, setSelectedType] = useState('slides');
   const [prompt, setPrompt] = useState('');
@@ -45,7 +45,7 @@ export function CreativeStudioDialog({ open, onOpenChange }: CreativeStudioDialo
     try {
       const res = await fetch('/api/creative-studio', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-user-language': locale },
         body: JSON.stringify({ type: selectedType, prompt, customInstructions }),
       });
       const data = await res.json();

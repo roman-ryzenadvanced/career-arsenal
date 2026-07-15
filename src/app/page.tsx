@@ -235,7 +235,7 @@ function useFileUpload(
 
       const res = await fetch('/api/profile', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-user-language': t('app.title') ? 'en' : 'en' },
         body: JSON.stringify({
           file: {
             text: extractedText,
@@ -431,7 +431,7 @@ function ProfilePanel({ profile, onChanged, onCleared }: {
     try {
       const res = await fetch('/api/profile', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-user-language': t('app.title') ? 'en' : 'en' },
         body: JSON.stringify({ fullName, targetRole, targetContext }),
       });
       const data = await safeJson(res, 'Save failed.');
@@ -573,7 +573,7 @@ function SkillRunDialog({ skill, open, onOpenChange, onSaved }: {
   onOpenChange: (v: boolean) => void;
   onSaved: () => void;
 }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [inputValues, setInputValues] = useState<Record<string, string>>({});
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState<string | null>(null);
@@ -604,7 +604,7 @@ function SkillRunDialog({ skill, open, onOpenChange, onSaved }: {
     try {
       const res = await fetch(`/api/runs`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-user-language': locale },
         body: JSON.stringify({ skillId: skill.id, inputs: inputValues }),
       });
       const data = await safeJson(res, 'Run failed.');
@@ -1116,7 +1116,7 @@ export default function Home() {
     try {
       const res = await fetch('/api/profile', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-user-language': t('app.title') ? 'en' : 'en' },
         body: JSON.stringify({ targetRole: role }),
       });
       if (res.ok) {

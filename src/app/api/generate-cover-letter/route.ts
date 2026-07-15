@@ -21,6 +21,7 @@ export async function PATCH(req: NextRequest) {
   try {
     const user = await getCurrentUser();
     if (!user) return NextResponse.json({ error: 'Not authenticated. Please login.' }, { status: 401 });
+    const userLang = req.headers.get("x-user-language") || "en";
     const body = await req.json();
     const jobPosting: string = body.jobPosting || '';
     const companyResearch: string = body.companyResearch || '';

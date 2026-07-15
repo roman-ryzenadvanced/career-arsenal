@@ -48,7 +48,7 @@ interface HRChatButtonProps {
 }
 
 export function HRChatButton({ onRunSkill, onUpdateTargetRole }: HRChatButtonProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [open, setOpen] = useState(false);
   const [selectedPersona, setSelectedPersona] = useState('recruiter');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -75,7 +75,10 @@ export function HRChatButton({ onRunSkill, onUpdateTargetRole }: HRChatButtonPro
     try {
       const res = await fetch('/api/hr-chat', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-language': locale,
+        },
         body: JSON.stringify({
           messages: newMessages.map((m) => ({ role: m.role, content: m.content })),
           persona: selectedPersona,

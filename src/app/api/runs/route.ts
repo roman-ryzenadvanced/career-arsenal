@@ -51,6 +51,7 @@ export async function PATCH(req: NextRequest) {
     const user = await getCurrentUser();
     if (!user) return NextResponse.json({ error: 'Not authenticated. Please login.' }, { status: 401 });
 
+    const userLang = req.headers.get("x-user-language") || "en";
     const body = await req.json().catch(() => ({}));
     const skillId: string = body.skillId;
     const inputs: Record<string, string> = body.inputs || {};

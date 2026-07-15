@@ -4,12 +4,17 @@ import { useState, useEffect } from 'react';
 import {
   Sparkles, Send, Loader2, Eye, EyeOff, ExternalLink, ArrowRight,
   Bot, FileText, Briefcase, MessageCircle, Check, ChevronDown, ChevronUp,
+  Globe,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
 import { useI18n } from '@/lib/i18n-context';
+import { LOCALES } from '@/lib/i18n';
 import { PugLoader } from '@/components/pug-loader';
 
 interface LoginScreenProps {
@@ -17,7 +22,7 @@ interface LoginScreenProps {
 }
 
 export function LoginScreen({ onLoggedIn }: LoginScreenProps) {
-  const { t } = useI18n();
+  const { t, locale, setLocale } = useI18n();
   const { toast } = useToast();
   const [mode, setMode] = useState<'choice' | 'login' | 'signup'>('choice');
   const [token, setToken] = useState('');
@@ -57,7 +62,32 @@ export function LoginScreen({ onLoggedIn }: LoginScreenProps) {
   };
 
   return (
-    <div className="min-h-[100dvh] flex flex-col items-center justify-center p-4 bg-background">
+    <div className="min-h-[100dvh] flex flex-col items-center justify-center p-4 bg-background relative">
+      {/* Language picker — top right */}
+      <div className="absolute top-4 right-4 z-10">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm" className="h-9 gap-1.5 px-2" aria-label="Language">
+              <Globe className="h-4 w-4" />
+              <span className="text-base leading-none">{LOCALES.find(l => l.code === locale)?.flag}</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="min-w-[140px]">
+            {LOCALES.map((l) => (
+              <DropdownMenuItem
+                key={l.code}
+                onClick={() => setLocale(l.code)}
+                className={`cursor-pointer gap-2 ${l.code === locale ? 'font-semibold bg-accent' : ''}`}
+              >
+                <span className="text-base">{l.flag}</span>
+                <span>{l.label}</span>
+                {l.code === locale && <Check className="h-3.5 w-3.5 ml-auto" />}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
       {/* Logo + title */}
       <div className="text-center mb-8 animate-fade-in-up">
         <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-foreground text-background mb-4">

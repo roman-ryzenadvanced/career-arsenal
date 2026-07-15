@@ -912,3 +912,68 @@ pre, code {
   overflow-x: auto;
   white-space: nowrap;
 }
+
+/* ─── Dialog scroll fixes (resume builder, creative studio, etc) ─────────── */
+
+/* All custom full-screen dialogs */
+.fixed.inset-0.z-\[60\] > div {
+  max-height: 100dvh !important;
+  overflow: hidden !important;
+}
+
+/* Left panel (inputs) — scrollable */
+.fixed.inset-0.z-\[60\] > div > div > div:first-child,
+.fixed.inset-0.z-\[60\] > div > .flex-1 > div:first-child {
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  flex-shrink: 0;
+}
+
+/* Right panel (preview) — scrollable */
+.fixed.inset-0.z-\[60\] > div > div > div:last-child,
+.fixed.inset-0.z-\[60\] > div > .flex-1 > div:last-child {
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Preview iframe — fill container */
+.fixed.inset-0.z-\[60\] iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Preview container */
+.fixed.inset-0.z-\[60\] .bg-gray-100,
+.fixed.inset-0.z-\[60\] .dark\:bg-gray-900 {
+  overflow: hidden !important;
+}
+
+/* Resume preview — allow scrolling within the preview area */
+.fixed.inset-0.z-\[60\] .overflow-y-auto {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Code blocks in previews */
+.fixed.inset-0.z-\[60\] pre {
+  overflow-x: auto;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure the resume template preview doesn't overflow */
+.resume {
+  max-width: 100% !important;
+  overflow-x: hidden;
+}
+
+.resume * {
+  max-width: 100% !important;
+  word-wrap: break-word;
+}
+
+/* Creative studio iframe container */
+.fixed.inset-0.z-\[60\] .flex-1.overflow-hidden {
+  min-height: 0;
+}

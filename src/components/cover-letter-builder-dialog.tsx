@@ -17,7 +17,7 @@ interface CoverLetterBuilderDialogProps {
 }
 
 export function CoverLetterBuilderDialog({ open, onOpenChange }: CoverLetterBuilderDialogProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const { toast } = useToast();
   const [jobPosting, setJobPosting] = useState('');
   const [companyResearch, setCompanyResearch] = useState('');
@@ -34,7 +34,7 @@ export function CoverLetterBuilderDialog({ open, onOpenChange }: CoverLetterBuil
     try {
       const res = await fetch('/api/generate-cover-letter', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-user-language': locale },
         body: JSON.stringify({ jobPosting, companyResearch, format, customInstructions }),
       });
       const text = await res.text();

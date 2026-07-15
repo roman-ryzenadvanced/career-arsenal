@@ -89,6 +89,7 @@ export async function POST(req: NextRequest) {
     const user = await getCurrentUser();
     if (!user) return NextResponse.json({ error: 'Not authenticated.' }, { status: 401 });
 
+    const userLang = req.headers.get("x-user-language") || "en";
     const body = await req.json();
     const type: string = body.type || 'slides';
     const prompt: string = body.prompt || '';

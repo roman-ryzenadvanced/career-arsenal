@@ -19,7 +19,7 @@ interface ResumeBuilderDialogProps {
 }
 
 export function ResumeBuilderDialog({ open, onOpenChange }: ResumeBuilderDialogProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const { toast } = useToast();
   const [jobPosting, setJobPosting] = useState('');
   const [customInstructions, setCustomInstructions] = useState('');
@@ -38,7 +38,7 @@ export function ResumeBuilderDialog({ open, onOpenChange }: ResumeBuilderDialogP
     try {
       const res = await fetch('/api/generate-resume', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-user-language': locale },
         body: JSON.stringify({ jobPosting, customInstructions, format }),
       });
       const text = await res.text();

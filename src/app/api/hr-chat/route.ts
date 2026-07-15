@@ -279,8 +279,15 @@ export async function PATCH(req: NextRequest) {
     // Build portal context (user's resume, target role, recent activity, available skills)
     const portalContext = await buildPortalContext(user.id);
 
-    // Build the full system prompt: persona + portal context
-    const systemPrompt = persona.systemPrompt + portalContext;
+    // Get the user's preferred language from the request header
+    const userLang = req.headers.get('x-user-language') || 'en';
+    const langName: Record<string, string> = {
+      en: 'English', ru: 'Russian', he: 'Hebrew', fr: 'French', ar: 'Arabic',
+    };
+    const langInstruction = `\n\nLANGUAGE: You MUST respond in ${langName[userLang] || 'English'} unless the user explicitly asks for a different language. Write naturally in ${langName[userLang] || 'English'} — not translated, but as a native speaker would.`;
+
+    // Build the full system prompt: persona + portal context + language
+    const systemPrompt = persona.systemPrompt + portalContext + langInstruction;
 
     // Build the conversation
     const fullMessages = [
